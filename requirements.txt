@@ -1,0 +1,6 @@
+json_stream==1.1.0
+regex==2021.7.6
+dataclasses_json==0.5.4
+jamdict==0.1a11.post2
+mediawiki-dump==0.8.0
+pytest==6.2.3
