@@ -19,9 +19,17 @@ from daijisen.year import parse_birth_and_death_year
 
 def name_from_entry(heading: str, text: str) -> NameData | None:
     """
-    There may be some crap after the name
-    "heading": "おぎわら‐もりえ【荻原守衛】をぎはらもりヱ",
-    "heading": "なかはら‐ていじろう【中原悌二郎】‐テイジラウ"
+    Extract NameData from a Daijisen entry (heading and lifespan). Entries
+    without a lifespan are ignored, to reduce non-person false positives.
+
+    Daijisen splits the furigana reading into last/first name parts, but
+    not the kanji, so we use a heuristic to split it. This heuristic is quite
+    rough atm but should suffice; it may be improved later.
+
+    Other things we don't handle:
+     - names written with kana (the dictionary does not include any afaik)
+     - の as a silent middle name, e.g.
+       "ふじわら‐の‐なりちか【藤原成親】ふぢはら‐\n［一一三八〜一一七七］平安後期の公卿。"
     """
     if m := regex.match(r'^(\p{Hiragana}+)‐(\p{Hiragana}+)【(\p{Han}+)】', heading):
         sei, mei, kanji = m.groups()
@@ -36,9 +44,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         reading.lifetime = Lifetime(result.birth_year, result.death_year)
 
         # Attempt to split the kanji into surname + first name
-        sp = split_kanji_name(sei, mei, kanji)
-        if sp is not None:
-            reading.kaki = f'{kanji[0:sp]} {kanji[sp:]}'
+        reading.kaki = split_kanji_name(reading.kaki, reading.yomi)
 
         return reading
     else:
@@ -57,3 +63,14 @@ for entry in entries:
     text = entry['text']
     if reading := name_from_entry(heading, text):
         print(reading.to_jsonl())
+
+
+def test_parse_daijisen():
+    assert name_from_entry(
+        "しみず‐はまおみ【清水浜臣】しみづ‐",
+        "しみず‐はまおみ【清水浜臣】しみづ‐\n［一七七六〜一八二四］江戸後期の歌人・国学者。江戸の人。号、泊{{w_49708}}舎（さざなみのや）。村田春海に国学を学び、古典の考証・注釈にすぐれ、王朝的情趣のある歌文を残した。著「泊{{w_49708}}舎文藻」「泊{{w_49708}}舎集」など。\n",
+    ) == NameData(
+        kaki="清水 浜臣",
+        yomi="しみず はまおみ",
+        lifetime=Lifetime(1776, 1824),
+    )

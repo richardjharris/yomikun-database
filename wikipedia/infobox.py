@@ -104,12 +104,13 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
                     result.yomi = box[key]
                     name_set = True
 
-        if (key := box.first_set('生年月日', '生年', '生誕')) and not lifetime.birth_year:
+        if (key := box.first_set('生年月日', '生年', '生誕', 'birth_date')) and not lifetime.birth_year:
             lifetime.birth_year = extract_year(box[key])
 
-        if (key := box.first_set('没年月日', '没年', '死没')) and not lifetime.death_year:
+        if (key := box.first_set('没年月日', '没年', '死没', 'death_date')) and not lifetime.death_year:
             lifetime.death_year = extract_year(box[key])
 
+    result.clean()
     return result
 
 

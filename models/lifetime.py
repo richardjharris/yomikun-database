@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 
-@dataclass_json
 @dataclass
-class Lifetime:
+class Lifetime(DataClassJsonMixin):
     """
     Represents a span of years lived. Both sides may be None
     (to either indicate unknown, or alive).
@@ -19,5 +18,17 @@ class Lifetime:
         return self.birth_year is not None or \
             self.death_year is not None
 
-    def __str__(self):
-        return f"{self.birth_year or ''} ~ {self.death_year or ''}"
+    def __repr__(self):
+        return f"<{self.birth_year or ''} ~ {self.death_year or ''}>"
+
+    def merge_in(self, other: Lifetime):
+        """
+        Fill missing data with data from another object.
+        """
+        # TODO if the other object is complete and we aren't, really
+        #      we should prefer the other object? Do we want to ensure
+        #      the other data matches first?
+        if self.birth_year is None:
+            self.birth_year = other.birth_year
+        if self.death_year is None:
+            self.death_year = other.death_year

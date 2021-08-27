@@ -1,23 +1,14 @@
 from __future__ import annotations
+import logging
 
 import regex
 from mediawiki_dump.tokenizer import clean
 
 from models import Reading, NameData, NameType, Lifetime
 from wikipedia.infobox import extract_infoboxes, parse_infoboxes
-
-# Pattern indicating article subject is a fictional character
-fictional_pat = regex.compile(r'架空')
-
-# Patterns indicating that the article subject is using a pseudonym, with the real
-# name after.
-# TODO space -> \s*
-honmyo_pats = [
-    regex.compile(
-        r"本名は?、?(\p{Han}+ \p{Han}+)（(\p{Hiragana}+ \p{Hiragana}+)[）、]"),
-    regex.compile(
-        r"本名は?、?'''(\p{Han}+ \p{Han}+)'''（(\p{Hiragana}+ \p{Hiragana}+)[）、]"),
-]
+from wikipedia.honmyo import find_honmyo
+from utils.patterns import name_pat, reading_pat, name_paren_start
+from utils.split import split_kanji_name
 
 
 def parse_article_text(content: str) -> NameData | None:
@@ -29,44 +20,66 @@ def parse_article_text(content: str) -> NameData | None:
 
     There are some irregularities, for example date may contain 元号 years.
     """
+    # To speed things up we limit how much of the document we search.
     excerpt = content[0:10_000]
 
-    # Quickly filter out articles without a name
+    # Find 'real name is ...' -type sentences.
+    honmyo = find_honmyo(excerpt)
+
+    # Get name and following paragraph of text from the article heading.
     m = regex.search(
-        r"^'''(\p{Han}+\s+[\p{Han}\p{Hiragana}\p{Katakana}]+)'''（(\p{Hiragana}+\s+\p{Hiragana}+)(.*)", excerpt, regex.MULTILINE)
-    if not m:
+        fr"^'''({name_pat})'''{name_paren_start}({reading_pat})(.*?)(?:\n\n|\Z)", excerpt, regex.M | regex.S)
+
+    if m:
+        kaki, yomi, extra_raw = m.groups()
+        yomi = yomi.replace('、', '')
+        kaki = split_kanji_name(kaki, yomi)
+        reading = NameData(kaki, yomi)
+        logging.info(f"Got headline reading {reading}")
+    elif honmyo:
+        # Make the honmyo the main reading
+        reading, honmyo = honmyo, None
+        logging.info(f"No headline reading, using honymo {reading}")
+        # Extract extra_raw from the article content, if possible
+        # Quite often the name is Latin/Katakana and has no furigana reading,
+        # so include the reading in the extra_raw.
+        m = regex.search(
+            fr"^'''.*?'''（(.*?)(?:\n\n|\Z)", excerpt, flags=regex.M | regex.S)
+        extra_raw = m.group(1) if m else ''
+    else:
+        logging.info("Could not find a reading, giving up")
         return
 
-    kaki, yomi, extra_raw = m.groups()
-
-    # Commas count as Hiragana
-    yomi = yomi.replace('、', '')
-
-    reading = NameData(kaki, yomi)
-
-    # Check content after name
-    # NOTE: \d{4} is important, else we may match Japanese dates (Reiwa, Heisei etc.)
-    #       which are less consistently marked up
+    # Check content after name for year info
     extra = clean(extra_raw)
-    extra = extra.replace('、', '').strip()
-    if m := regex.match(r'^(\d{4})年', extra):
+    extra = regex.sub(r'[,、]', '', extra).strip()
+    # Don't match 2 digit years as these could be confused for Showa, Heisei etc
+    if m := regex.match(r'(\d{3,4})年', extra):
         reading.lifetime.birth_year = int(m[1])
 
-        if m := regex.search(r'- (\d{4})年', extra):
+        if m := regex.search(r'- (\d{3,4})年', extra):
             reading.lifetime.death_year = int(m[1])
+    else:
+        # Heuristic match, might remove if it FPs
+        #  - allow a bracket right after the year, e.g. [[天正]]12年（[[1584年]]）
+        #  - don't match past the hiragana/DOB section, else we FP e.g.
+        #    '''近藤 麻理恵'''（こんどう まりえ, [[1984年]][[10月9日]] - ）は、...
+        #      ... [[2010年]]末に出版した著書は[[ミリオンセラー]]となった。
+        #  - This should really be parsing matched parens.
+        if m := regex.search(r'(\d{4})年[）)]?[^）)。]+?(\d{4})年', extra):
+            birth = int(m[1])
+            death = int(m[2])
+            if 15 <= (death - birth) <= 100 and \
+                    1000 <= birth <= 2500:
+                reading.lifetime = Lifetime(birth, death)
 
-    if fictional_pat.match(excerpt):
+    if regex.search(r'架空', extra_raw):
         reading.name_type = NameType.FICTIONAL
-    elif regex.match(r'本名', excerpt):
+    elif honmyo:
+        reading.add_subreading(honmyo)
         reading.name_type = NameType.PSEUDO
-        for pat in honmyo_pats:
-            if m := pat.match(excerpt):
-                kaki, yomi = m.groups()
-                # TODO this should probably clone the original
-                subreading = NameData(kaki, yomi, name_type=NameType.REAL)
-                reading.add_subreading(subreading)
-                break
 
+    reading.clean()
     return reading
 
 
@@ -79,27 +92,10 @@ def parse_wikipedia_article(content: str) -> NameData | None:
     This examines both the article Infobox and an early line of text that
     contains the name in bold followed by the reading in round brackets.
     """
-    # First, try parsing the infobox
-    # TODO: handle cases where we only have partial name info
-    # TODO: sometimes we can only get the birth year from the infobox.
-    boxdata = parse_infoboxes(extract_infoboxes(content))
+    box_data = parse_infoboxes(extract_infoboxes(content))
+    article_data = parse_article_text(content)
 
-    if boxdata.lifetime and boxdata.has_name():
-        # We're done, return that
-        return boxdata
-
-    # Otherwise, parse the article content to extract missing data.
-    # TODO clean this up
-    reading = parse_article_text(content)
-    if reading:
-        if not reading.lifetime:
-            reading.lifetime = boxdata.lifetime
-        return reading
-
-    # TODO replace with .merge() method
-
-    # Give up
-    return
+    return NameData.relaxed_merge(box_data, article_data)
 
 
 def test_basic():

@@ -1,10 +1,9 @@
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
+from dataclasses_json import DataClassJsonMixin
 
 
-@dataclass_json
 @dataclass
-class Reading:
+class Reading(DataClassJsonMixin):
     """
     The written (kaki) and read (yomi) form of a name part.
     """

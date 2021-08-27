@@ -1,8 +1,5 @@
 from enum import Enum
 
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
-
 
 class NameType(Enum):
     """
@@ -18,5 +15,5 @@ class NameType(Enum):
     """An additional name found with the real name, but a different person"""
     EXTRA = 4
 
-    def __str__(self):
-        return self.name.lower()
+    def __repr__(self):
+        return f"<{self.name.lower()}>"

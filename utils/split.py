@@ -12,7 +12,31 @@ jam = jamdict.Jamdict(
 assert jam.has_jmne()
 
 
-def split_kanji_name(sei: str, mei: str, kanji: str) -> int | None:
+def split_kanji_name(kaki: str, yomi: str) -> str:
+    """
+    Given written form (kaki) with no spaces and read form (yomi)
+    with spaces, split kaki into two parts that match the yomi
+    and return the parts joined with a space.
+
+    Returns kaki as-is if unable to split.
+    """
+    if len(yomi.split()) != 2:
+        # yomi not in two parts - can't split
+        return kaki
+
+    if len(kaki.split()) >= 2:
+        # already split
+        return kaki
+
+    sei, mei = yomi.split()
+    split_point = find_split_point(sei, mei, kaki)
+    if split_point == -1:
+        return kaki
+    else:
+        return f"{kaki[0:split_point]} {kaki[split_point:]}"
+
+
+def find_split_point(sei: str, mei: str, kanji: str) -> int | None:
     """
     Given the surname and first name (in kana), and the combined kanji,
     split the kanji to separate the two name portions. Return the number
@@ -92,4 +116,4 @@ def test_split_name(test):
     m = re.fullmatch(r'(.*?)‐(.*?)【(.*?)】', dict_entry)
     assert m is not None
 
-    assert split_kanji_name(m[1], m[2], m[3]) == expected_split_point
+    assert find_split_point(m[1], m[2], m[3]) == expected_split_point

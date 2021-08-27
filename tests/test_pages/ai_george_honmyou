@@ -1,7 +1,9 @@
 title: アイ・ジョージ
-birth_year: 1933
+lifetime: 1933 ~
 name: 石松 譲冶
 reading: いしまつ じょうじ
+# Penname is nonsense but honmyou is included, we should use that
+# as the main name entry instead.
 ---
 {{出典の明記|date=2019年9月}}
 {{Infobox Musician <!--プロジェクト:音楽家を参照-->
