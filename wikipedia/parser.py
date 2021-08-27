@@ -11,7 +11,7 @@ from utils.patterns import name_pat, reading_pat, name_paren_start
 from utils.split import split_kanji_name
 
 
-def parse_article_text(content: str) -> NameData | None:
+def parse_article_text(title: str, content: str) -> NameData | None:
     """
     Parses the name/years out of the article text. This is fairly consistent across
     articles, e.g.
@@ -19,6 +19,8 @@ def parse_article_text(content: str) -> NameData | None:
     '''山藤 一郎'''（ふじやま いちろう、[[1911年]]（[[明治]]44年）[[4月8日]] - [[1993年]]（[[平成]]5年）[[8月21日]]）は、[[日本]]の[[歌手]]・[[声楽#西洋音楽における声楽|声楽家]]・[[作曲家]]・[[指揮者]]。本名、増永 丈夫（ますなが たけお）。[[位階]]は[[従四位]]。本名では[[クラシック音楽]]の声楽家・[[バリトン]]歌手として活躍した。
 
     There are some irregularities, for example date may contain 元号 years.
+
+    `title` is used for logging.
     """
     # To speed things up we limit how much of the document we search.
     excerpt = content[0:10_000]
@@ -47,7 +49,7 @@ def parse_article_text(content: str) -> NameData | None:
             fr"^'''.*?'''（(.*?)(?:\n\n|\Z)", excerpt, flags=regex.M | regex.S)
         extra_raw = m.group(1) if m else ''
     else:
-        logging.info("Could not find a reading, giving up")
+        logging.info(f"[{title}] Could not find a reading, giving up")
         return
 
     # Check content after name for year info
@@ -83,7 +85,7 @@ def parse_article_text(content: str) -> NameData | None:
     return reading
 
 
-def parse_wikipedia_article(content: str) -> NameData | None:
+def parse_wikipedia_article(title: str, content: str) -> NameData | None:
     """
     Parse ja.wikipedia article for names/readings and return the primary one.
     (At some point, other extracted names may also be returned)
@@ -93,7 +95,7 @@ def parse_wikipedia_article(content: str) -> NameData | None:
     contains the name in bold followed by the reading in round brackets.
     """
     box_data = parse_infoboxes(extract_infoboxes(content))
-    article_data = parse_article_text(content)
+    article_data = parse_article_text(title, content)
 
     return NameData.relaxed_merge(box_data, article_data)
 
@@ -105,7 +107,7 @@ def test_basic():
 }}
 '''阿部 寛'''（あべ ひろし、[[1964年]]〈昭和39年〉[[6月22日]]<ref name="rirekisho" /> - ）は、[[日本]]の[[俳優]]。[[茂田オフィス]]所属。
 """.strip()
-    assert parse_wikipedia_article(content) == NameData(
+    assert parse_wikipedia_article('foo', content) == NameData(
         kaki='阿部 寛',
         yomi='あべ ひろし',
         lifetime=Lifetime(1964),
@@ -116,7 +118,7 @@ def test_ref_in_first_line():
     content = """
 '''鈴置 洋孝'''（すずおき ひろたか、[[1950年]][[3月6日]]<ref name="kenproduction">{{Cite web|date=|url=blah}}</ref>
 """
-    assert parse_wikipedia_article(content) == NameData(
+    assert parse_wikipedia_article('bar', content) == NameData(
         kaki='鈴置 洋孝',
         yomi='すずおき ひろたか',
         lifetime=Lifetime(1950),

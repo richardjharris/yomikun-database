@@ -4,3 +4,4 @@ dataclasses_json==0.5.4
 jamdict==0.1a11.post2
 mediawiki-dump==0.8.0
 pytest==6.2.3
+mwclient==0.10.1

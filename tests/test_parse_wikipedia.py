@@ -45,7 +45,7 @@ def pytest_generate_tests(metafunc):
 def test_parser(test_page: Path):
     content, metadata = load_test(test_page)
 
-    result = parse_wikipedia_article(content)
+    result = parse_wikipedia_article(test_page.name, content)
     expected = build_namedata_from_test_header(metadata)
 
     assert result == expected
@@ -72,6 +72,9 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
             pass
         elif key == 'gender':
             # Gender tag, unused as gender detection is unimplemented
+            pass
+        elif key == 'source':
+            # Article source URL
             pass
         elif key == 'subreadings':
             for subreading_data in value:

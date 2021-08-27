@@ -1,12 +1,12 @@
 """
 Pattern for kanji characters used in surnames
 """
-kanji_pat = r'[\p{Han}ヶヵ]'
+sei_chars = r'\p{Han}ヶヵノ'
 
 """
 Pattern for a full written name. We focus on names with kanji surnames.
 """
-name_pat = r'[\p{Han}ヶヵ]+\s*[\p{Han}ヶヵ\p{Hiragana}\p{Katakana}]+'
+name_pat = fr'[{sei_chars}]+\s*[{sei_chars}' + r'\p{Hiragana}\p{Katakana}]+'
 
 """
 Pattern for a full name reading.

@@ -63,10 +63,14 @@ class NameData(DataClassJsonMixin):
         """
         Converts a NameData to a JSONL string.
         """
+        self.clean()
         # TODO consider existing dataclasses.asdict() func
-        return json.dumps(self.to_dict(), ensure_ascii=False)
+        return json.dumps(self.to_dict(),
+                          ensure_ascii=False,
+                          default=lambda x: x.name.lower(),
+                          )
 
-    @classmethod
+    @ classmethod
     def relaxed_merge(cls, a: NameData | None, b: NameData | None):
         """
         Merge two NameData records, treating None as an empty record.
@@ -80,7 +84,7 @@ class NameData(DataClassJsonMixin):
         else:
             return cls.merge(a, b)
 
-    @classmethod
+    @ classmethod
     def merge(cls, a: NameData, b: NameData) -> NameData:
         """
         Merge two NameData records. The records must correspond to the
