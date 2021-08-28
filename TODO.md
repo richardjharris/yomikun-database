@@ -35,6 +35,16 @@
 Chinese names: https://ja.m.wikipedia.org/wiki/%E4%BA%8E%E5%90%89 
   These could be tagged
 
+FP ish:
+{"kaki": "坪田 愛華", "yomi": "つぼた あいか", "name_type": "real", "lifetime": {"birth_year": 1979, "death_year": 1991}, "subreadings": [], "source": "wikipedia_ja:地球の秘密"}
+
+How the heck did it extract this name? Looks like infobox as part of an article about something else!
+Therefore TODO we need to check the names are the same before
+ copying information!
+
+A few pages have >1 honmyo:
+https://ja.m.wikipedia.org/wiki/%E5%9C%B0%E7%90%83_(%E3%81%8A%E7%AC%91%E3%81%84%E3%82%B3%E3%83%B3%E3%83%93)
+
 FP:
 {"kaki": "公益社団法人応用物理学会 公益社団法人応用物理学会", "yomi": "こうえきしゃだんほうじん おうようぶつりがっか
 い", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
@@ -52,11 +62,6 @@ for mangaka names, e.g.
 '''中崎 タツヤ'''（なかざき タツヤ、[[1955年]][[8月11日]] - ）は、[[日本]]の[[漫画家]]。[[愛媛県]][[西予市]]生まれ、[[愛知県]]育ち。[[名古屋市立工芸高等学校]]卒業。
 
 '''永田 トマト'''（ながた トマト、[[1959年]]<ref name="yb">『YOUNG BLOOD』第 1 巻 表 3 小学館</ref> - ）は[[日本]]の[[漫画家]]。[[静岡県]][[静岡市]]出身<ref name="yb" />。
-
-Katakana here:
-
-'''二ノ宮 知子'''（にのみや ともこ、[[1969年]][[5月25日]] - ）は、[[日本]]の[[漫画家]]。[[埼玉県]][[秩父郡]][[皆野町]]出身、埼玉県在住。女性。[[ABO式血液型|血液型]]B 型。
-https://ja.wikipedia.org/wiki/%E4%BA%8C%E3%83%8E%E5%AE%AE%E7%9F%A5%E5%AD%90
 
 Sometimes hiragana comes first, this is a fairly common pattern for mangaka.
 Watch out because something is autoformatting this markdown in a bad way.

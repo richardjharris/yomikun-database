@@ -1,6 +1,9 @@
 """
 Utilities for ignoring invalid names from Wikipedia articles
 """
+from models import NameData
+
+import regex
 
 """Ignore names containing these words"""
 ignore_words = [
@@ -8,6 +11,8 @@ ignore_words = [
     '学校',
     '地球',
 ]
+ignore_words_pat = regex.compile(r"\L<words>", words=ignore_words)
+
 
 """
 Name lengths are approx 10% 2 chars, 15% 3, 40% 4,
@@ -45,3 +50,18 @@ There is a rugby player called 源五郎丸 洋 (げんごろうまる　ひろ�
 etc (see https://name.sijisuru.com/Columns/longname)
 """
 max_family_name_length = 5
+
+
+# TODO handle logging here?
+def should_ignore_name(kaki: str) -> bool:
+    sei, mei = kaki.split()
+    if len(sei) > max_family_name_length:
+        return True
+    elif len(sei) + len(mei) >= max_total_name_length:
+        return True
+    elif ignore_words_pat.match(sei):
+        return True
+    elif ignore_words_pat.match(mei):
+        return True
+    else:
+        return False

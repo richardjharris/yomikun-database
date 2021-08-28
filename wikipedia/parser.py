@@ -5,6 +5,7 @@ import regex
 from mediawiki_dump.tokenizer import clean
 
 from models import Reading, NameData, NameType, Lifetime
+from wikipedia.ignore import should_ignore_name
 from wikipedia.infobox import extract_infoboxes, parse_infoboxes
 from wikipedia.honmyo import find_honmyo
 from utils.patterns import name_pat, reading_pat, name_paren_start
@@ -82,7 +83,6 @@ def parse_article_text(title: str, content: str) -> NameData:
         reading.add_subreading(honmyo)
         reading.name_type = NameType.PSEUDO
 
-    reading.source = f"wikipedia_ja:{title}"
     reading.clean()
     return reading
 
@@ -99,7 +99,16 @@ def parse_wikipedia_article(title: str, content: str) -> NameData:
     box_data = parse_infoboxes(extract_infoboxes(content))
     article_data = parse_article_text(title, content)
 
-    return NameData.merge(box_data, article_data)
+    namedata = NameData.merge(box_data, article_data)
+
+    if namedata.has_name() and should_ignore_name(namedata.kaki):
+        logging.info(
+            f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
+        # Remove all information except for source
+        namedata = NameData()
+
+    namedata.source = f"wikipedia_ja:{title}"
+    return namedata
 
 
 def test_basic():
