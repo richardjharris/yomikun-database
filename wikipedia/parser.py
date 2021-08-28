@@ -101,11 +101,14 @@ def parse_wikipedia_article(title: str, content: str) -> NameData:
 
     namedata = NameData.merge(box_data, article_data)
 
-    if namedata.has_name() and should_ignore_name(namedata.kaki):
-        logging.info(
-            f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
-        # Remove all information except for source
-        namedata = NameData()
+    if namedata.has_name():
+        # Exclude certain names which are likely to not be people
+        # Also exclude cases where we were unable to split the name
+        if len(namedata.kaki.split()) == 1 or should_ignore_name(namedata.kaki):
+            logging.info(
+                f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
+            # Remove all information except for source
+            namedata = NameData()
 
     namedata.source = f"wikipedia_ja:{title}"
     return namedata

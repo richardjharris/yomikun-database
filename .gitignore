@@ -4,3 +4,4 @@ __pycache__
 *.jsonl
 *.json.gz
 *.gz
+data/*.json.gz

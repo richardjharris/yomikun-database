@@ -39,7 +39,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
 
         # Skip entries with no year information, as they are not people.
         if not result:
-            return
+            return None
 
         reading.lifetime = Lifetime(result.birth_year, result.death_year)
 
@@ -48,7 +48,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
 
         return reading
     else:
-        return
+        return None
 
 
 if __name__ == '__main__':
@@ -69,7 +69,8 @@ if __name__ == '__main__':
 def test_parse_daijisen():
     assert name_from_entry(
         "しみず‐はまおみ【清水浜臣】しみづ‐",
-        "しみず‐はまおみ【清水浜臣】しみづ‐\n［一七七六〜一八二四］江戸後期の歌人・国学者。江戸の人。号、泊{{w_49708}}舎（さざなみのや）。村田春海に国学を学び、古典の考証・注釈にすぐれ、王朝的情趣のある歌文を残した。著「泊{{w_49708}}舎文藻」「泊{{w_49708}}舎集」など。\n",
+        "しみず‐はまおみ【清水浜臣】しみづ‐\n［一七七六〜一八二四］江戸後期の歌人・国学者。江戸の人。号、泊{{w_49708}}舎（さざなみのや）。" +
+        "村田春海に国学を学び、古典の考証・注釈にすぐれ、王朝的情趣のある歌文を残した。著「泊{{w_49708}}舎文藻」「泊{{w_49708}}舎集」など。\n",
     ) == NameData(
         kaki="清水 浜臣",
         yomi="しみず はまおみ",

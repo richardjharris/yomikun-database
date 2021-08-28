@@ -1,11 +1,5 @@
 ### TODO
 
- - Wikipedia filtering: long names, gakkou
-  {"kaki": "道の駅米沢 道の駅米沢", "yomi": "みちのえき よねざわ", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
-   - why does this appear twice?? some bad attempt at splitting it.
-
- - Use empty NameData instead of NameData|None everywhere.
-
  - Add importer for the top 5000 list - this identifies the 'official'
    readings for those names.
 
@@ -29,6 +23,8 @@
 
 ---
 
+ - consider ignoring before we do further processing (such as name splits)
+
 の in the middle of the name:
 源 頼家（みなもと の よりいえ）は、鎌倉時代前期の鎌倉幕府第2代将軍（鎌倉殿）。鎌倉幕府を開いた源頼朝の嫡男で母は北条政子（頼朝の子としては第3子で次男、政子の子としては第2子で長男）。
 
@@ -45,14 +41,7 @@ Therefore TODO we need to check the names are the same before
 A few pages have >1 honmyo:
 https://ja.m.wikipedia.org/wiki/%E5%9C%B0%E7%90%83_(%E3%81%8A%E7%AC%91%E3%81%84%E3%82%B3%E3%83%B3%E3%83%93)
 
-FP:
-{"kaki": "公益社団法人応用物理学会 公益社団法人応用物理学会", "yomi": "こうえきしゃだんほうじん おうようぶつりがっか
-い", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
 {"kaki": "足利将軍一覧 足利将軍一覧", "yomi": "あしかがしょうぐん いちらん", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
-
-LOL:
-{"kaki": "必殺仕置人殺人事件 必殺仕置人殺人事件", "yomi": "ひっさつしおきにん さつじんじけん", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
-
 
 Possible for readings to contain katakana, although this seems mostly
 for mangaka names, e.g.
@@ -64,7 +53,6 @@ for mangaka names, e.g.
 '''永田 トマト'''（ながた トマト、[[1959年]]<ref name="yb">『YOUNG BLOOD』第 1 巻 表 3 小学館</ref> - ）は[[日本]]の[[漫画家]]。[[静岡県]][[静岡市]]出身<ref name="yb" />。
 
 Sometimes hiragana comes first, this is a fairly common pattern for mangaka.
-Watch out because something is autoformatting this markdown in a bad way.
 
 '''たがみ よしひさ'''（本名：田上 喜久<ref name="duo">[[DUO (マンガ雑誌)|デュオ]]別冊『たがみよしひさの世界』、1983年7月1日、朝日ソノラマ、p.236</ref><ref name="wolf">プレイコミックシリーズ版『我が名は狼』全 3 巻（1982 年 - 1983 年）の折り返し部分に、著者近影とともにプロフィールが記載されている。</ref>、[[1958年]][[12月9日]]<ref name="duo" /><ref name="wolf" /> - ）は、[[日本]]の[[漫画家]]。代表作に『[[軽井沢シンドローム]]』など。同じく漫画家の[[小山田いく]]は実兄<ref>[[DUO (マンガ雑誌)|デュオ]]別冊『たがみよしひさの世界』、1983 年 7 月 1 日、朝日ソノラマ、p.236</ref><ref>[[秋田書店]]『我が名は狼』プレイコミックシリーズ版全 3 巻（1982 年 - 1983 年）の折り返し部分、'''たがみよしひさ'''のプロフィール参照。</ref>。
 

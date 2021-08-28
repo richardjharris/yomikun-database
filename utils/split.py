@@ -30,7 +30,7 @@ def split_kanji_name(kaki: str, yomi: str) -> str:
 
     sei, mei = yomi.split()
     split_point = find_split_point(sei, mei, kaki)
-    if split_point == -1:
+    if split_point is None:
         return kaki
     else:
         return f"{kaki[0:split_point]} {kaki[split_point:]}"

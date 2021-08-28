@@ -30,14 +30,14 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
             reading.lifetime = Lifetime(birth, death)
         else:
             # Possibly not a person
-            return
+            return None
 
         # Attempt to split the kanji into surname + first name
         reading.kaki = split_kanji_name(reading.kaki, reading.yomi)
 
         return reading
     else:
-        return
+        return None
 
 
 if __name__ == '__main__':
