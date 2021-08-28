@@ -35,6 +35,9 @@ class NameData(DataClassJsonMixin):
     # Sub-readings (related to this one)
     subreadings: list[NameData] = field(default_factory=list)
 
+    # String identifying the source of this reading
+    source: str = ''
+
     def __post_init__(self):
         self.clean()
 
@@ -71,24 +74,10 @@ class NameData(DataClassJsonMixin):
                           )
 
     @ classmethod
-    def relaxed_merge(cls, a: NameData | None, b: NameData | None):
-        """
-        Merge two NameData records, treating None as an empty record.
-        """
-        # TODO it's ugly how we use None for empty data here, we may
-        # want to always return NameData.
-        if a is None:
-            return b
-        elif b is None:
-            return a
-        else:
-            return cls.merge(a, b)
-
-    @ classmethod
     def merge(cls, a: NameData, b: NameData) -> NameData:
         """
-        Merge two NameData records. The records must correspond to the
-        same person in the same context (real/pseudo/pen-name).
+        Merge two NameData records. The records should correspond to the
+        same person!
         """
         # Normalise the values of both records
         a.clean()

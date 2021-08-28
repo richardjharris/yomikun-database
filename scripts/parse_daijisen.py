@@ -51,18 +51,19 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         return
 
 
-root = json_stream.load(sys.stdin)
-entries = root['subbooks'][0]['entries']
-for entry in entries:
-    heading = entry['heading']
+if __name__ == '__main__':
+    root = json_stream.load(sys.stdin)
+    entries = root['subbooks'][0]['entries']
+    for entry in entries:
+        heading = entry['heading']
 
-    if 'text' not in entry:
-        print(f"No text for entry '{heading}'", file=sys.stderr)
-        continue
+        if 'text' not in entry:
+            print(f"No text for entry '{heading}'", file=sys.stderr)
+            continue
 
-    text = entry['text']
-    if reading := name_from_entry(heading, text):
-        print(reading.to_jsonl())
+        text = entry['text']
+        if reading := name_from_entry(heading, text):
+            print(reading.to_jsonl())
 
 
 def test_parse_daijisen():

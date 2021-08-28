@@ -11,7 +11,7 @@ from utils.patterns import name_pat, reading_pat, name_paren_start
 from utils.split import split_kanji_name
 
 
-def parse_article_text(title: str, content: str) -> NameData | None:
+def parse_article_text(title: str, content: str) -> NameData:
     """
     Parses the name/years out of the article text. This is fairly consistent across
     articles, e.g.
@@ -50,7 +50,8 @@ def parse_article_text(title: str, content: str) -> NameData | None:
         extra_raw = m.group(1) if m else ''
     else:
         logging.info(f"[{title}] Could not find a reading, giving up")
-        return
+        # Return empty data record to indicate failure
+        return NameData()
 
     # Check content after name for year info
     extra = clean(extra_raw)
@@ -81,11 +82,12 @@ def parse_article_text(title: str, content: str) -> NameData | None:
         reading.add_subreading(honmyo)
         reading.name_type = NameType.PSEUDO
 
+    reading.source = f"wikipedia_ja:{title}"
     reading.clean()
     return reading
 
 
-def parse_wikipedia_article(title: str, content: str) -> NameData | None:
+def parse_wikipedia_article(title: str, content: str) -> NameData:
     """
     Parse ja.wikipedia article for names/readings and return the primary one.
     (At some point, other extracted names may also be returned)
@@ -97,7 +99,7 @@ def parse_wikipedia_article(title: str, content: str) -> NameData | None:
     box_data = parse_infoboxes(extract_infoboxes(content))
     article_data = parse_article_text(title, content)
 
-    return NameData.relaxed_merge(box_data, article_data)
+    return NameData.merge(box_data, article_data)
 
 
 def test_basic():

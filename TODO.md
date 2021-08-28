@@ -1,10 +1,48 @@
 ### TODO
 
-Run against Wikipedia and assess results.
+ - Wikipedia filtering: long names, gakkou
+  {"kaki": "道の駅米沢 道の駅米沢", "yomi": "みちのえき よねざわ", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
+   - why does this appear twice?? some bad attempt at splitting it.
 
-Use empty NameData instead of NameData|None everywhere.
+ - Use empty NameData instead of NameData|None everywhere.
+
+ - Add importer for the top 5000 list - this identifies the 'official'
+   readings for those names.
+
+ - MERGE process -> sqlite
+  - each dictionary returns a set of (kaki, yomi, type, lifetime)
+
+  How to do it?
+   * import all names into a database (kanji, reading, part: forename, surname) including gender info
+     full name matches can be left as-is i guess
+
+   * for each data source
+     - add any missing first/last names to the database
+     - add full name entries
+     - add a reference for both name parts (e.g. forename -> REF)
+    
+   * compute the relative score for each name
+     - e.g. for each kanji, find all readings and all references to each reading
+     - figure out a score
+
+ - Basic flutter app
 
 ---
+
+の in the middle of the name:
+源 頼家（みなもと の よりいえ）は、鎌倉時代前期の鎌倉幕府第2代将軍（鎌倉殿）。鎌倉幕府を開いた源頼朝の嫡男で母は北条政子（頼朝の子としては第3子で次男、政子の子としては第2子で長男）。
+
+Chinese names: https://ja.m.wikipedia.org/wiki/%E4%BA%8E%E5%90%89 
+  These could be tagged
+
+FP:
+{"kaki": "公益社団法人応用物理学会 公益社団法人応用物理学会", "yomi": "こうえきしゃだんほうじん おうようぶつりがっか
+い", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
+{"kaki": "足利将軍一覧 足利将軍一覧", "yomi": "あしかがしょうぐん いちらん", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
+
+LOL:
+{"kaki": "必殺仕置人殺人事件 必殺仕置人殺人事件", "yomi": "ひっさつしおきにん さつじんじけん", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
+
 
 Possible for readings to contain katakana, although this seems mostly
 for mangaka names, e.g.

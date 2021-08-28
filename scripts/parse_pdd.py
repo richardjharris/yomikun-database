@@ -45,26 +45,27 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
 
         left, right = text.splitlines()[1].split('〜')
         if m := regex.match(r'(\d{4})\.', left):
-            reading.lifetime.birth_year = m[1]
-        if m := regex.match(r'(\d{4})\.', right):
-            reading.lifetime.death_year = m[1]
+            reading.lifetime.birth_year = int(m[1])
+        if m := regex.match(r'\s*(\d{4})\.', right):
+            reading.lifetime.death_year = int(m[1])
         return reading
     else:
         raise Exception(f"Cannot parse heading {heading}")
 
 
-root = json_stream.load(sys.stdin)
-entries = root['subbooks'][0]['entries']
-for entry in entries:
-    heading = entry['heading']
+if __name__ == '__main__':
+    root = json_stream.load(sys.stdin)
+    entries = root['subbooks'][0]['entries']
+    for entry in entries:
+        heading = entry['heading']
 
-    if 'text' not in entry:
-        print(f"No text for entry '{heading}'", file=sys.stderr)
-        continue
+        if 'text' not in entry:
+            print(f"No text for entry '{heading}'", file=sys.stderr)
+            continue
 
-    text = entry['text']
-    if reading := name_from_entry(heading, text):
-        print(reading.to_jsonl())
+        text = entry['text']
+        if reading := name_from_entry(heading, text):
+            print(reading.to_jsonl())
 
 
 def test_parse_pdd():

@@ -39,6 +39,8 @@ for page in pages:
     title = page.title
     content = page.content
 
+    # TODO no way to distinguish "no name here" from "there's a name here,
+    # but we failed to parse it"
     result = parse_wikipedia_article(title, content)
-    if result:
+    if result.has_name():
         print(result.to_jsonl())
