@@ -7,7 +7,7 @@ from typing import Iterable
 import sys
 import regex
 
-from models import NameType, NameData, Lifetime
+from yomikun.models import NameType, NameData, Lifetime
 
 
 def parse_myoji_yurai(lines: Iterable[str]):

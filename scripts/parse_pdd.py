@@ -11,8 +11,8 @@ from dataclasses import dataclass
 import json_stream
 from dataclasses_json import dataclass_json
 
-from models import Reading, NameType, NameData, Lifetime
-from utils.patterns import name_pat, reading_pat
+from yomikun.models import Reading, NameType, NameData, Lifetime
+from yomikun.utils.patterns import name_pat, reading_pat
 
 
 def name_from_entry(heading: str, text: str) -> NameData | None:

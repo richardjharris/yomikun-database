@@ -4,12 +4,12 @@ import logging
 import regex
 from mediawiki_dump.tokenizer import clean
 
-from models import Reading, NameData, NameType, Lifetime
-from wikipedia.ignore import should_ignore_name
-from wikipedia.infobox import extract_infoboxes, parse_infoboxes
-from wikipedia.honmyo import find_honmyo
-from utils.patterns import name_pat, reading_pat, name_paren_start
-from utils.split import split_kanji_name
+from yomikun.models import Reading, NameData, NameType, Lifetime
+from yomikun.wikipedia.ignore import should_ignore_name
+from yomikun.wikipedia.infobox import extract_infoboxes, parse_infoboxes
+from yomikun.wikipedia.honmyo import find_honmyo
+from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
+from yomikun.utils.split import split_kanji_name
 
 
 def parse_article_text(title: str, content: str) -> NameData:
@@ -87,7 +87,7 @@ def parse_article_text(title: str, content: str) -> NameData:
     return reading
 
 
-def parse_wikipedia_article(title: str, content: str) -> NameData:
+def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData:
     """
     Parse ja.wikipedia article for names/readings and return the primary one.
     (At some point, other extracted names may also be returned)
@@ -110,7 +110,8 @@ def parse_wikipedia_article(title: str, content: str) -> NameData:
             # Remove all information except for source
             namedata = NameData()
 
-    namedata.source = f"wikipedia_ja:{title}"
+    if add_source:
+        namedata.source = f"wikipedia_ja:{title}"
     return namedata
 
 
@@ -125,6 +126,7 @@ def test_basic():
         kaki='阿部 寛',
         yomi='あべ ひろし',
         lifetime=Lifetime(1964),
+        source='wikipedia_ja:foo',
     )
 
 
@@ -136,4 +138,5 @@ def test_ref_in_first_line():
         kaki='鈴置 洋孝',
         yomi='すずおき ひろたか',
         lifetime=Lifetime(1950),
+        source='wikipedia_ja:bar',
     )

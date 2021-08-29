@@ -1,9 +1,9 @@
 from __future__ import annotations
 import regex
 
-from models import NameData
-from utils.patterns import name_pat, reading_pat, name_paren_start
-from utils.split import split_kanji_name
+from yomikun.models import NameData
+from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
+from yomikun.utils.split import split_kanji_name
 
 """
 Some examples:

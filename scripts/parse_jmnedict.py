@@ -25,8 +25,8 @@ from dataclasses import dataclass, field
 import romkan
 import jamdict
 
-from models import Lifetime
-from utils.split import split_kanji_name
+from yomikun.models import Lifetime
+from yomikun.utils.split import split_kanji_name
 
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
@@ -108,19 +108,20 @@ def parse(data: dict):
                 print(json.dumps(output, ensure_ascii=False))
 
 
-# Jamdict requires pos to be non-empty but it is ignored for name queries
-result = jam.lookup_iter('%', pos=['dummy'])
-for name in result.names:
-    data = name.to_dict()
+if __name__ == '__main__':
+    # Jamdict requires pos to be non-empty but it is ignored for name queries
+    result = jam.lookup_iter('%', pos=['dummy'])
+    for name in result.names:
+        data = name.to_dict()
 
-    # TODO this does not always shut down tidily on Ctrl+C
-    try:
-        parse(data)
-    except KeyboardInterrupt:
-        print("caught INT, exiting", file=sys.stderr)
-        sys.exit(1)
-    except BrokenPipeError:
-        sys.exit(0)
-    except Exception as err:
-        logging.error(f"Failed to parse entry: {err!r}")
-        logging.info(data)
+        # TODO this does not always shut down tidily on Ctrl+C
+        try:
+            parse(data)
+        except KeyboardInterrupt:
+            print("caught INT, exiting", file=sys.stderr)
+            sys.exit(1)
+        except BrokenPipeError:
+            sys.exit(0)
+        except Exception as err:
+            logging.error(f"Failed to parse entry: {err!r}")
+            logging.info(data)

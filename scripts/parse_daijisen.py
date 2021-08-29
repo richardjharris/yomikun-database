@@ -12,9 +12,9 @@ from dataclasses import dataclass
 import json_stream
 from dataclasses_json import dataclass_json
 
-from models import NameType, NameData, Lifetime
-from utils.split import split_kanji_name
-from daijisen.year import parse_birth_and_death_year
+from yomikun.models import NameType, NameData, Lifetime
+from yomikun.utils.split import split_kanji_name
+from yomikun.daijisen.year import parse_birth_and_death_year
 
 
 def name_from_entry(heading: str, text: str) -> NameData | None:
@@ -76,4 +76,5 @@ def test_parse_daijisen():
         kaki="清水 浜臣",
         yomi="しみず はまおみ",
         lifetime=Lifetime(1776, 1824),
+        source='daijisen:しみず‐はまおみ【清水浜臣】しみづ‐'
     )

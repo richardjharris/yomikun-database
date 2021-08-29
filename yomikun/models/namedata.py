@@ -6,8 +6,8 @@ import copy
 import regex
 from dataclasses_json import DataClassJsonMixin
 
-from models.nametype import NameType
-from models.lifetime import Lifetime
+from yomikun.models.nametype import NameType
+from yomikun.models.lifetime import Lifetime
 
 
 def normalise(s: str) -> str:

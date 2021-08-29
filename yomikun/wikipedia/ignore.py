@@ -1,7 +1,7 @@
 """
 Utilities for ignoring invalid names from Wikipedia articles
 """
-from models import NameData
+from yomikun.models import NameData
 
 import regex
 

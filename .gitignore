@@ -1,7 +1,9 @@
 .pytest_cache
 __pycache__
 *.sw[op]
+/dist/
+*.pyc
+/*.egg-info
+
 *.jsonl
-*.json.gz
-*.gz
 data/*.json.gz

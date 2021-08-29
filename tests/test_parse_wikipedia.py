@@ -7,8 +7,8 @@ from pathlib import Path
 
 import yaml
 
-from models import NameType, NameData, Lifetime
-from wikipedia.parser import parse_wikipedia_article
+from yomikun.models import NameType, NameData, Lifetime
+from yomikun.wikipedia.parser import parse_wikipedia_article
 
 
 def load_test(file: Path) -> tuple[str, dict]:
@@ -45,7 +45,7 @@ def pytest_generate_tests(metafunc):
 def test_parser(test_page: Path):
     content, metadata = load_test(test_page)
 
-    result = parse_wikipedia_article(test_page.name, content)
+    result = parse_wikipedia_article(test_page.name, content, add_source=False)
     expected = build_namedata_from_test_header(metadata)
 
     assert result == expected

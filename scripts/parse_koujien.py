@@ -11,8 +11,8 @@ from dataclasses import dataclass
 import json_stream
 from dataclasses_json import dataclass_json
 
-from models import NameType, NameData, Lifetime
-from utils.split import split_kanji_name
+from yomikun.models import NameType, NameData, Lifetime
+from yomikun.utils.split import split_kanji_name
 
 
 def name_from_entry(heading: str, text: str) -> NameData | None:
@@ -61,4 +61,5 @@ def test_parse_koujien():
         kaki="小渕 恵三",
         yomi="おぶち けいぞう",
         lifetime=Lifetime(1937, 2000),
+        source='koujien:おぶち‐けいぞう【小渕恵三】ヲ‥ザウ'
     )

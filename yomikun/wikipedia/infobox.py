@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 import regex
 from mediawiki_dump.tokenizer import clean
 
-from models import NameData, Lifetime
+from yomikun.models import NameData, Lifetime
 
 
 @dataclass
