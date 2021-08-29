@@ -35,6 +35,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         # Attempt to split the kanji into surname + first name
         reading.kaki = split_kanji_name(reading.kaki, reading.yomi)
 
+        reading.source = f"koujien:{heading}"
         return reading
     else:
         return None
