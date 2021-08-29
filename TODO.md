@@ -1,8 +1,5 @@
 ### TODO
 
-  Move to src/ layout
-    - ensure pytest collects all tests (e.g. scripts/)
-
   PersonName(sei/mei kaki/yomi, years, type, source)
    - load from all sources
    - de-dupe a bit
