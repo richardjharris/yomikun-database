@@ -19,6 +19,9 @@
 
  - Not sure how to handle gender.
 
+ - Import names from MeCab
+ - Import names from mtk dict etc.
+
 ## Observations
 
  - consider ignoring before we do further processing (such as name splits)
