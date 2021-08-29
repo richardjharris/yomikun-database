@@ -1,27 +1,25 @@
 ### TODO
 
- - Add importer for the top 5000 list - this identifies the 'official'
-   readings for those names.
+  PersonName(sei/mei kaki/yomi, years, type, source)
+   - load from all sources
+   - de-dupe a bit
 
- - MERGE process -> sqlite
-  - each dictionary returns a set of (kaki, yomi, type, lifetime)
+  From this, generate
+   Names(kaki, yomi, part, years, count)
+     - base data from edict
+     - years is aggregated (min/max)
+     - count is number of entries (might be split into fictional/penname)
+     - sources can be linked back
+  
+  Top5000 List can aslo reference kaki/yomi.
 
-  How to do it?
-   * import all names into a database (kanji, reading, part: forename, surname) including gender info
-     full name matches can be left as-is i guess
-
-   * for each data source
-     - add any missing first/last names to the database
-     - add full name entries
-     - add a reference for both name parts (e.g. forename -> REF)
-    
-   * compute the relative score for each name
-     - e.g. for each kanji, find all readings and all references to each reading
-     - figure out a score
+## Later todo
 
  - Basic flutter app
 
----
+ - Not sure how to handle gender.
+
+## Observations
 
  - consider ignoring before we do further processing (such as name splits)
 
