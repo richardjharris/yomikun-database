@@ -21,8 +21,8 @@ def parse_myoji_yurai(lines: Iterable[str]):
 
         for reading in readings:
             data = NameData(kanji, reading)
-            # TBD
-            pass
+            data.source = "myoji-yurai-5000"
+            print(data.to_jsonl())
 
 
 if __name__ == '__main__':

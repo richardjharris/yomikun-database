@@ -1,13 +1,30 @@
-PYTHONPATH := "${PYTHONPATH}:/home/rjh/yomikun/database"
+export PYTHONPATH := ${PYTHONPATH}:.
 
-koujien.jsonl:
-	zcat data/koujien.json.gz | python scripts/parse_koujien.py > $@
+.DELETE_ON_ERROR:
 
-daijisen.jsonl:
-	zcat data/daijisen.json.gz | python scripts/parse_daijisen.py > $@
+.PHONY: jsonl
+
+JSONLFILES = koujien.jsonl daijisen.jsonl pdd.jsonl wikipedia.jsonl jmnedict.jsonl myoji-yurai.jsonl
+
+jsonl: ${JSONLFILES}
+
+clean:
+	rm ${JSONLFILES}
+
+koujien.jsonl: data/koujien.json.gz
+	zcat $^ | python scripts/parse_koujien.py > $@
+
+daijisen.jsonl: data/daijisen.json.gz
+	zcat $^ | python scripts/parse_daijisen.py > $@
+
+pdd.jsonl: data/pdd.json.gz
+	zcat $^ | python scripts/parse_pdd.py > $@
 
 wikipedia.jsonl:
 	python scripts/parse_wikipedia.py > $@
 
 jmnedict.jsonl:
 	python scripts/parse_jmnedict.py > $@
+
+myoji-yurai.jsonl: data/myoji-yurai-readings.csv
+	python scripts/parse_myoji_yurai.py < $^ > $@

@@ -8,7 +8,6 @@ import regex
 import json
 from dataclasses import dataclass
 
-import json_stream
 from dataclasses_json import dataclass_json
 
 from yomikun.models import NameType, NameData, Lifetime
@@ -42,7 +41,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
 
 
 if __name__ == '__main__':
-    root = json_stream.load(sys.stdin)
+    root = json.load(sys.stdin)
     entries = root['subbooks'][0]['entries']
     for entry in entries:
         heading = entry['heading']

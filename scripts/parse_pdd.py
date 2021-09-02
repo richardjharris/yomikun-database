@@ -8,7 +8,6 @@ import regex
 import json
 from dataclasses import dataclass
 
-import json_stream
 from dataclasses_json import dataclass_json
 
 from yomikun.models import Reading, NameType, NameData, Lifetime
@@ -39,24 +38,34 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
     TODO handle の
     TODO handle alternate form of name
     """
-    if m := regex.match(fr'^(?:\[\d+\])?({reading_pat})【({name_pat})\(.*?\)】', heading):
+    if m := regex.match(fr'^(?:\[\d+\])?({reading_pat})【({name_pat})(?:\(.*?\))?】', heading):
         yomi, kaki = m.groups()
         reading = NameData(kaki, yomi)
+        lines = text.splitlines()
 
-        left, right = text.splitlines()[1].split('〜')
-        if m := regex.match(r'(\d{4})\.', left):
-            reading.lifetime.birth_year = int(m[1])
-        if m := regex.match(r'\s*(\d{4})\.', right):
-            reading.lifetime.death_year = int(m[1])
+        if len(lines) < 2:
+            return
+
+        result = text.splitlines()[1].split('〜')
+        if len(result) == 2:
+            left, right = result
+            if m := regex.match(r'(\d{4})\.', left):
+                reading.lifetime.birth_year = int(m[1])
+            if m := regex.match(r'\s*(\d{4})\.', right):
+                reading.lifetime.death_year = int(m[1])
         return reading
     else:
-        raise Exception(f"Cannot parse heading {heading}")
+        #raise Exception(f"Cannot parse heading {heading}")
+        pass
 
 
 if __name__ == '__main__':
-    root = json_stream.load(sys.stdin)
+    root = json.load(sys.stdin)
     entries = root['subbooks'][0]['entries']
     for entry in entries:
+        if 'heading' not in entry:
+            continue
+
         heading = entry['heading']
 
         if 'text' not in entry:
