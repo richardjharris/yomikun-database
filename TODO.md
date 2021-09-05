@@ -1,6 +1,5 @@
 ### TODO
 
- - Check top5000 is working (currently: not)
  - Genders are just wrong. 明(akira) is female only, 聖(hijiri) is female for some reason?
    - importing data off wikipedia (JA or EN) seems good.
    - EN wikipedia has 1,345 names vs. JP 238.

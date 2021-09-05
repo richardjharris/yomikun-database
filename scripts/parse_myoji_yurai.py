@@ -21,6 +21,7 @@ def parse_myoji_yurai(lines: Iterable[str]):
 
         for reading in readings:
             data = NameData(kanji, reading)
+            data.add_tag('surname')
             data.source = "myoji-yurai-5000"
             print(data.to_jsonl())
 
