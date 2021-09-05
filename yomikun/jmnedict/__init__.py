@@ -95,7 +95,7 @@ def parse(data: dict, with_orig=True) -> list[dict]:
 
 def test_basic():
     data = {'idseq': 5000254, 'kanji': [{'text': 'あき竹城'}], 'kana': [{'text': 'あきたけじょう', 'nokanji': 0}], 'senses': [
-        {'SenseGloss': [{'lang': 'eng', 'text': 'Aki Takejou (1947.4-)'}], 'name_types': ['person']}]}
+        {'SenseGloss': [{'lang': 'eng', 'text': 'Aki Takejou (1947.4-)'}], 'name_type': ['person']}]}
     result = parse(data, with_orig=False)
     assert result == [
         {'kaki': 'あき 竹城', 'yomi': 'あき たけじょう', 'tags': ['person'],
@@ -109,7 +109,7 @@ def test_sumo():
             {'lang': 'eng',
                 'text': 'Sōkokurai Eikichi (sumo wrestler from Inner Mongolia, 1984-)'},
             {'lang': 'eng', 'text': 'Engketübsin'}],
-         'name_types': ['person']}]}
+         'name_type': ['person']}]}
     result = parse(data, with_orig=False)
     assert result == [
         {'kaki': '蒼国来 栄吉', 'yomi': 'そうこくらい えいきち', 'tags': ['person'],

@@ -10,7 +10,7 @@ import mwclient
 from mediawiki_dump.dumps import WikipediaDump, MediaWikiClientDump
 from mediawiki_dump.reader import DumpReaderArticles
 
-from yomikun.wikipedia.parser import parse_wikipedia_article
+from yomikun.wikipedia_ja.parser import parse_wikipedia_article
 
 parser = argparse.ArgumentParser(
     description='Parses ja.wikipedia.org articles for name information',

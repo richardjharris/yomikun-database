@@ -8,7 +8,7 @@ from pathlib import Path
 import yaml
 
 from yomikun.models import NameAuthenticity, NameData, Lifetime
-from yomikun.wikipedia.parser import parse_wikipedia_article
+from yomikun.wikipedia_ja.parser import parse_wikipedia_article
 
 
 def load_test(file: Path) -> tuple[str, dict]:
@@ -38,7 +38,7 @@ def pytest_generate_tests(metafunc):
         return str(path.name)
 
     if 'test_page' in metafunc.fixturenames:
-        files = Path(__file__).parent.glob('test_pages/*')
+        files = Path(__file__).parent.glob('wikipedia_ja_pages/*')
         metafunc.parametrize("test_page", files, ids=get_id)
 
 

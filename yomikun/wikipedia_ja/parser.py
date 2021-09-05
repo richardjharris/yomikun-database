@@ -5,9 +5,9 @@ import regex
 from mediawiki_dump.tokenizer import clean
 
 from yomikun.models import Reading, NameData, NameAuthenticity, Lifetime
-from yomikun.wikipedia.ignore import should_ignore_name
-from yomikun.wikipedia.infobox import extract_infoboxes, parse_infoboxes
-from yomikun.wikipedia.honmyo import find_honmyo
+from yomikun.wikipedia_ja.ignore import should_ignore_name
+from yomikun.wikipedia_ja.infobox import extract_infoboxes, parse_infoboxes
+from yomikun.wikipedia_ja.honmyo import find_honmyo
 from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
 from yomikun.utils.split import split_kanji_name
 
