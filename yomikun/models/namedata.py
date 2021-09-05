@@ -70,10 +70,16 @@ class NameData():
 
     def to_dict(self) -> dict:
         self.clean()
+
+        # asdict() converts lifetime and subreadings for us. However, it does not call
+        # our overriden to_dict (this method) on the subreadings, so we need to do that
+        # manually.
+        # TODO we could use __dict__ directly instead.
         data = dataclasses.asdict(self)
+
         data['authenticity'] = data['authenticity'].name.lower()
-        data['lifetime'] = data['lifetime'].to_dict()
-        data['subreadings'] = map(lambda x: x.to_dict(), data['subreadings'])
+        for subreading in data['subreadings']:
+            subreading['authenticity'] = subreading['authenticity'].name.lower()
 
         return data
 
@@ -83,7 +89,7 @@ class NameData():
         """
         return json.dumps(self.to_dict(), ensure_ascii=False)
 
-    @ classmethod
+    @classmethod
     def from_dict(cls, data: dict) -> NameData:
         if 'authenticity' in data:
             data['authenticity'] = NameAuthenticity[data['authenticity'].upper()]
@@ -94,7 +100,7 @@ class NameData():
                 lambda x: NameData.from_dict(x), data['subreadings'])
         return NameData(**data)
 
-    @ classmethod
+    @classmethod
     def merge(cls, a: NameData, b: NameData) -> NameData:
         """
         Merge two NameData records. The records should correspond to the

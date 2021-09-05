@@ -9,7 +9,7 @@ class Lifetime():
     Represents a span of years lived. Both sides may be None
     (to either indicate unknown, or alive).
     """
-    # TODO distinguish unknown and alive.
+    # TODO distinguish unknown and alive?
     birth_year: int | None = None
     death_year: int | None = None
 
