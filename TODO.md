@@ -1,27 +1,14 @@
 ### TODO
 
- - Genders are just wrong. 明(akira) is female only, 聖(hijiri) is female for some reason?
-   - importing data off wikipedia (JA or EN) seems good.
-   - EN wikipedia has 1,345 names vs. JP 238.
-
  - Possibly having a single type field (surname/given/male/female/unclass) like jmnedict
    is easier than having two fields, as surname + gender makes no sense anyway
+   Then we can remove tags?
+   Then we can output a single row for each name type, which simplifies processing later.
 
  - Database is 50MB. Problem?
  - Consider a way to mapping names back to sources.
 
-## Name genders
-
-　As a start: https://ja.wikipedia.org/wiki/Category:日本語の女性名 and equivalent (and 日本語の姓)
-  Each page has some information: 
-    日本の女性名。現代では主に「あきこ」、まれに「めいこ」と読むが、平安時代には「あきらけいこ」と読まれた。
-    日本人の人名。主に女性名に使われる。
-    敦子（あつこ）は、日本の女性名。
-
- The EN wikipedia has similar pages, e.g. https://en.wikipedia.org/wiki/Hirotomo which mark the gender clearly
- and show common readings. Most of the names themselves are in the JA wikipedia though.
-
- We want something like (kaki, yomi, gender) where gender = 0 .. 1 (0=male 1=female) 0.5 being truly neutral
+ - Stop testing scripts/. Move scripts to their own directory.
 
 ## Later todo
 
@@ -29,7 +16,7 @@
  - Import names from MeCab?
  - Import names from mtk dict etc.
 
-## Observations
+## Observations (lower priority)
 
  - consider ignoring before we do further processing (such as name splits)
 
