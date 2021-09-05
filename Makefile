@@ -4,7 +4,7 @@ export PYTHONPATH := ${PYTHONPATH}:.
 
 .PHONY: all clean
 
-JSONLFILES = koujien.jsonl daijisen.jsonl pdd.jsonl wikipedia.jsonl jmnedict.jsonl myoji-yurai.jsonl
+JSONLFILES = koujien.jsonl daijisen.jsonl pdd.jsonl wikipedia_ja.jsonl jmnedict.jsonl myoji-yurai.jsonl
 
 names.sqlite: ${JSONLFILES}
 	cat $^ | python scripts/load_data.py $@
@@ -22,8 +22,8 @@ daijisen.jsonl: data/daijisen.json.gz
 pdd.jsonl: data/pdd.json.gz
 	zcat $< | python scripts/parse_pdd.py > $@
 
-wikipedia.jsonl:
-	python scripts/parse_wikipedia.py > $@
+wikipedia_ja.jsonl:
+	python scripts/parse_wikipedia_ja.py > $@
 
 jmnedict.jsonl:
 	python scripts/parse_jmnedict.py > $@
