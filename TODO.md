@@ -7,12 +7,18 @@
    - importing data off wikipedia (JA or EN) seems good.
    - EN wikipedia has 1,345 names vs. JP 238.
 
- - NameType should be renamed
+ - NameAuthenticity should be renamed
  - Possibly having a single type field (surname/given/male/female/unclass) like jmnedict
    is easier than having two fields, as surname + gender makes no sense anyway
 
  - Database is 50MB. Problem?
  - Consider a way to mapping names back to sources.
+
+Given name / male given name / female given name / Surname / Unclassified
+Real name / Pseudo-name/penname / Fictional name
+
+name_position
+name_veracity
 
 ## Name genders
 
@@ -44,7 +50,7 @@ Chinese names: https://ja.m.wikipedia.org/wiki/%E4%BA%8E%E5%90%89
   These could be tagged
 
 FP ish:
-{"kaki": "坪田 愛華", "yomi": "つぼた あいか", "name_type": "real", "lifetime": {"birth_year": 1979, "death_year": 1991}, "subreadings": [], "source": "wikipedia_ja:地球の秘密"}
+{"kaki": "坪田 愛華", "yomi": "つぼた あいか", "authenticity": "real", "lifetime": {"birth_year": 1979, "death_year": 1991}, "subreadings": [], "source": "wikipedia_ja:地球の秘密"}
 
 How the heck did it extract this name? Looks like infobox as part of an article about something else!
 Therefore TODO we need to check the names are the same before
@@ -53,7 +59,7 @@ Therefore TODO we need to check the names are the same before
 A few pages have >1 honmyo:
 https://ja.m.wikipedia.org/wiki/%E5%9C%B0%E7%90%83_(%E3%81%8A%E7%AC%91%E3%81%84%E3%82%B3%E3%83%B3%E3%83%93)
 
-{"kaki": "足利将軍一覧 足利将軍一覧", "yomi": "あしかがしょうぐん いちらん", "name_type": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
+{"kaki": "足利将軍一覧 足利将軍一覧", "yomi": "あしかがしょうぐん いちらん", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": []}
 
 Possible for readings to contain katakana, although this seems mostly
 for mangaka names, e.g.

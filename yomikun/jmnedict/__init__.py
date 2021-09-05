@@ -1,20 +1,17 @@
 from __future__ import annotations
-import logging
 from operator import itemgetter
-import os
-import sys
 import re
-import json
 from dataclasses import dataclass, field
+from yomikun.utils.romaji import romaji_to_hiragana
 
 import romkan
-import jamdict
 
 from yomikun.models import Lifetime
 from yomikun.utils.split import split_kanji_name
 
 
-name_types_we_want = {'fem', 'given', 'person', 'masc', 'surname', 'unclass'}
+name_types_we_want = {'fem', 'given',
+                      'person', 'masc', 'surname', 'unclass'}
 
 
 @dataclass
@@ -59,7 +56,7 @@ def parse(data: dict, with_orig=True) -> list[dict]:
     records_out = []
 
     for sense in data['senses']:
-        name_types = set(sense['name_type']).intersection(
+        name_types = set(sense['name_types']).intersection(
             name_types_we_want)
         if not name_types:
             continue
@@ -75,10 +72,7 @@ def parse(data: dict, with_orig=True) -> list[dict]:
                 if gloss.name:
                     # Convert name to hiragana and use it to split the name
                     # TODO other 4 vowels
-                    gloss.name = gloss.name.replace('ō', 'ou')
-                    gloss.name = gloss.name.replace('ā', 'aa')
-                    gloss.name = gloss.name.replace('ē', 'ee')
-                    split_kana = romkan.to_hiragana(gloss.name)
+                    split_kana = romaji_to_hiragana(gloss.name)
                     split_kanji = split_kanji_name(kanji, split_kana)
                     if kanji != split_kanji:
                         kanji, kana = split_kanji, split_kana
@@ -100,7 +94,7 @@ def parse(data: dict, with_orig=True) -> list[dict]:
 
 def test_basic():
     data = {'idseq': 5000254, 'kanji': [{'text': 'あき竹城'}], 'kana': [{'text': 'あきたけじょう', 'nokanji': 0}], 'senses': [
-        {'SenseGloss': [{'lang': 'eng', 'text': 'Aki Takejou (1947.4-)'}], 'name_type': ['person']}]}
+        {'SenseGloss': [{'lang': 'eng', 'text': 'Aki Takejou (1947.4-)'}], 'name_types': ['person']}]}
     result = parse(data, with_orig=False)
     assert result == [
         {'kaki': 'あき 竹城', 'yomi': 'あき たけじょう', 'tags': ['person'],
@@ -114,7 +108,7 @@ def test_sumo():
             {'lang': 'eng',
                 'text': 'Sōkokurai Eikichi (sumo wrestler from Inner Mongolia, 1984-)'},
             {'lang': 'eng', 'text': 'Engketübsin'}],
-         'name_type': ['person']}]}
+         'name_types': ['person']}]}
     result = parse(data, with_orig=False)
     assert result == [
         {'kaki': '蒼国来 栄吉', 'yomi': 'そうこくらい えいきち', 'tags': ['person'],

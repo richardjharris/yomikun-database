@@ -8,7 +8,7 @@ import regex
 import json
 
 
-from yomikun.models import Reading, NameType, NameData, Lifetime
+from yomikun.models import Reading, NameAuthenticity, NameData, Lifetime
 from yomikun.utils.patterns import name_pat, reading_pat
 
 

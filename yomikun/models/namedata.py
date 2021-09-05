@@ -5,7 +5,7 @@ import copy
 
 import regex
 
-from yomikun.models.nametype import NameType
+from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.lifetime import Lifetime
 
 
@@ -26,7 +26,7 @@ class NameData():
     yomi: str = ''
 
     # Reading type
-    name_type: NameType = NameType.REAL
+    authenticity: NameAuthenticity = NameAuthenticity.REAL
 
     # Years lived for this name
     lifetime: Lifetime = dataclasses.field(default_factory=Lifetime)
@@ -71,7 +71,7 @@ class NameData():
     def to_dict(self) -> dict:
         self.clean()
         data = dataclasses.asdict(self)
-        data['name_type'] = data['name_type'].name.lower()
+        data['authenticity'] = data['authenticity'].name.lower()
         data['lifetime'] = data['lifetime'].to_dict()
         data['subreadings'] = map(lambda x: x.to_dict(), data['subreadings'])
 
@@ -85,8 +85,8 @@ class NameData():
 
     @ classmethod
     def from_dict(cls, data: dict) -> NameData:
-        if 'name_type' in data:
-            data['name_type'] = NameType[data['name_type'].upper()]
+        if 'authenticity' in data:
+            data['authenticity'] = NameAuthenticity[data['authenticity'].upper()]
         if 'lifetime' in data:
             data['lifetime'] = Lifetime(**data['lifetime'])
         if 'subreadings' in data:

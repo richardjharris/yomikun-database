@@ -2,16 +2,15 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 
-import yomikun.models
-from yomikun.models import NameData
-from yomikun.loader.models import Gender, Person, Name, Base, NameType
+from yomikun.models import NameData, NameAuthenticity
+from yomikun.loader.models import Gender, Person, Name, Base, NamePosition
 
 
 @dataclass(frozen=True)
 class NamePart:
     kaki: str
     yomi: str
-    name_type: NameType
+    position: NamePosition
 
 
 class Aggregator():
@@ -28,8 +27,8 @@ class Aggregator():
 
         for subreading in data.subreadings:
             # Copy over the lifetime / source to the real actor
-            if data.name_type == yomikun.models.NameType.PSEUDO \
-                    and subreading.name_type == yomikun.models.NameType.REAL:
+            if data.authenticity == NameAuthenticity.PSEUDO \
+                    and subreading.authenticity == NameAuthenticity.REAL:
                 if data.lifetime and not subreading.lifetime:
                     subreading.lifetime = copy.copy(data.lifetime)
                 if data.source and not subreading.source:
@@ -43,7 +42,7 @@ class Aggregator():
                 self._names[part] = Name(
                     kaki=part.kaki,
                     yomi=part.yomi,
-                    name_type=part.name_type,
+                    position=part.position,
                     earliest_year=data.lifetime.birth_year,
                     latest_year=data.lifetime.death_year,
                 )
@@ -53,14 +52,14 @@ class Aggregator():
 
             # Don't record non-person jmnedict entries as they are inaccurate.
             if data.source != 'jmnedict' or 'person' in data.tags:
-                self._names[part].record_sighting(data.name_type)
+                self._names[part].record_sighting(data.authenticity)
 
             # NOTE: if we see >0 sightings of both gender we mark the
             # name as 'neutral' which may not be accurate in all cases.
             if gender:
                 self._names[part].record_gender(gender)
 
-            if data.source == 'myoji-yurai-5000' and part.name_type == NameType.sei:
+            if data.source == 'myoji-yurai-5000' and part.position == NamePosition.sei:
                 self._names[part].set_top5000()
 
             for subreading in data.subreadings:
@@ -88,29 +87,29 @@ class Aggregator():
             yomis = data.yomi.split()
             if len(kakis) == 2 and len(yomis) == 2:
                 sei = NamePart(kaki=kakis[0], yomi=yomis[0],
-                               name_type=NameType.sei)
+                               position=NamePosition.sei)
                 mei = NamePart(kaki=kakis[1], yomi=yomis[1],
-                               name_type=NameType.mei)
+                               position=NamePosition.mei)
                 parts += [(sei, gender), (mei, gender)]
             else:
-                # Can't reliably assign name_types to names
+                # Can't reliably assign positions to names
                 pass
         elif 'unclass' in data.tags:
             assert len(data.tags) == 1  # no other tags
             part = NamePart(kaki=data.kaki, yomi=data.yomi,
-                            name_type=NameType.unknown)
+                            position=NamePosition.unknown)
             parts.append((part, None))
         else:
             # Names may be a combination of masc,fem,given,surname
             if 'surname' in data.tags:
                 sei = NamePart(kaki=data.kaki, yomi=data.yomi,
-                               name_type=NameType.sei)
+                               position=NamePosition.sei)
                 parts.append((sei, None))
 
             if set(data.tags).intersection({'masc', 'fem', 'given'}):
                 gender = self.gender_from_tags(data.tags)
                 mei = NamePart(kaki=data.kaki, yomi=data.yomi,
-                               name_type=NameType.mei)
+                               position=NamePosition.mei)
                 parts.append((mei, gender))
 
         return parts

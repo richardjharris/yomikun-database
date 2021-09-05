@@ -8,7 +8,7 @@ import sys
 import regex
 import json
 
-from yomikun.models import NameType, NameData, Lifetime
+from yomikun.models import NameAuthenticity, NameData, Lifetime
 from yomikun.utils.split import split_kanji_name
 from yomikun.daijisen.year import parse_birth_and_death_year
 

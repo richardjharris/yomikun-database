@@ -7,7 +7,7 @@ from pathlib import Path
 
 import yaml
 
-from yomikun.models import NameType, NameData, Lifetime
+from yomikun.models import NameAuthenticity, NameData, Lifetime
 from yomikun.wikipedia.parser import parse_wikipedia_article
 
 
@@ -60,7 +60,7 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
         elif key == 'reading':
             namedata.yomi = value
         elif key == 'type':
-            namedata.name_type = NameType[value.upper()]
+            namedata.authenticity = NameAuthenticity[value.upper()]
         elif key == 'lifetime':
             birth, death = value.split('~')
             if len(birth.strip()):

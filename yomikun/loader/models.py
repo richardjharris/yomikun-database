@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import enum
 
-import yomikun.models
+from yomikun.models import NameAuthenticity
 
-from sqlalchemy import Column, Integer, String, Boolean, Enum, UniqueConstraint, Index
+from sqlalchemy import Column, Integer, String, Boolean, Enum
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -17,8 +17,7 @@ class Gender(enum.Enum):
     neutral = 4
 
 
-# TODO conflict with NameData.name_type, rename?
-class NameType(enum.Enum):
+class NamePosition(enum.Enum):
     unknown = 1
     sei = 2
     mei = 3
@@ -37,7 +36,7 @@ class Name(Base):
     __tablename__ = 'name'
     kaki = Column(String, primary_key=True)
     yomi = Column(String, primary_key=True)
-    name_type = Column(Enum(NameType), primary_key=True)
+    position = Column(Enum(NamePosition), primary_key=True)
     earliest_year = Column(Integer)
     latest_year = Column(Integer)
     sighting_real = Column(Integer, nullable=False, default=0)
@@ -64,10 +63,10 @@ class Name(Base):
         self.latest_year = max(
             filter(None.__ne__, [self.latest_year, year]))
 
-    def record_sighting(self, typ: yomikun.models.NameType):
-        if typ == yomikun.models.NameType.FICTIONAL:
+    def record_sighting(self, typ: NameAuthenticity):
+        if typ == NameAuthenticity.FICTIONAL:
             self.sighting_fictional += 1
-        elif typ == yomikun.models.NameType.PSEUDO:
+        elif typ == NameAuthenticity.PSEUDO:
             self.sighting_pseudo += 1
         else:
             self.sighting_real += 1

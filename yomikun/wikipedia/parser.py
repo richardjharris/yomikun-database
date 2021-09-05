@@ -4,7 +4,7 @@ import logging
 import regex
 from mediawiki_dump.tokenizer import clean
 
-from yomikun.models import Reading, NameData, NameType, Lifetime
+from yomikun.models import Reading, NameData, NameAuthenticity, Lifetime
 from yomikun.wikipedia.ignore import should_ignore_name
 from yomikun.wikipedia.infobox import extract_infoboxes, parse_infoboxes
 from yomikun.wikipedia.honmyo import find_honmyo
@@ -78,10 +78,10 @@ def parse_article_text(title: str, content: str) -> NameData:
                 reading.lifetime = Lifetime(birth, death)
 
     if regex.search(r'架空', extra_raw):
-        reading.name_type = NameType.FICTIONAL
+        reading.authenticity = NameAuthenticity.FICTIONAL
     elif honmyo:
         reading.add_subreading(honmyo)
-        reading.name_type = NameType.PSEUDO
+        reading.authenticity = NameAuthenticity.PSEUDO
 
     reading.clean()
     return reading

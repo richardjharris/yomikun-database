@@ -47,7 +47,7 @@ def find_split_point(sei: str, mei: str, kanji: str) -> int | None:
     def has_sense(senses: list, keyword: str):
         """
         Look into the senses object to find a sense entry
-        with a name_type matching the given `keyword`.
+        with a authenticity matching the given `keyword`.
 
         keyword should be 'place', 'surname', 'fem' etc.
         """
