@@ -8,8 +8,6 @@
  - Database is 50MB. Problem?
  - Consider a way to mapping names back to sources.
 
- - Stop testing scripts/. Move scripts to their own directory.
-
 ## Later todo
 
  - Basic flutter app
