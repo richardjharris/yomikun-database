@@ -1,25 +1,36 @@
 ### TODO
 
-  PersonName(sei/mei kaki/yomi, years, type, source)
-   - load from all sources
-   - de-dupe a bit
+ - give jmnedict a source field.
 
-  From this, generate
-   Names(kaki, yomi, part, years, count)
-     - base data from edict
-     - years is aggregated (min/max)
-     - count is number of entries (might be split into fictional/penname)
-     - sources can be linked back
-  
-  Top5000 List can aslo reference kaki/yomi.
+ - Check top5000 is working (currently: not)
+ - Genders are just wrong. 明(akira) is female only, 聖(hijiri) is female for some reason?
+   - importing data off wikipedia (JA or EN) seems good.
+   - EN wikipedia has 1,345 names vs. JP 238.
+
+ - NameType should be renamed
+ - Possibly having a single type field (surname/given/male/female/unclass) like jmnedict
+   is easier than having two fields, as surname + gender makes no sense anyway
+
+ - Database is 50MB. Problem?
+ - Consider a way to mapping names back to sources.
+
+## Name genders
+
+　As a start: https://ja.wikipedia.org/wiki/Category:日本語の女性名 and equivalent (and 日本語の姓)
+  Each page has some information: 
+    日本の女性名。現代では主に「あきこ」、まれに「めいこ」と読むが、平安時代には「あきらけいこ」と読まれた。
+    日本人の人名。主に女性名に使われる。
+    敦子（あつこ）は、日本の女性名。
+
+ The EN wikipedia has similar pages, e.g. https://en.wikipedia.org/wiki/Hirotomo which mark the gender clearly
+ and show common readings. Most of the names themselves are in the JA wikipedia though.
+
+ We want something like (kaki, yomi, gender) where gender = 0 .. 1 (0=male 1=female) 0.5 being truly neutral
 
 ## Later todo
 
  - Basic flutter app
-
- - Not sure how to handle gender.
-
- - Import names from MeCab
+ - Import names from MeCab?
  - Import names from mtk dict etc.
 
 ## Observations

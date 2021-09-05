@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from dataclasses_json import DataClassJsonMixin
+import dataclasses
 
 
-@dataclass
-class Lifetime(DataClassJsonMixin):
+@dataclasses.dataclass
+class Lifetime():
     """
     Represents a span of years lived. Both sides may be None
     (to either indicate unknown, or alive).
@@ -32,3 +31,6 @@ class Lifetime(DataClassJsonMixin):
             self.birth_year = other.birth_year
         if self.death_year is None:
             self.death_year = other.death_year
+
+    def to_dict(self) -> dict:
+        return dataclasses.asdict(self)

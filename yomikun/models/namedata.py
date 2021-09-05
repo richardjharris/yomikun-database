@@ -1,10 +1,9 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
+import dataclasses
 import json
 import copy
 
 import regex
-from dataclasses_json import DataClassJsonMixin
 
 from yomikun.models.nametype import NameType
 from yomikun.models.lifetime import Lifetime
@@ -17,8 +16,8 @@ def normalise(s: str) -> str:
     return s
 
 
-@dataclass
-class NameData(DataClassJsonMixin):
+@dataclasses.dataclass
+class NameData():
     """
     Name data extracted by the parsers.
     """
@@ -30,13 +29,17 @@ class NameData(DataClassJsonMixin):
     name_type: NameType = NameType.REAL
 
     # Years lived for this name
-    lifetime: Lifetime = field(default_factory=Lifetime)
+    lifetime: Lifetime = dataclasses.field(default_factory=Lifetime)
 
     # Sub-readings (related to this one)
-    subreadings: list[NameData] = field(default_factory=list)
+    subreadings: list[NameData] = dataclasses.field(default_factory=list)
 
     # String identifying the source of this reading
     source: str = ''
+
+    # Arbitrary tags assigned to the name. Used by JMNedict to mark
+    # whether a name is a forename or a surname, etc.
+    tags: list[str] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
         self.clean()
@@ -46,6 +49,9 @@ class NameData(DataClassJsonMixin):
         Add a subreading.
         """
         self.subreadings.append(subreading)
+
+    def add_tag(self, tag: str):
+        self.tags.append(tag)
 
     def has_name(self) -> bool:
         """
@@ -62,16 +68,31 @@ class NameData(DataClassJsonMixin):
         for sub in self.subreadings:
             sub.clean()
 
+    def to_dict(self) -> dict:
+        self.clean()
+        data = dataclasses.asdict(self)
+        data['name_type'] = data['name_type'].name.lower()
+        data['lifetime'] = data['lifetime'].to_dict()
+        data['subreadings'] = map(lambda x: x.to_dict(), data['subreadings'])
+
+        return data
+
     def to_jsonl(self) -> str:
         """
         Converts a NameData to a JSONL string.
         """
-        self.clean()
-        # TODO consider existing dataclasses.asdict() func
-        return json.dumps(self.to_dict(),
-                          ensure_ascii=False,
-                          default=lambda x: x.name.lower(),
-                          )
+        return json.dumps(self.to_dict(), ensure_ascii=False)
+
+    @ classmethod
+    def from_dict(cls, data: dict) -> NameData:
+        if 'name_type' in data:
+            data['name_type'] = NameType[data['name_type'].upper()]
+        if 'lifetime' in data:
+            data['lifetime'] = Lifetime(**data['lifetime'])
+        if 'subreadings' in data:
+            data['subreadings'] = map(
+                lambda x: NameData.from_dict(x), data['subreadings'])
+        return NameData(**data)
 
     @ classmethod
     def merge(cls, a: NameData, b: NameData) -> NameData:

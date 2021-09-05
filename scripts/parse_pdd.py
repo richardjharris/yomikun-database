@@ -6,9 +6,7 @@ from __future__ import annotations
 import sys
 import regex
 import json
-from dataclasses import dataclass
 
-from dataclasses_json import dataclass_json
 
 from yomikun.models import Reading, NameType, NameData, Lifetime
 from yomikun.utils.patterns import name_pat, reading_pat

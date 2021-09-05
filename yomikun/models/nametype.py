@@ -12,8 +12,9 @@ class NameType(Enum):
     PSEUDO = 2
     """A fictional character name"""
     FICTIONAL = 3
-    """An additional name found with the real name, but a different person"""
-    EXTRA = 4
+    # Unused but reserved:
+    #"""An additional name found with the real name, but a different person"""
+    #EXTRA = 4
 
     def __repr__(self):
         return f"<{self.name.lower()}>"
