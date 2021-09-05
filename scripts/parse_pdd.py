@@ -85,4 +85,5 @@ def test_parse_pdd():
         kaki="三遊亭 円生",
         yomi="さんゆうてい えんしょう",
         lifetime=Lifetime(1878, 1923),
+        source='pdd:さんゆうてい　えんしょう【三遊亭　円生(６代)】',
     )
