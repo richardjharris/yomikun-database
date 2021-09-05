@@ -2,7 +2,7 @@ export PYTHONPATH := ${PYTHONPATH}:.
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean
+.PHONY: all clean test
 
 JSONLFILES = koujien.jsonl daijisen.jsonl pdd.jsonl wikipedia_ja.jsonl jmnedict.jsonl myoji-yurai.jsonl
 
@@ -12,6 +12,9 @@ names.sqlite: ${JSONLFILES}
 clean:
 	rm -f ${JSONLFILES}
 	rm -f names.sqlite
+
+test:
+	pytest
 
 koujien.jsonl: data/koujien.json.gz
 	zcat $< | python scripts/parse_koujien.py > $@
