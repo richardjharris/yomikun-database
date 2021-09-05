@@ -56,7 +56,7 @@ def parse(data: dict, with_orig=True) -> list[dict]:
     records_out = []
 
     for sense in data['senses']:
-        name_types = set(sense['name_types']).intersection(
+        name_types = set(sense['name_type']).intersection(
             name_types_we_want)
         if not name_types:
             continue

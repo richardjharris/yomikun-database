@@ -51,5 +51,5 @@ if __name__ == '__main__':
         except BrokenPipeError:
             sys.exit(0)
         except Exception as err:
-            logging.error(f"Failed to parse entry: {err!r}")
+            logging.exception(f"Failed to parse entry")
             logging.info(data)
