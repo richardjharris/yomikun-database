@@ -31,25 +31,18 @@ jam = jamdict.Jamdict(
 )
 assert jam.has_jmne()
 
-
-jam = jamdict.Jamdict(
-    memory_mode=False,
-)
-assert jam.has_jmne()
-
-if __name__ == '__main__':
-    # Jamdict requires pos to be non-empty but it is ignored for name queries
-    result = jam.lookup_iter('%', pos=['dummy'])
-    for name in result.names:
-        data = name.to_dict()
-        try:
-            for output in yomikun.jmnedict.parse(data):
-                print(json.dumps(output, ensure_ascii=False))
-        except KeyboardInterrupt:
-            print("caught INT, exiting", file=sys.stderr)
-            sys.exit(1)
-        except BrokenPipeError:
-            sys.exit(0)
-        except Exception as err:
-            logging.exception(f"Failed to parse entry")
-            logging.info(data)
+# Jamdict requires pos to be non-empty but it is ignored for name queries
+result = jam.lookup_iter('%', pos=['dummy'])
+for name in result.names:
+    data = name.to_dict()
+    try:
+        for output in yomikun.jmnedict.parse(data):
+            print(json.dumps(output, ensure_ascii=False))
+    except KeyboardInterrupt:
+        print("caught INT, exiting", file=sys.stderr)
+        sys.exit(1)
+    except BrokenPipeError:
+        sys.exit(0)
+    except Exception as err:
+        logging.exception(f"Failed to parse entry")
+        logging.info(data)

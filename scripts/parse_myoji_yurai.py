@@ -5,9 +5,8 @@ Japanese surnames and their 'typical' readings.
 from __future__ import annotations
 from typing import Iterable
 import sys
-import regex
 
-from yomikun.models import NameAuthenticity, NameData, Lifetime
+from yomikun.models import NameData
 
 
 def parse_myoji_yurai(lines: Iterable[str]):
@@ -26,5 +25,4 @@ def parse_myoji_yurai(lines: Iterable[str]):
             print(data.to_jsonl())
 
 
-if __name__ == '__main__':
-    parse_myoji_yurai(sys.stdin.readlines())
+parse_myoji_yurai(sys.stdin.readlines())

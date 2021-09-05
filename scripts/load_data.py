@@ -12,24 +12,23 @@ import json
 import yomikun.loader
 from yomikun.models import NameData
 
-if __name__ == '__main__':
-    dbpath = sys.argv[1]
+dbpath = sys.argv[1]
 
-    aggregator = yomikun.loader.Aggregator()
+aggregator = yomikun.loader.Aggregator()
 
-    for line in sys.stdin:
-        data = json.loads(line)
+for line in sys.stdin:
+    data = json.loads(line)
 
-        # Remove orig, added by jmnedict parser
-        if 'orig' in data:
-            del data['orig']
+    # Remove orig, added by jmnedict parser
+    if 'orig' in data:
+        del data['orig']
 
-        aggregator.ingest(NameData.from_dict(data))
+    aggregator.ingest(NameData.from_dict(data))
 
-    loader = yomikun.loader.Loader(dbpath)
-    loader.create_tables()
-    for person in aggregator.people():
-        loader.add_person(person)
-    for name in aggregator.names():
-        loader.add_name(name)
-    loader.commit()
+loader = yomikun.loader.Loader(dbpath)
+loader.create_tables()
+for person in aggregator.people():
+    loader.add_person(person)
+for name in aggregator.names():
+    loader.add_name(name)
+loader.commit()
