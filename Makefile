@@ -2,23 +2,25 @@ export PYTHONPATH := ${PYTHONPATH}:.
 
 .DELETE_ON_ERROR:
 
-.PHONY: jsonl
+.PHONY: all clean
 
 JSONLFILES = koujien.jsonl daijisen.jsonl pdd.jsonl wikipedia.jsonl jmnedict.jsonl myoji-yurai.jsonl
 
-jsonl: ${JSONLFILES}
+names.sqlite: ${JSONLFILES}
+	cat $^ | python scripts/load_data.py $@
 
 clean:
-	rm ${JSONLFILES}
+	rm -f ${JSONLFILES}
+	rm -f names.sqlite
 
 koujien.jsonl: data/koujien.json.gz
-	zcat $^ | python scripts/parse_koujien.py > $@
+	zcat $< | python scripts/parse_koujien.py > $@
 
 daijisen.jsonl: data/daijisen.json.gz
-	zcat $^ | python scripts/parse_daijisen.py > $@
+	zcat $< | python scripts/parse_daijisen.py > $@
 
 pdd.jsonl: data/pdd.json.gz
-	zcat $^ | python scripts/parse_pdd.py > $@
+	zcat $< | python scripts/parse_pdd.py > $@
 
 wikipedia.jsonl:
 	python scripts/parse_wikipedia.py > $@
