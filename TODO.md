@@ -1,24 +1,15 @@
 ### TODO
 
- - give jmnedict a source field.
-
  - Check top5000 is working (currently: not)
  - Genders are just wrong. 明(akira) is female only, 聖(hijiri) is female for some reason?
    - importing data off wikipedia (JA or EN) seems good.
    - EN wikipedia has 1,345 names vs. JP 238.
 
- - NameAuthenticity should be renamed
  - Possibly having a single type field (surname/given/male/female/unclass) like jmnedict
    is easier than having two fields, as surname + gender makes no sense anyway
 
  - Database is 50MB. Problem?
  - Consider a way to mapping names back to sources.
-
-Given name / male given name / female given name / Surname / Unclassified
-Real name / Pseudo-name/penname / Fictional name
-
-name_position
-name_veracity
 
 ## Name genders
 
