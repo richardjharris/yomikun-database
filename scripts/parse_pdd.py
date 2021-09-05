@@ -51,6 +51,8 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
                 reading.lifetime.birth_year = int(m[1])
             if m := regex.match(r'\s*(\d{4})\.', right):
                 reading.lifetime.death_year = int(m[1])
+
+        reading.source = f'pdd:{heading}'
         return reading
     else:
         #raise Exception(f"Cannot parse heading {heading}")

@@ -13,6 +13,8 @@ import yomikun.loader
 from yomikun.models import NameData
 
 if __name__ == '__main__':
+    dbpath = sys.argv[1]
+
     aggregator = yomikun.loader.Aggregator()
 
     for line in sys.stdin:
@@ -24,7 +26,7 @@ if __name__ == '__main__':
 
         aggregator.ingest(NameData.from_dict(data))
 
-    loader = yomikun.loader.Loader('temp.sqlite')
+    loader = yomikun.loader.Loader(dbpath)
     loader.create_tables()
     for person in aggregator.people():
         loader.add_person(person)

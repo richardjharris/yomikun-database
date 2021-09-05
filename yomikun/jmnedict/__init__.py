@@ -81,6 +81,7 @@ def parse(data: dict, with_orig=True) -> list[dict]:
                     'kaki': kanji,
                     'yomi': kana,
                     'tags': list(name_types),
+                    'source': 'jmnedict',
                 }
                 if with_orig:
                     output['orig'] = gloss.source_string
@@ -98,7 +99,7 @@ def test_basic():
     result = parse(data, with_orig=False)
     assert result == [
         {'kaki': 'あき 竹城', 'yomi': 'あき たけじょう', 'tags': ['person'],
-         'lifetime': {'birth_year': 1947, 'death_year': None}},
+         'lifetime': {'birth_year': 1947, 'death_year': None}, 'source': 'jmnedict'},
     ]
 
 
@@ -112,5 +113,5 @@ def test_sumo():
     result = parse(data, with_orig=False)
     assert result == [
         {'kaki': '蒼国来 栄吉', 'yomi': 'そうこくらい えいきち', 'tags': ['person'],
-         'lifetime': {'birth_year': 1984, 'death_year': None}},
+         'lifetime': {'birth_year': 1984, 'death_year': None}, 'source': 'jmnedict'},
     ]

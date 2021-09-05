@@ -42,7 +42,6 @@ if __name__ == '__main__':
     result = jam.lookup_iter('%', pos=['dummy'])
     for name in result.names:
         data = name.to_dict()
-        print(data)
         try:
             for output in yomikun.jmnedict.parse(data):
                 print(json.dumps(output, ensure_ascii=False))
