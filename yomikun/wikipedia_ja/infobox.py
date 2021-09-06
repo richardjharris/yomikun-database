@@ -64,15 +64,15 @@ def extract_infoboxes(wikitext: str) -> list[Infobox]:
     cur = None
 
     for line in wikitext.splitlines():
-        if m := regex.match(r'^\{\{(\S+)', line):
+        if m := regex.search(r'^\{\{(\S+)', line):
             # Start of new template?
             if cur is None:
                 cur = Infobox(name=m[1])
-        elif m := regex.match(r'^\s*\|\s*(\S+)\s*=\s*(.*)$', line):
+        elif m := regex.search(r'^\s*\|\s*(\S+)\s*=\s*(.*)$', line):
             key, value = m.groups()
             if cur:
                 cur.add(key, value)
-        elif m := regex.match(r'^\}\}', line):
+        elif m := regex.search(r'^\}\}', line):
             if cur is not None:
                 infoboxes.append(cur)
             cur = None
@@ -95,12 +95,12 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
     for box in boxes:
         if not name_set:
             if key := box.first_set('人名', '名前', '芸名', '氏名'):
-                if m := regex.match(r'^[\p{Han}]+\s+[\p{Han}\p{Hiragana}\p{Katakana}]+$', box[key]):
+                if m := regex.search(r'^[\p{Han}]+\s+[\p{Han}\p{Hiragana}\p{Katakana}]+$', box[key]):
                     result.kaki = box[key]
                     name_set = True
 
             if key := box.first_set('ふりがな', '各国語表記'):
-                if m := regex.match(r'^\p{Hiragana}+\s+\p{Hiragana}+$', box[key]):
+                if m := regex.search(r'^\p{Hiragana}+\s+\p{Hiragana}+$', box[key]):
                     result.yomi = box[key]
                     name_set = True
 

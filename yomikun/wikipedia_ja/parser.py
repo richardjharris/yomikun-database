@@ -58,7 +58,7 @@ def parse_article_text(title: str, content: str) -> NameData:
     extra = clean(extra_raw)
     extra = regex.sub(r'[,、]', '', extra).strip()
     # Don't match 2 digit years as these could be confused for Showa, Heisei etc
-    if m := regex.match(r'(\d{3,4})年', extra):
+    if m := regex.search(r'(\d{3,4})年', extra):
         reading.lifetime.birth_year = int(m[1])
 
         if m := regex.search(r'- (\d{3,4})年', extra):

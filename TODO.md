@@ -8,6 +8,13 @@
  - Database is 50MB. Problem?
  - Consider a way to mapping names back to sources.
 
+## JP wikipedia
+
+{"kaki": "太田正典", "yomi": "ōた まさのり", "authenticity": "real", "lifetime": {"birth_year": 1961, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Masamune Shirow", "tags": ["masc"]}
+ -> error in kana
+
+Minoru_Yamasaki -> no gender
+
 ## Later todo
 
  - Basic flutter app

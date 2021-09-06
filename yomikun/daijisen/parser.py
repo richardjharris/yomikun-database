@@ -27,7 +27,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
      - の as a silent middle name, e.g.
        "ふじわら‐の‐なりちか【藤原成親】ふぢはら‐\n［一一三八〜一一七七］平安後期の公卿。"
     """
-    if m := regex.match(r'^(\p{Hiragana}+)‐(\p{Hiragana}+)【(\p{Han}+)】', heading):
+    if m := regex.search(r'^(\p{Hiragana}+)‐(\p{Hiragana}+)【(\p{Han}+)】', heading):
         sei, mei, kanji = m.groups()
         reading = NameData(kanji, f'{sei} {mei}')
 

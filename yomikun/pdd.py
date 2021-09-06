@@ -36,7 +36,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
     TODO handle の
     TODO handle alternate form of name
     """
-    if m := regex.match(fr'^(?:\[\d+\])?({reading_pat})【({name_pat})(?:\(.*?\))?】', heading):
+    if m := regex.search(fr'^(?:\[\d+\])?({reading_pat})【({name_pat})(?:\(.*?\))?】', heading):
         yomi, kaki = m.groups()
         reading = NameData(kaki, yomi)
         lines = text.splitlines()
@@ -47,9 +47,9 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         result = text.splitlines()[1].split('〜')
         if len(result) == 2:
             left, right = result
-            if m := regex.match(r'(\d{4})\.', left):
+            if m := regex.search(r'^(\d{4})\.', left):
                 reading.lifetime.birth_year = int(m[1])
-            if m := regex.match(r'\s*(\d{4})\.', right):
+            if m := regex.search(r'^\s*(\d{4})\.', right):
                 reading.lifetime.death_year = int(m[1])
 
         reading.source = f'pdd:{heading}'

@@ -7,4 +7,6 @@ __pycache__
 
 *.jsonl
 data/*.json.gz
+data/*.xml.bz2
 *.sqlite
+tmp/

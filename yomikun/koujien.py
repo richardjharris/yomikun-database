@@ -15,7 +15,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
     """
     Extract NameData from a Koujien entry.
     """
-    if m := regex.match(r'^(\p{Hiragana}+)‐(\p{Hiragana}+)【(\p{Han}+)】', heading):
+    if m := regex.search(r'^(\p{Hiragana}+)‐(\p{Hiragana}+)【(\p{Han}+)】', heading):
         sei, mei, kanji = m.groups()
         reading = NameData(kanji, f'{sei} {mei}')
 

@@ -1,10 +1,11 @@
 export PYTHONPATH := ${PYTHONPATH}:.
+export TMPDIR = ./tmp
 
 .DELETE_ON_ERROR:
 
 .PHONY: all clean test
 
-JSONLFILES = koujien.jsonl daijisen.jsonl pdd.jsonl wikipedia_ja.jsonl jmnedict.jsonl myoji-yurai.jsonl
+JSONLFILES = koujien.jsonl daijisen.jsonl pdd.jsonl wikipedia_ja.jsonl jmnedict.jsonl myoji-yurai.jsonl wikipedia_en.jsonl
 
 names.sqlite: ${JSONLFILES}
 	cat $^ | python scripts/load_data.py $@
@@ -27,6 +28,9 @@ pdd.jsonl: data/pdd.json.gz
 
 wikipedia_ja.jsonl:
 	python scripts/parse_wikipedia_ja.py > $@
+
+wikipedia_en.jsonl: data/enwiki.xml.bz2
+	python scripts/parse_wikipedia.en.py --dump $< > $@
 
 jmnedict.jsonl:
 	python scripts/parse_jmnedict.py > $@
