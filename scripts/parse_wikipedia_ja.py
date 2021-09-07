@@ -5,9 +5,11 @@
 from __future__ import annotations
 import logging
 import argparse
+import sys
+import json
 
 import mwclient
-from mediawiki_dump.dumps import WikipediaDump, MediaWikiClientDump
+from mediawiki_dump.dumps import MediaWikiClientDump
 from mediawiki_dump.reader import DumpReaderArticles
 
 from yomikun.wikipedia_ja.parser import parse_wikipedia_article
@@ -30,17 +32,16 @@ if args.article:
     # Fetch article directly (uses local file cache)
     site = mwclient.Site('ja.wikipedia.org')
     dump = MediaWikiClientDump(site, args.article)
+    pages = DumpReaderArticles().read(dump)
+    for page in pages:
+        # TODO no way to distinguish "no name here" from "there's a name here,
+        # but we failed to parse it"
+        result = parse_wikipedia_article(page.title, page.content)
+        if result.has_name():
+            print(result.to_jsonl())
 else:
-    # Read dump file
-    dump = WikipediaDump('ja')
-
-pages = DumpReaderArticles().read(dump)
-for page in pages:
-    title = page.title
-    content = page.content
-
-    # TODO no way to distinguish "no name here" from "there's a name here,
-    # but we failed to parse it"
-    result = parse_wikipedia_article(title, content)
-    if result.has_name():
-        print(result.to_jsonl())
+    for line in sys.stdin:
+        data = json.loads(line)
+        result = parse_wikipedia_article(data['title'], data['text'])
+        if result.has_name():
+            print(result.to_jsonl())

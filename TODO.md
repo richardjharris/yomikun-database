@@ -1,19 +1,67 @@
+### Gender reshuffle
+
+Instead of (mei/sei) + (female/unknown) etc. we should have one field, identically to
+edict. This allows us to tally up male/female sightings differently. Possibly the
+veracity should also be a field.
+
+ - OTOH we have many ungendered sightings. we also have gender data like 'this name is male'
+   not sure how to handle that...
+
+### EN Wikipedia
+
+Some nonsense stuff in here:
+{"kaki": "立命館大学", "yomi": "''りつめいかん だいがく''", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Ritsumeikan University", "tags": []}
+
+Lack of birth/death year may be enough to rule out stuff.
+
+{"kaki": "大城 ガクト", "yomi": "ōしろ がくと", "authenticity": "real", "lifetime": {"birth_year": 1973, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Gackt", "tags": ["masc"]}
+
+{"kaki": "名探偵コナン", "yomi": "めいたんてい こなん", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Case Closed", "tags": ["masc"]}
+
+{"kaki": "横山 ノック", "yomi": "よこやま のっく", "authenticity": "real", "lifetime": {"birth_year": 1932, "death_year": 2007}, "subreadings": [], "source": "wikipedia_en:Knock Yokoyama", "tags": ["masc"]}
+
+{"kaki": "天上天下", "yomi": "てんじょう てんげ", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Tenjho Tenge", "tags": ["masc"]}
+
+{"kaki": "不知火 舞", "yomi": "しらぬい まい", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Mai Shiranui", "tags": ["fem"]}
+
+{"kaki": "三原ミツカズ", "yomi": "''みはら みつかず''", "authenticity": "real", "lifetime": {"birth_year": 1970, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Mitsukazu Mihara", "tags": ["fem"]}
+
+# rare case where we did not split
+{"kaki": "玉椿憲太郎", "yomi": "''たまつばき けんたろう''", "authenticity": "real", "lifetime": {"birth_year": 1883, "death_year": 1928}, "subreadings": [], "source": "wikipedia_en:Tamatsubaki Kentarō", "tags": ["masc"]}
+
+# not a name
+{"kaki": "拡張新字体", "yomi": "かくちょう しんじたい", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Extended shinjitai", "tags": []}
+
+# fictional? no dates
+{"kaki": "亜馬尻 菊の助", "yomi": "あばしり きくのすけ", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:The Abashiri Family", "tags": ["fem"]}
+
+{"kaki": "艦隊これくしょん", "yomi": "かんたい これくしょん", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Kantai Collection (TV series)", "tags": ["fem"]}
+
+{"kaki": "楽しんご", "yomi": "たの しんご", "authenticity": "real", "lifetime": {"birth_year": 1979, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Shingo Tano", "tags": ["masc"]}
+
+# vvv
+{"kaki": "太田正典", "yomi": "ōた まさのり", "authenticity": "real", "lifetime": {"birth_year": 1961, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Masamune Shirow", "tags": ["masc"]}
+ -> error in kana
+
+Minoru_Yamasaki -> no gender
+
+# A distinct lack of Chinese names which may be useful. Maybe in JA wikipedia?
+
 ### TODO
+
+ - Person dedupe. In particular, where birth_year is the same.
+
+ - Remove subreadings
 
  - Possibly having a single type field (surname/given/male/female/unclass) like jmnedict
    is easier than having two fields, as surname + gender makes no sense anyway
    Then we can remove tags?
    Then we can output a single row for each name type, which simplifies processing later.
 
- - Database is 50MB. Problem?
+ - Database is 50MB. Problem? How does it compare to gzipped json? We could build the
+   database at startup.
+
  - Consider a way to mapping names back to sources.
-
-## JP wikipedia
-
-{"kaki": "太田正典", "yomi": "ōた まさのり", "authenticity": "real", "lifetime": {"birth_year": 1961, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Masamune Shirow", "tags": ["masc"]}
- -> error in kana
-
-Minoru_Yamasaki -> no gender
 
 ## Later todo
 

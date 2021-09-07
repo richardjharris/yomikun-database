@@ -8,5 +8,7 @@ __pycache__
 *.jsonl
 data/*.json.gz
 data/*.xml.bz2
+data/enwiki-nihongo-articles.gz
+data/jawiki-articles.gz
 *.sqlite
 tmp/
