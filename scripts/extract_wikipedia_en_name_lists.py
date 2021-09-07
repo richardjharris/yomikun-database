@@ -28,7 +28,7 @@ for category in categories:
     while True:
         result = site.get('query',
                           list='categorymembers',
-                          cmtitle='Category:Japanese masculine given names',
+                          cmtitle='Category:' + category,
                           cmlimit=500,
                           cmcontinue=continue_token,
                           )
@@ -41,7 +41,7 @@ for category in categories:
             # Strip parens
             title = regex.sub(r'\s*\(.*?\)$', '', title)
             if len(title.split()) > 1:
-                logging.warn(f'Skipping multi-word name "{title}"')
+                logging.warn(f"Skipping multi-word name '{title}'")
                 continue
 
             names[pageid] = title
