@@ -43,5 +43,8 @@ else:
     for line in sys.stdin:
         data = json.loads(line)
         result = parse_wikipedia_article(data['title'], data['text'])
-        if result.has_name():
+        # Require a lifetime, as results without birth/death years have too many false positives.
+        # Examples: 立命館大学, 名探偵コナン, 天上天下, 拡張新字体, 艦隊これくしょん
+        # We could also use the fact we didn't split the name to reject.
+        if result.has_name() and result.lifetime:
             print(result.to_jsonl())

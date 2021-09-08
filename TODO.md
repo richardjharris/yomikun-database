@@ -1,32 +1,9 @@
-### Gender reshuffle
-
-Instead of (mei/sei) + (female/unknown) etc. we should have one field, identically to
-edict. This allows us to tally up male/female sightings differently. Possibly the
-veracity should also be a field.
-
- - OTOH we have many ungendered sightings. we also have gender data like 'this name is male'
-   not sure how to handle that...
-
 ### EN Wikipedia
 
-Some nonsense stuff in here:
-{"kaki": "立命館大学", "yomi": "''りつめいかん だいがく''", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Ritsumeikan University", "tags": []}
-
-Lack of birth/death year may be enough to rule out stuff.
-
-{"kaki": "大城 ガクト", "yomi": "ōしろ がくと", "authenticity": "real", "lifetime": {"birth_year": 1973, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Gackt", "tags": ["masc"]}
-
-{"kaki": "名探偵コナン", "yomi": "めいたんてい こなん", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Case Closed", "tags": ["masc"]}
-
-{"kaki": "横山 ノック", "yomi": "よこやま のっく", "authenticity": "real", "lifetime": {"birth_year": 1932, "death_year": 2007}, "subreadings": [], "source": "wikipedia_en:Knock Yokoyama", "tags": ["masc"]}
-
-{"kaki": "天上天下", "yomi": "てんじょう てんげ", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Tenjho Tenge", "tags": ["masc"]}
-
+# Fictional but we should include? Possibly.
 {"kaki": "不知火 舞", "yomi": "しらぬい まい", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Mai Shiranui", "tags": ["fem"]}
 
-{"kaki": "三原ミツカズ", "yomi": "''みはら みつかず''", "authenticity": "real", "lifetime": {"birth_year": 1970, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Mitsukazu Mihara", "tags": ["fem"]}
-
-# rare case where we did not split
+# rare case where we did not split. see yomi ''
 {"kaki": "玉椿憲太郎", "yomi": "''たまつばき けんたろう''", "authenticity": "real", "lifetime": {"birth_year": 1883, "death_year": 1928}, "subreadings": [], "source": "wikipedia_en:Tamatsubaki Kentarō", "tags": ["masc"]}
 
 # not a name
@@ -44,6 +21,15 @@ Lack of birth/death year may be enough to rule out stuff.
  -> error in kana
 
 Minoru_Yamasaki -> no gender
+
+### Gender reshuffle
+
+Instead of (mei/sei) + (female/unknown) etc. we should have one field, identically to
+edict. This allows us to tally up male/female sightings differently. Possibly the
+veracity should also be a field.
+
+ - OTOH we have many ungendered sightings. we also have gender data like 'this name is male'
+   not sure how to handle that...
 
 # A distinct lack of Chinese names which may be useful. Maybe in JA wikipedia?
 

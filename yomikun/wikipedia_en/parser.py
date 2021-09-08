@@ -31,20 +31,14 @@ from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
 from yomikun.utils.split import split_kanji_name
 from yomikun.utils.romaji import romaji_to_hiragana
 
-ROMAJI = r"[A-Za-zŌōā']"
-ROMAJI_NAME = ROMAJI + r'+\s+' + ROMAJI + '+'
-
-NIHONGO_TEMPLATE_PAT = r'\{\{' + \
-    fr"[Nn]ihongo\|'''{ROMAJI_NAME}'''\|({name_pat})\|({ROMAJI_NAME})\|(.*?)" + \
-    r'\}\}(.{1,5000})'
-
-CATEGORY_PAT = r'\[\[Category:(.*?)\]\]'
-
 
 class Gender(enum.Enum):
     unknown = 1
     male = 2
     female = 3
+
+
+CATEGORY_PAT = r'\[\[Category:(.*?)\]\]'
 
 
 def get_categories(content: str) -> list[str]:
@@ -54,25 +48,39 @@ def get_categories(content: str) -> list[str]:
     return regex.findall(CATEGORY_PAT, content)
 
 
+ROMAJI = r"[A-Za-zŌōā']"
+ROMAJI_NAME = ROMAJI + r'+\s+' + ROMAJI + '+'
+
+NIHONGO_TEMPLATE_PAT = r'\{\{' + \
+    fr"[Nn]ihongo\|'''{ROMAJI_NAME}'''\|({name_pat})\|({ROMAJI_NAME})\|(.*?)" + \
+    r'\}\}(.{1,5000})'
+
+
 def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData:
     """
     Parse en.wikipedia article for names/readings and return the primary one.
     """
     if m := regex.search(NIHONGO_TEMPLATE_PAT, content, regex.S):
         kanji, romaji, template_extra, rest_of_line = m.groups()
-        kana = romaji_to_hiragana(romaji)
+        kana = romaji_to_hiragana(romaji, kanji=kanji)
 
         kanji = split_kanji_name(kanji, kana)
 
         namedata = NameData(kaki=kanji, yomi=kana)
         gender = Gender.unknown
 
+        print(content)
+        print(regex.search(r"\b[Bb]orn.*\p{Han}", content))
+
         if regex.search(r'\bfictional\b', rest_of_line):
             namedata.authenticity = NameAuthenticity.FICTIONAL
-        elif m := regex.search(r"born\s*(?:''')?" + NIHONGO_TEMPLATE_PAT, content, regex.S, pos=m.end()):
+        elif regex.search(r"\b[Bb]orn\s*(?:''')?" + NIHONGO_TEMPLATE_PAT, content, regex.S, pos=m.end()):
             namedata.authenticity = NameAuthenticity.PSEUDO
             # TODO
-            pass
+        elif regex.search(r"\b[Bb]orn\s+'''", content):
+            # e.g. Knock Yokoyama: Born '''Isamu Yamada''' (山田勇 ''Yamada Isamu'')
+            # Born\s*\p{Han} won't work due to FP: "born on July 14, 1986, in [[Uozu, Toyama]].<ref>{{cite web|url=https://www.shogi.or.jp/player/pro/267.html|script-title=ja:棋士データベース(...)"
+            namedata.authenticity = NameAuthenticity.PSEUDO
 
         # Extract data from categories
         categories = get_categories(content)
@@ -157,3 +165,27 @@ def test_nya_romaji():
         tags=['masc'],
         source='wikipedia_en:Junya Kato',
     ), 'should not convert to じゅにゃ'
+
+
+def test_knock():
+    content = """
+{{nihongo|'''Knock Yokoyama'''|横山 ノック|Yokoyama Nokku|January 30, 1932 – May 3, 2007}} was a [[Japan]]ese [[politician]] and [[comedian]].
+
+Born '''Isamu Yamada''' (山田勇 ''Yamada Isamu'') in [[Kobe]], he adopted his current stage name while directing the ''Manga Trio'' [[manzai]] troupe from 1959 to 1968. Following his comedy years, he went into the construction industry and served as a director at several major construction firms in the [[Kansai]] region.
+
+He became governor of [[Osaka prefecture]] in 1995, running as an independent and joining the [[Liberal Democratic Party (Japan)|Liberal Democratic Party]] (LDP) after his election. He enjoyed great popularity as governor, mostly due to his existing fame as a comedian.
+
+In 2000, a 21-year-old campaign volunteer accused Yokoyama of [[sexual harassment]], claiming that the governor groped her for 30 minutes in the back of a campaign truck. Yokoyama denied the charges, but the Osaka District Court found him liable for ¥11 million in damages, following a highly publicized trial in which the plaintiff testified from behind an opaque screen to avoid revealing her identity. Following the judgment, Yokoyama resigned: he was replaced by a female LDP bureaucrat, [[Fusae Ohta]].
+[[Category:1932 births]]
+[[Category:2007 deaths]]
+""".strip()
+    result = parse_wikipedia_article('Knock Yokoyama', content)
+    # We don't expect Isamu Yamada to be extracted, but we do want to mark it as pseudo at least
+    assert result == NameData(
+        kaki='横山 ノック',
+        yomi='よこやま のっく',
+        lifetime=Lifetime(1932, 2007),
+        authenticity=NameAuthenticity.PSEUDO,
+        tags=['masc'],
+        source='wikipedia_en:Knock Yokoyama',
+    )
