@@ -69,9 +69,6 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
         namedata = NameData(kaki=kanji, yomi=kana)
         gender = Gender.unknown
 
-        print(content)
-        print(regex.search(r"\b[Bb]orn.*\p{Han}", content))
-
         if regex.search(r'\bfictional\b', rest_of_line):
             namedata.authenticity = NameAuthenticity.FICTIONAL
         elif regex.search(r"\b[Bb]orn\s*(?:''')?" + NIHONGO_TEMPLATE_PAT, content, regex.S, pos=m.end()):
