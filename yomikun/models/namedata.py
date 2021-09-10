@@ -51,7 +51,8 @@ class NameData():
         self.subreadings.append(subreading)
 
     def add_tag(self, tag: str):
-        self.tags.append(tag)
+        if tag not in self.tags:
+            self.tags.append(tag)
 
     def has_name(self) -> bool:
         """
@@ -117,6 +118,7 @@ class NameData():
 
         merged.lifetime.merge_in(b.lifetime)
         merged.subreadings += b.subreadings
+        merged.tags = list(set(merged.tags).union(b.tags))
 
         return merged
 

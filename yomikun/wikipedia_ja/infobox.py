@@ -110,6 +110,17 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
         if (key := box.first_set('没年月日', '没年', '死没', 'death_date')) and not lifetime.death_year:
             lifetime.death_year = extract_year(box[key])
 
+        if key := box.first_set('性別'):
+            value = clean(box[key])
+            if value == '女性':
+                result.add_tag("fem")
+            elif value == '男性':
+                result.add_tag("masc")
+
+        if key := box.first_set('職業'):
+            if regex.search('女優', box[key]):
+                result.add_tag("fem")
+
     result.clean()
     return result
 

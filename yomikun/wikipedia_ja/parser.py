@@ -1,3 +1,6 @@
+"""
+Parser for Japanese Wikipedia articles.
+"""
 from __future__ import annotations
 import logging
 
@@ -10,6 +13,8 @@ from yomikun.wikipedia_ja.infobox import extract_infoboxes, parse_infoboxes
 from yomikun.wikipedia_ja.honmyo import find_honmyo
 from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
 from yomikun.utils.split import split_kanji_name
+
+from yomikun.wikipedia_en.parser import get_categories
 
 
 def parse_article_text(title: str, content: str) -> NameData:
@@ -77,11 +82,37 @@ def parse_article_text(title: str, content: str) -> NameData:
                     1000 <= birth <= 2500:
                 reading.lifetime = Lifetime(birth, death)
 
+    # Look for gender declaration in the opening sentence.
+    # TODO maybe change to extra_raw
+    if regex.search(r'\[\[女性\]\]。', excerpt):
+        reading.add_tag('fem')
+    elif regex.search(r'\[\[男性\]\]。', excerpt):
+        reading.add_tag('masc')
+
+    # Look for 'fictional character' declarations
     if regex.search(r'架空', extra_raw):
         reading.authenticity = NameAuthenticity.FICTIONAL
     elif honmyo:
         reading.add_subreading(honmyo)
         reading.authenticity = NameAuthenticity.PSEUDO
+
+    # Check categories too
+    for category in get_categories(content):
+        # A blanket search for '女性' might cause false positives
+        if regex.search(r'(日本の女性|日本の女子|女性騎手|女優$)', category):
+            reading.add_tag('fem')
+        elif regex.search(r'(日本の男性)', category):
+            reading.add_tag('masc')
+
+        if regex.search(r'架空の', category):
+            reading.authenticity = NameAuthenticity.FICTIONAL
+
+        if m := regex.search(r'^(\d+)年生$', category):
+            reading.lifetime.birth_year = int(m[1])
+        elif m := regex.search(r'^(\d+)年没$', category):
+            reading.lifetime.death_year = int(m[1])
+        elif category == '存命人物':
+            reading.lifetime.death_year = None
 
     reading.clean()
     return reading
