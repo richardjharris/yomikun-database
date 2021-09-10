@@ -6,6 +6,8 @@
    complicates matters a bit? But allows us to see count of sightings.
    Perhaps attaching gender to Person is easier?
 
+ - Fix ja tests, which now need genders added.
+
  - Person de-duping / merging birth/death data
  - Remove subreadings system, replace with list[NameData]
    - simplifies import
