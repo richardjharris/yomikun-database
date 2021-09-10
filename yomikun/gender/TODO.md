@@ -1,3 +1,30 @@
+## Ideas
+
+ - xref wikipedia name lists (male/female/unisex) with our data,
+   is it representatative? probably male
+   bias - what gender split is the wikipedia extracted data?
+
+    % female / f+m
+    wikidata: 34687/103443  -> 25%
+    ..nokana:                  30%
+    wiki-en                    26%
+    jmnedict is >90% female, which seems weird. Perhaps the assumption
+    is male?
+
+    wikipedia_en makoto: ~85% male
+    wikidata: >92% male
+
+    akira: 957/1000 wikidata are male, 114/120 wikipedia EN are male.
+
+    However the split is good for kanji: 誠 vs. 真琴 etc provides a reasonable
+    guess. Interestingly 真恋人 is missing from namegen, but we have it.
+
+ - try extracting gender info from japanese wikipedia again. e.g. extract
+   女 (exclusing 帰国子女).
+
+ - try wikidata, which has gendered info?
+   -> done.
+
 Goal: given a name (written/reading) return the rough % chance of it being male.
 Data sources:
  - EN wikipedia has pages for male, female and unisex names, based on reading only.

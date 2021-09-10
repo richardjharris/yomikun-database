@@ -22,6 +22,7 @@ def romaji_to_hiragana(romaji: str, kanji: str | None = None):
     romaji = romaji.replace('ō', 'ou')
     romaji = romaji.replace('ā', 'aa')
     romaji = romaji.replace('ē', 'ee')
+    romaji = romaji.replace('ū', 'uu')
     return romkan.to_hiragana(romaji)
 
 

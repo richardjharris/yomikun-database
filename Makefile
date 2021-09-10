@@ -14,7 +14,8 @@ endif
 
 .PHONY: all clean test
 
-JSONLFILES = koujien.jsonl daijisen.jsonl pdd.jsonl wikipedia_ja.jsonl jmnedict.jsonl myoji-yurai.jsonl wikipedia_en.jsonl
+JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana
+JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
 names.sqlite: ${JSONLFILES}
 	cat $^ | python scripts/load_data.py $@
@@ -35,23 +36,29 @@ data/enwiki-nihongo-articles.gz: |data/enwiki.xml.bz2
 data/jawiki-articles.gz: |data/jawiki.xml.bz2
 	bzcat data/jawiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl | pigz -9f > $@
 
-wikipedia_en.jsonl: data/enwiki-nihongo-articles.gz
+jsonl/wikipedia_en.jsonl: data/enwiki-nihongo-articles.gz
 	pzcat data/enwiki-nihongo-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
 
-wikipedia_ja.jsonl: data/jawiki-articles.gz
+jsonl/wikipedia_ja.jsonl: data/jawiki-articles.gz
 	pzcat data/jawiki-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_ja.py > $@
 
-jmnedict.jsonl:
+jsonl/wikidata.jsonl: data/wikidata.jsonl.gz
+	pzcat $< | ${PARALLEL} python scripts/parse_wikidata.py > $@ 2>/dev/null
+
+jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
+	pzcat $< | ${PARALELL} python scripts/parse_wikidata_nokana.py > $@
+
+jsonl/jmnedict.jsonl:
 	python scripts/parse_jmnedict.py > $@
 
-myoji-yurai.jsonl: data/myoji-yurai-readings.csv
+jsonl/myoji-yurai.jsonl: data/myoji-yurai-readings.csv
 	python scripts/parse_myoji_yurai.py < $^ > $@
 
-koujien.jsonl: data/koujien.json.gz
+jsonl/koujien.jsonl: data/koujien.json.gz
 	zcat $< | python scripts/parse_koujien.py > $@
 
-daijisen.jsonl: data/daijisen.json.gz
+jsonl/daijisen.jsonl: data/daijisen.json.gz
 	zcat $< | python scripts/parse_daijisen.py > $@
 
-pdd.jsonl: data/pdd.json.gz
+jsonl/pdd.jsonl: data/pdd.json.gz
 	zcat $< | python scripts/parse_pdd.py > $@

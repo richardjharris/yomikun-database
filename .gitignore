@@ -1,3 +1,4 @@
+# Standard Python ignores
 .pytest_cache
 __pycache__
 *.sw[op]
@@ -5,10 +6,18 @@ __pycache__
 *.pyc
 /*.egg-info
 
+# Build products
 *.jsonl
-data/*.json.gz
-data/*.xml.bz2
+jsonl/
+tmp/
+*.sqlite
 data/enwiki-nihongo-articles.gz
 data/jawiki-articles.gz
-*.sqlite
-tmp/
+
+# wikidumps
+data/*.xml.bz2
+
+# dictionaries converted to json
+data/pdd.json.gz
+data/koujien.json.gz
+data/daijisen.json.gz

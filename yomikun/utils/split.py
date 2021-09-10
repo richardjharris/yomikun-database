@@ -74,6 +74,23 @@ def find_split_point(sei: str, mei: str, kanji: str) -> int | None:
             if sei in kana_forms:
                 return chars
 
+    # Try to match forenames instead
+    for chars in reversed(range(1, len(kanji))):
+        kanji_suffix = kanji[chars:]
+        result = jam.lookup(
+            query=kanji_suffix, strict_lookup=True, lookup_chars=False)
+
+        for name in result.names:
+            if not any(has_sense(name.senses, x) for x in ('masc', 'fem', 'given')):
+                continue
+
+            # Gotcha: basic string comparison won't work, must
+            # use text attribute
+            kana_forms = [kf.text for kf in name.kana_forms]
+
+            if mei in kana_forms:
+                return chars
+
     return None
 
 
@@ -107,6 +124,9 @@ tests = [
     # Chinese? Can identify these via 中国 after the year.
     # ("き‐ゆうこう【帰有光】", 1),
     # ("そ‐じゅん【蘇洵】", 1),
+
+    # This requires a forename lookup
+    ("あびる‐えいさぶろう【阿比類鋭三郎】", 3),
 ]
 
 

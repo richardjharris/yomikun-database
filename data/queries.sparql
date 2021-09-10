@@ -1,0 +1,38 @@
+# Get Japanese names from Wikidata. We fetch name, nationality, gender, birth/death year
+SELECT DISTINCT
+  ?item ?itemLabel ?itemDescription ?kana ?genderLabel ?dob ?dod ?countryLabel ?nativeName ?ethnicGroupLabel ?birthName ?birthNameKana
+WHERE
+{
+  ?item wdt:P31 wd:Q5 .    # find humans
+  ?item wdt:P1814 ?kana .  # which have 'name in kana'
+  OPTIONAL {?item wdt:P21 ?gender .}  # also fetch gender
+  OPTIONAL {?item wdt:P569 ?dob .}
+  OPTIONAL {?item wdt:P570 ?dod .}
+  OPTIONAL {?item wdt:P27 ?country .}
+  OPTIONAL {?item wdt:P1559 ?nativeName .}
+  OPTIONAL {?item wdt:P172 ?ethnicGroup .}
+  OPTIONAL {
+    ?item p:P1477 ?birthNameSt .
+    ?birthNameSt ps:P1477 ?birthName .
+    OPTIONAL {
+     ?birthNameSt pq:P1814 ?birthNameKana .
+    }
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "ja,en". }
+}
+
+--
+
+SELECT ?item ?itemLabel ?itemDescription ?nativeName ?genderLabel ?dob ?dod ?countryLabel ?ethnicGroupLabel WHERE {
+    ?item wdt:P31 wd:Q5 .    # find humans
+    ?item wdt:P27 wd:Q17 .   # who are Japanese
+    OPTIONAL {?item wdt:P21 ?gender .}  # also fetch gender
+    OPTIONAL {?item wdt:P569 ?dob .}
+    OPTIONAL {?item wdt:P570 ?dod .}
+    OPTIONAL {?item wdt:P27 ?country .}
+    OPTIONAL {?item wdt:P1559 ?nativeName .}
+    OPTIONAL {?item wdt:P172 ?ethnicGroup .}
+    ?item wdt:P1559 ?nativeName
+    FILTER NOT EXISTS {?item wdt:P1814 ?kana }  # which have 'name in kana'  
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
