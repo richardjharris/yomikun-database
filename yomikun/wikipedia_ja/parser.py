@@ -94,7 +94,6 @@ def parse_article_text(title: str, content: str) -> NameData:
     #      [[奈良女子大学]][[名誉教授]]。
     #      長女は女優の[[長澤まさみ]]<ref>。
     #      向井 万起男（むかい まきお、1947年（昭和22年）6月24日 - ）は、日本の医学者（医学博士）、エッセイスト。専門は病理学。日本人初の女性飛行士、向井千秋の夫として知られる。
-    fem = False
     if (m := regex.search(r'(女学校出身|日本の女性|、女優|、女性|女性\d{4}年)', extra)) and \
             not regex.search(r'教授', extra_raw):
         reading.add_tag('fem')
