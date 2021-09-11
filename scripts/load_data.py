@@ -19,10 +19,6 @@ aggregator = yomikun.loader.Aggregator()
 for line in sys.stdin:
     data = json.loads(line)
 
-    # Remove orig, added by jmnedict parser
-    if 'orig' in data:
-        del data['orig']
-
     aggregator.ingest(NameData.from_dict(data))
 
 loader = yomikun.loader.Loader(dbpath)

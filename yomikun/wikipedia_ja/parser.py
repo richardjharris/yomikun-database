@@ -84,10 +84,20 @@ def parse_article_text(title: str, content: str) -> NameData:
 
     # Look for gender declaration in the opening sentence.
     # TODO maybe change to extra_raw
-    if regex.search(r'\[\[女性\]\]。', excerpt):
+    if regex.search(r'女性\s*。', extra):
         reading.add_tag('fem')
-    elif regex.search(r'\[\[男性\]\]。', excerpt):
+    elif regex.search(r'男性\s*。', extra):
         reading.add_tag('masc')
+
+    # See 松本麻実, 長江麻美, 相沢真美,  山口真未, 華耀きらり
+    # FPs: [[多摩美術大学]][[教授]]。妻は女優の[[とよた真帆]]
+    #      [[奈良女子大学]][[名誉教授]]。
+    #      長女は女優の[[長澤まさみ]]<ref>。
+    #      向井 万起男（むかい まきお、1947年（昭和22年）6月24日 - ）は、日本の医学者（医学博士）、エッセイスト。専門は病理学。日本人初の女性飛行士、向井千秋の夫として知られる。
+    fem = False
+    if (m := regex.search(r'(女学校出身|日本の女性|、女優|、女性|女性\d{4}年)', extra)) and \
+            not regex.search(r'教授', extra_raw):
+        reading.add_tag('fem')
 
     # Look for 'fictional character' declarations
     if regex.search(r'架空', extra_raw):
@@ -99,8 +109,11 @@ def parse_article_text(title: str, content: str) -> NameData:
     # Check categories too
     for category in get_categories(content):
         # A blanket search for '女性' might cause false positives
-        if regex.search(r'(日本の女性|日本の女子|女性騎手|女優$)', category):
-            reading.add_tag('fem')
+        # Even 日本の女子 can be an FP e.g. if person is a coach
+        if regex.search(r'(ソプラノ歌手|日本の女性|日本の女子|女性(騎手|競輪選手)|女優$|中国の女性)', category) or \
+                category in ('グラビアアイドル', 'レースクイーン', '女院'):
+            if category != '日本の女子サッカー':
+                reading.add_tag('fem')
         elif regex.search(r'(日本の男性)', category):
             reading.add_tag('masc')
 

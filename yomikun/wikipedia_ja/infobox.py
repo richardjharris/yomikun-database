@@ -112,14 +112,17 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
 
         if key := box.first_set('性別'):
             value = clean(box[key])
-            if value == '女性':
+            if value == '女性' or value == '女':
                 result.add_tag("fem")
-            elif value == '男性':
+            elif value == '男性' or value == '男':
                 result.add_tag("masc")
 
         if key := box.first_set('職業'):
-            if regex.search('女優', box[key]):
+            if regex.search('女優', clean(box[key])):
                 result.add_tag("fem")
+
+        if key := box.first_set('フリーサイズ', 'カップサイズ'):
+            result.add_tag('fem')
 
     result.clean()
     return result

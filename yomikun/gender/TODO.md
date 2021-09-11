@@ -1,23 +1,10 @@
-## Ideas
-
- - For each first name in wikipedia_ja (for example) try to compute
-   the gender.
-
-    Resources: data/name_lists.json (reading)
-               average gender for kana reading
-               average gender for kanji reading (*)
-               guess based on kanji inside
-               guess based on name length (4+ is usually male)
-               manual overrides
-
-    For cross checking: baby names site, namegen, JA wikipedia pages
-    
-    We can then compute a name dictionary which can be looked up
-    independently of everything else.
-
-    Where the results differ from reality, we tweak the algorithm.
-
 ### Notes
+
+  https://ja.wikipedia.org/wiki/%E9%95%B7%E6%BE%A4%E5%92%8C%E6%98%8E was marked
+  as female, so maybe too many FPs. 長澤和明
+  otoh we only got 1 fem result so we can determine FP easily here.
+
+  Script works, we just need to make a judgement.
 
  * wikidata/wikipedia data is heavily male biased, about 75% male
    on average (probably due to politicans + sports + historical
@@ -33,6 +20,10 @@
  * try extracting gender info from japanese wikipedia again. e.g. extract
    女 (exclusing 帰国子女). This would help to identify more female names,
    as women are marked more often than men.
+     - done: 29,356 female; 8,642 male (out of 218,418 entries)
+
+    - wikipedia_ja:小出真朱 should not be marked as real.
+    -  ditto https://ja.wikipedia.org/wiki/%E6%A2%93%E7%9C%9F%E5%BC%93
 
 ### JA wikipedia pages
 

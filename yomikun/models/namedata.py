@@ -99,6 +99,8 @@ class NameData():
         if 'subreadings' in data:
             data['subreadings'] = map(
                 lambda x: NameData.from_dict(x), data['subreadings'])
+        if 'orig' in data:
+            del data['orig']
         return NameData(**data)
 
     @classmethod

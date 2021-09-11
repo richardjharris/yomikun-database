@@ -18,21 +18,30 @@ class Aggregator():
         self._people = []
         self._names = {}
 
-    def ingest(self, data: NameData):
-        # Prepare data for ingestion
-
-        if not data.tags:
-            # Assume full name
-            data.add_tag('person')
-
+    @staticmethod
+    def copy_data_to_subreadings(data: NameData):
+        """
+        Copy information in the main NameData reading to its subreadings
+        if applicable.
+        """
         for subreading in data.subreadings:
-            # Copy over the lifetime / source to the real actor
+            # Copy over the lifetime / gender / source to the real actor
             if data.authenticity == NameAuthenticity.PSEUDO \
                     and subreading.authenticity == NameAuthenticity.REAL:
                 if data.lifetime and not subreading.lifetime:
                     subreading.lifetime = copy.copy(data.lifetime)
                 if data.source and not subreading.source:
                     subreading.source = data.source
+                if data.tags and not subreading.tags:
+                    subreading.tags = data.tags
+
+    def ingest(self, data: NameData):
+        # Prepare data for ingestion
+        self.copy_data_to_subreadings(data)
+
+        if not data.tags:
+            # Assume full name
+            data.add_tag('person')
 
         if 'person' in data.tags:
             self.add_person(data)
@@ -50,8 +59,10 @@ class Aggregator():
                 self._names[part].record_year(data.lifetime.birth_year)
                 self._names[part].record_year(data.lifetime.death_year)
 
-            # Don't record non-person jmnedict entries as they are inaccurate.
-            if data.source != 'jmnedict' or 'person' in data.tags:
+            if data.source == 'jmnedict' and 'person' not in data.tags:
+                # Don't record non-person jmnedict entries as they are inaccurate.
+                pass
+            else:
                 self._names[part].record_sighting(data.authenticity)
 
             # NOTE: if we see >0 sightings of both gender we mark the
@@ -78,11 +89,12 @@ class Aggregator():
                         )
         self._people.append(person)
 
-    def extract_name_parts(self, data: NameData) -> list[tuple[NamePart, Gender | None]]:
+    @staticmethod
+    def extract_name_parts(data: NameData) -> list[tuple[NamePart, Gender | None]]:
         parts = []
         if 'person' in data.tags:
             # Rarely, is tagged [person, fem] to indicate the person's gender.
-            gender = self.gender_from_tags(data.tags)
+            gender = Aggregator.gender_from_tags(data.tags)
             kakis = data.kaki.split()
             yomis = data.yomi.split()
             if len(kakis) == 2 and len(yomis) == 2:
@@ -107,7 +119,7 @@ class Aggregator():
                 parts.append((sei, None))
 
             if set(data.tags).intersection({'masc', 'fem', 'given'}):
-                gender = self.gender_from_tags(data.tags)
+                gender = Aggregator.gender_from_tags(data.tags)
                 mei = NamePart(kaki=data.kaki, yomi=data.yomi,
                                position=NamePosition.mei)
                 parts.append((mei, gender))

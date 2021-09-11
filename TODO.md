@@ -1,6 +1,7 @@
 ## TODO List
 
- - Gender stuff (see yomikun/gender/TODO.md)
+ - Gender stats + more detailed information
+
  - EN wikipedia FPs etc. (below)
  - Could log names as given/male/female/surname/unclas but this
    complicates matters a bit? But allows us to see count of sightings.
