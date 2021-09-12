@@ -113,7 +113,7 @@ def parse_article_text(title: str, content: str) -> NameData:
                 category in ('グラビアアイドル', 'レースクイーン', '女院'):
             if category != '日本の女子サッカー':
                 reading.add_tag('fem')
-        elif regex.search(r'(日本の男性)', category):
+        elif regex.search(r'(日本の男性|日本の男優)', category):
             reading.add_tag('masc')
 
         if regex.search(r'架空の', category):
