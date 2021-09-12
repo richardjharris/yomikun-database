@@ -17,6 +17,11 @@ For improving our data:
 
 # Ideas
 
+ - Improve male tagging - 男優 etc. Categories should override
+   anything else.
+
+ - Using tagged data find the most common kanji for male/female names.
+
  - For each first name in wikipedia_ja (for example) try to compute
    the gender.
 
