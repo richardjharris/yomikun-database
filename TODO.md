@@ -1,17 +1,19 @@
 ## TODO List
 
  - Gender stats + more detailed information
+  - going by last kana, last kanji or overall char score
+
+ - (^) Person de-duping / merging birth/death data
+  - should be done before computing gender stats
 
  - EN wikipedia FPs etc. (below)
- - Could log names as given/male/female/surname/unclas but this
-   complicates matters a bit? But allows us to see count of sightings.
-   Perhaps attaching gender to Person is easier?
 
  - Fix ja tests, which now need genders added.
 
- - Person de-duping / merging birth/death data
  - Remove subreadings system, replace with list[NameData]
    - simplifies import
+
+ - Force 'person' tag instead of adding it later.
 
 ### Later stuff
 
@@ -20,13 +22,27 @@
  - Flutter app
  - MeCab, etc.
 
+## From book
+
+上村には「かみむら」と「うえむら」の読みがある。
+山崎は「やまざき」と読むのが普通なので、「やまさき」と読んで欲しいと思う人は「ヤマザキではなくヤマサキです」といった注意書きを付けておいたほうがいいという。
+「太田」ではなく「大田」という名前のヒットは、「太い「太田」ではなく、大きい「大田」です」という？
+
 ### EN Wikipedia
 
 # Fictional but we should include? Possibly.
 {"kaki": "不知火 舞", "yomi": "しらぬい まい", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Mai Shiranui", "tags": ["fem"]}
+ - opening paragraph  [[fictional character]]
+ - several categories begin with Fictional
 
 # rare case where we did not split. see yomi ''
 {"kaki": "玉椿憲太郎", "yomi": "''たまつばき けんたろう''", "authenticity": "real", "lifetime": {"birth_year": 1883, "death_year": 1928}, "subreadings": [], "source": "wikipedia_en:Tamatsubaki Kentarō", "tags": ["masc"]}
+
+   {{nihongo|'''Tamatsubaki Kentarō'''|玉椿憲太郎|''Tamatsubaki Kentarō''|10 November 1883 – 19 September 1928}}
+    - infobox has birth_name = Morino Kenjiro
+
+# similarly
+{"kaki": "夏目 房之介", "yomi": "''なつめ ふさのすけ''", "authenticity": "real", "lifetime": {"birth_year": 1950, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Fusanosuke Natsume", "tags": ["masc"]}
 
 # not a name
 {"kaki": "拡張新字体", "yomi": "かくちょう しんじたい", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Extended shinjitai", "tags": []}

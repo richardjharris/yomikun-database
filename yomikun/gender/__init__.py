@@ -20,6 +20,10 @@ For improving our data:
  - Improve male tagging - 男優 etc. Categories should override
    anything else.
 
+ - Try to remove FPs via person merging
+   房之介 appears in wikidata as female (incorrectly) and male in
+   wikipedia_en, _ja (correctly).
+
  - Using tagged data find the most common kanji for male/female names.
 
  - For each first name in wikipedia_ja (for example) try to compute
@@ -123,6 +127,7 @@ def make_gender_dict(names: Iterable[NameData], name_lists: NameLists):
             # Check against the tags
             if ListTitle.UNISEX in tags:
                 # Anything is allowed - some readings are more male than others
+                # TBD maybe check the kana counts
                 pass
             elif ListTitle.MALE in tags:
                 if perc < 0.9:
