@@ -5,6 +5,8 @@ import regex
 from mediawiki_dump.tokenizer import clean
 
 from yomikun.models import NameData, Lifetime
+from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
+from yomikun.utils.split import split_kanji_name
 
 
 @dataclass
@@ -94,20 +96,20 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
 
     for box in boxes:
         if not name_set:
-            if key := box.first_set('人名', '名前', '芸名', '氏名'):
+            if key := box.first_set('人名', '名前', '芸名', '氏名', 'name'):
                 if m := regex.search(r'^[\p{Han}]+\s+[\p{Han}\p{Hiragana}\p{Katakana}]+$', box[key]):
                     result.kaki = box[key]
                     name_set = True
 
-            if key := box.first_set('ふりがな', '各国語表記'):
+            if key := box.first_set('ふりがな', '各国語表記', 'native_name'):
                 if m := regex.search(r'^\p{Hiragana}+\s+\p{Hiragana}+$', box[key]):
                     result.yomi = box[key]
                     name_set = True
 
-        if (key := box.first_set('生年月日', '生年', '生誕', 'birth_date')) and not lifetime.birth_year:
+        if (key := box.first_set('生年月日', '生年', '生誕', 'birth_date', 'Born', 'birthdate')) and not lifetime.birth_year:
             lifetime.birth_year = extract_year(box[key])
 
-        if (key := box.first_set('没年月日', '没年', '死没', 'death_date')) and not lifetime.death_year:
+        if (key := box.first_set('没年月日', '没年', '死没', 'death_date', '失踪年月日', 'Died', 'deathdate')) and not lifetime.death_year:
             lifetime.death_year = extract_year(box[key])
 
         if key := box.first_set('性別'):
@@ -123,6 +125,14 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
 
         if key := box.first_set('フリーサイズ', 'カップサイズ'):
             result.add_tag('fem')
+
+        if key := box.first_set('本名'):
+            value = clean(box[key])
+            if m := regex.search(fr'^({name_pat})\s*{name_paren_start}({reading_pat})', value):
+                kaki, yomi = m.groups()
+                kaki = split_kanji_name(kaki, yomi)
+                subreading = NameData(kaki, yomi)
+                result.add_honmyo(subreading)
 
     result.clean()
     return result

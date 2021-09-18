@@ -29,7 +29,7 @@ def extract(data: dict, path: str):
 
 def year(date: str):
     if date:
-        return date[0:4]
+        return int(date[0:4])
     else:
         return None
 

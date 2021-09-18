@@ -22,6 +22,7 @@ TODO: Natsume Soseki
 from __future__ import annotations
 import logging
 import enum
+from yomikun.wikipedia_ja.ignore import should_ignore_name
 
 import regex
 from mediawiki_dump.tokenizer import clean
@@ -62,7 +63,8 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     """
     if m := regex.search(NIHONGO_TEMPLATE_PAT, content, regex.S):
         kanji, romaji, template_extra, rest_of_line = m.groups()
-        kana = romaji_to_hiragana(romaji, kanji=kanji)
+
+        kana = romaji_to_hiragana(clean(romaji), kanji=kanji)
 
         kanji = split_kanji_name(kanji, kana)
 
@@ -108,6 +110,20 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     else:
         # Return an empty record
         namedata = NameData()
+
+    if namedata.has_name():
+        # Exclude probable false positives.
+        # This includes cases where we could not split the name, obviously invalid
+        # names, and (for the English wikipedia only) cases where we have no birth
+        # or death year. Examples:
+        #  - 拡張新字体 (from 'Extended shinjitai' page)
+        #  - 亜馬尻 菊の助 (name from the 'Characters' section of a series page)
+        #  - 艦隊これくしょん
+        if len(namedata.kaki.split()) == 1 or should_ignore_name(namedata.kaki):
+            logging.info(
+                f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
+            # Remove all information except for source
+            namedata = NameData()
 
     if add_source:
         namedata.source = f'wikipedia_en:{title}'

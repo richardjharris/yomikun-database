@@ -1,0 +1,117 @@
+# Uses ''emphasis'' for the romaji name, needs cleaning.
+# Kanji is not split
+# TBD: this is a pseudonym, as shown by the altername name in the 'Born' section.
+name: 玉椿 憲太郎
+reading: たまつばき けんたろう
+lifetime: 1883 ~ 1928
+gender: M
+source: https://en.wikipedia.org/w/index.php?title=Tamatsubaki_Kentar%C5%8D&oldid=964410963
+---
+{{Use dmy dates|date=October 2018}}
+{{Infobox sumo wrestler
+| native_name = 玉椿憲太郎
+| name        = Tamatsubaki Kentarō
+| image       = Kentaro Tamatsubaki.jpg
+| birth_name  = Morino Kenjiro
+| birth_date  = {{birth date|df=yes|1883|11|10}}
+| birth_place = [[Toyama, Toyama]], Japan
+| death_date  = {{death date and age|df=yes|1928|9|19|1883|11|10}}
+| death_place =
+| height      = {{height|meters=1.58}}
+| weight      = {{convert|73|kg|lb|abbr=on}}
+| heya        = [[Ikazuchi stable|Ikazuchi]]
+| rank        =
+| record      = 91-82-52-34draws-17noresult
+| debut       = January, 1897
+| highestrank = Sekiwake (June, 1909)
+| retireddate = January, 1916
+| eldername   = Shiratama
+| yushos      =
+| prizes      =
+| goldstars   =
+| weburl      =
+| update      = June 2020
+}}
+{{nihongo|'''Tamatsubaki Kentarō'''|玉椿憲太郎|''Tamatsubaki Kentarō''|10 November 1883 – 19 September 1928}} was a [[sumo]] wrestler from [[Toyama City]], [[Japan]]. He was known for his techniques, which accommodated his small size. Although his height was only 158&nbsp;cm, he gave the likes of [[Hitachiyama]] and others a real challenge and was called the "[[mite]]".<ref>{{cite web|url=http://homepage2.nifty.com/awazu-go/go/book4.html|script-title=ja:甚句会と趣味の会|publisher=Tomoko Office (Go Awazu's Memorial Website)|language=Japanese|accessdate=2009-05-08}}</ref> He was the shortest wrestler in sumo history,<ref>{{cite book|author=Sharnoff, Lora|title=Grand Sumo|publisher=Weatherhill|year=1993|isbn=0-8348-0283-X|pages=225}}</ref> and also one of the lightest at 73&nbsp;kg. His highest rank was [[sekiwake]]. After retirement he was known as Shiratama-oyakata.
+
+==Top division record==
+{{sumo record box start 1875-1926 thin}}
+{{sumo record year start|1903}}
+    {{basho}}
+    {{basho|m|13|e|4|3|1<br>1d 1h}}
+  {{sumo record year end}}
+{{sumo record year start|1904}}
+    {{basho|m|9|e|6|3|1}}
+    {{basho|m|8|e|0|0|10}}
+  {{sumo record year end}}
+{{sumo record year start|1905}}
+    {{basho|m|11|e|3|0|6<br>1h}}
+    {{basho|m|4|e|1|5|1<br>1d 2h}}
+  {{sumo record year end}}
+{{sumo record year start|1906}}
+    {{basho|m|8|e|4|2|1<br>3d}}
+    {{basho|m|2|e|4|3|1<br>1d 1h}}
+  {{sumo record year end}}
+{{sumo record year start|1907}}
+    {{basho|k|1|e|3|2|1<br>5d}}
+    {{basho|k|1|e|3|2|1<br>3d 1h}}
+  {{sumo record year end}}
+{{sumo record year start|1908}}
+    {{basho|k|1|e|2|4|1<br>2d 1h}}
+    {{basho|m|2|e|5|3|2}}
+  {{sumo record year end}}
+{{sumo record year start|1909}}
+    {{basho|k|1|w|3|3|3<br>1d}}
+    {{basho|s|1|w|1|8|1<br>1d}}
+  {{sumo record year end}}
+{{sumo record year start|1910}}
+    {{basho|m|1|w|2|2<br>3d 3h}}
+    {{basho|m|1|w|4|3|1<br>1d 2h}}
+  {{sumo record year end}}
+{{sumo record year start|1911}}
+    {{basho|s|1|w|2|4|1<br>2d 1h}}
+    {{basho|m|1|w|5|3<br>1d 1h}}
+  {{sumo record year end}}
+{{sumo record year start|1912}}
+    {{basho|s|1|w|5|3<br>2d}}
+    {{basho|k|1|w|4|5<br>1d}}
+  {{sumo record year end}}
+{{sumo record year start|1913}}
+    {{basho|k|1|w|5|2|1<br>1d 1h}}
+    {{basho|k|1|e|6|3<br>1d}}
+  {{sumo record year end}}
+{{sumo record year start|1914}}
+    {{basho|s|1|e|1|4|5}}
+    {{basho|m|2|w|0|0|10}}
+  {{sumo record year end}}
+{{sumo record year start|1915}}
+    {{basho|m|7|w|3|6<br>1d}}
+    {{basho|m|11|e|3|4|3}}
+  {{sumo record year end}}
+{{sumo record year start|1916}}
+    {{basho|m|13|w|2|5<br>2d 1h}}
+  {{sumo record year end}}
+{{Sumo record box end 1890-1929}}
+
+==See also==
+*[[Glossary of sumo terms]]
+*[[List of past sumo wrestlers]]
+
+==References==
+<references/>
+
+==External links==
+* [http://sumodb.sumogames.de/Rikishi.aspx?r=3569 Tournament results]
+
+{{Authority control}}
+
+{{DEFAULTSORT:Tamatsubaki Kentaro}}
+[[Category:1883 births]]
+[[Category:1928 deaths]]
+[[Category:Japanese sumo wrestlers]]
+[[Category:People from Toyama (city)]]
+[[Category:Sumo people from Toyama Prefecture]]
+[[Category:Sekiwake]]
+
+
+{{sumo-bio-stub}}

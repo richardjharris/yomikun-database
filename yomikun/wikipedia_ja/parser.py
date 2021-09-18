@@ -3,6 +3,7 @@ Parser for Japanese Wikipedia articles.
 """
 from __future__ import annotations
 import logging
+from sys import exec_prefix
 
 import regex
 from mediawiki_dump.tokenizer import clean
@@ -31,6 +32,9 @@ def parse_article_text(title: str, content: str) -> NameData:
     # To speed things up we limit how much of the document we search.
     excerpt = content[0:10_000]
 
+    # Remove references entirely, they can appear anywhere and are not semantically useful
+    excerpt = regex.sub('<ref>(.{1,1000})</ref>', '', excerpt)
+
     # Find 'real name is ...' -type sentences.
     honmyo = find_honmyo(excerpt)
 
@@ -41,6 +45,18 @@ def parse_article_text(title: str, content: str) -> NameData:
     if m:
         kaki, yomi, extra_raw = m.groups()
         yomi = yomi.replace('、', '')
+        yomi = regex.sub(r'\s+', ' ', yomi)
+
+        # Handle names like 'みなもと の よりいえ'
+        if yomi.endswith(' の'):
+            logging.debug(
+                f'{kaki=} {yomi=} Looks like middle name? Removing and retrying...')
+            if m := regex.search(fr'^({reading_pat})', yomi[:-2] + extra_raw):
+                yomi = m[1]
+                logging.debug(f'New yomi is {yomi}')
+            else:
+                logging.debug(f'Did not match after removing の, leaving as is')
+
         kaki = split_kanji_name(kaki, yomi)
         reading = NameData(kaki, yomi)
         logging.info(f"Got headline reading {reading}")
@@ -63,7 +79,8 @@ def parse_article_text(title: str, content: str) -> NameData:
     extra = clean(extra_raw)
     extra = regex.sub(r'[,、]', '', extra).strip()
     # Don't match 2 digit years as these could be confused for Showa, Heisei etc
-    if m := regex.search(r'(\d{3,4})年', extra):
+    # Avoid '? - 1984年' type constructs
+    if m := regex.search(r'^[^-]*?(\d{3,4})年', extra):
         reading.lifetime.birth_year = int(m[1])
 
         if m := regex.search(r'- (\d{3,4})年', extra):
@@ -104,7 +121,27 @@ def parse_article_text(title: str, content: str) -> NameData:
     elif honmyo:
         reading.add_subreading(honmyo)
         reading.authenticity = NameAuthenticity.PSEUDO
+    else:
+        # Double-check that there isn't an unparsed 本名 here
+        # FP: '本名同じ', '「巧」が姓、「舟」が名前である。ペンネームのようだが本名[3]。通称は「タクシュー」[4]。'
+        if m := regex.search(r'本名(.{0,10})', extra_raw):
+            trailing = m[1]
+            logging.debug(f'Unparsed 本名 found (following text: [{trailing}])')
+            if regex.search(r'(同じ|。)', trailing):
+                logging.debug('Ignoring (looks like FP)')
+            else:
+                logging.debug('Marking PSEUDO')
+                reading.authenticity = NameAuthenticity.PSEUDO
 
+    reading.clean()
+    return reading
+
+
+def add_category_data(reading: NameData, content: str):
+    """
+    Extract categories from `content` and update `reading` in place
+    with the parsed data (lifetime, gender, fictional character etc.)
+    """
     # Check categories too
     for category in get_categories(content):
         # A blanket search for '女性' might cause false positives
@@ -116,6 +153,7 @@ def parse_article_text(title: str, content: str) -> NameData:
         elif regex.search(r'(日本の男性|日本の男優)', category):
             reading.add_tag('masc')
 
+        # TBD 架空 by itself may be enough
         if regex.search(r'架空の', category):
             reading.authenticity = NameAuthenticity.FICTIONAL
 
@@ -126,8 +164,29 @@ def parse_article_text(title: str, content: str) -> NameData:
         elif category == '存命人物':
             reading.lifetime.death_year = None
 
-    reading.clean()
-    return reading
+
+def merge_namedata(box_data: NameData, article_data: NameData) -> NameData:
+    # Prefer box data if set
+    if box_data.has_name():
+        result = box_data
+        other = article_data
+
+    else:
+        result = article_data
+        other = box_data
+
+    # Check the other source for subreadings
+    for extra in other.subreadings:
+        result.add_subreading(extra)
+
+    # Prefer lifetime from Infobox. Will be overriden by category
+    if box_data.lifetime:
+        result.lifetime = box_data.lifetime
+
+    # Merge tags
+    result.tags = list(set(box_data.tags).union(article_data.tags))
+
+    return result
 
 
 def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData:
@@ -139,10 +198,16 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     This examines both the article Infobox and an early line of text that
     contains the name in bold followed by the reading in round brackets.
     """
-    box_data = parse_infoboxes(extract_infoboxes(content))
-    article_data = parse_article_text(title, content)
+    box_data = parse_infoboxes(extract_infoboxes(content)).clean()
+    article_data = parse_article_text(title, content).clean()
 
-    namedata = NameData.merge(box_data, article_data)
+    logging.debug(f'Box data: {box_data}')
+    logging.debug(f'Article data: {article_data}')
+
+    # Complex merging logic YIKES
+    namedata = merge_namedata(box_data, article_data)
+
+    add_category_data(namedata, content)
 
     if namedata.has_name():
         # Exclude certain names which are likely to not be people

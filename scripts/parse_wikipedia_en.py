@@ -7,12 +7,16 @@ import logging
 import argparse
 import sys
 import json
+import os
 
 import mwclient
 from mediawiki_dump.dumps import MediaWikiClientDump
 from mediawiki_dump.reader import DumpReaderArticles
 
 from yomikun.wikipedia_en.parser import parse_wikipedia_article
+
+LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
+logging.basicConfig(level=LOGLEVEL)
 
 parser = argparse.ArgumentParser(
     description="Parses en.wikipedia.org articles for name information.\n\n" +

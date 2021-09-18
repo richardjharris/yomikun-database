@@ -50,6 +50,11 @@ class NameData():
         """
         self.subreadings.append(subreading)
 
+    def add_honmyo(self, honmyo: NameData):
+        assert honmyo.authenticity == NameAuthenticity.REAL
+        self.authenticity = NameAuthenticity.PSEUDO
+        self.add_subreading(honmyo)
+
     def add_tag(self, tag: str):
         if tag not in self.tags:
             self.tags.append(tag)
@@ -62,12 +67,14 @@ class NameData():
 
     def clean(self):
         """
-        Tidy up / normalise all data.
+        Tidy up / normalise all data. Returns self.
         """
         self.kaki = normalise(self.kaki)
         self.yomi = normalise(self.yomi)
         for sub in self.subreadings:
             sub.clean()
+
+        return self
 
     def to_dict(self) -> dict:
         self.clean()
@@ -102,27 +109,6 @@ class NameData():
         if 'orig' in data:
             del data['orig']
         return NameData(**data)
-
-    @classmethod
-    def merge(cls, a: NameData, b: NameData) -> NameData:
-        """
-        Merge two NameData records. The records should correspond to the
-        same person!
-        """
-        # Normalise the values of both records
-        a.clean()
-        b.clean()
-
-        if b.has_name():
-            a, b = b, a
-
-        merged = copy.deepcopy(a)
-
-        merged.lifetime.merge_in(b.lifetime)
-        merged.subreadings += b.subreadings
-        merged.tags = list(set(merged.tags).union(b.tags))
-
-        return merged
 
 
 def test_normalise():

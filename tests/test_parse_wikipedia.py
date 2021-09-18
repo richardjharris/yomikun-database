@@ -3,12 +3,14 @@
 # article.
 
 from __future__ import annotations
+import itertools
 from pathlib import Path
 
 import yaml
 
-from yomikun.models import NameAuthenticity, NameData, Lifetime
-from yomikun.wikipedia_ja.parser import parse_wikipedia_article
+from yomikun.models import NameAuthenticity, NameData
+import yomikun.wikipedia_en.parser
+import yomikun.wikipedia_ja.parser
 
 
 def load_test(file: Path) -> tuple[str, dict]:
@@ -34,18 +36,33 @@ def load_test(file: Path) -> tuple[str, dict]:
 
 
 def pytest_generate_tests(metafunc):
-    def get_id(path: Path):
-        return str(path.name)
+    def get_id(test_page: tuple[Path, str]):
+        return str(test_page[0].name)
 
     if 'test_page' in metafunc.fixturenames:
-        files = Path(__file__).parent.glob('wikipedia_ja_pages/*')
+        ja_files = ((file, 'ja') for file in Path(
+            __file__).parent.glob('wikipedia_ja_pages/*'))
+        en_files = ((file, 'en') for file in Path(
+            __file__).parent.glob("wikipedia_en_pages/*"))
+
+        files = itertools.chain(ja_files, en_files)
+
         metafunc.parametrize("test_page", files, ids=get_id)
 
 
-def test_parser(test_page: Path):
-    content, metadata = load_test(test_page)
+def test_parser(test_page: tuple[Path, str]):
+    path, lang = test_page
+    content, metadata = load_test(path)
 
-    result = parse_wikipedia_article(test_page.name, content, add_source=False)
+    if lang == 'en':
+        module = yomikun.wikipedia_en.parser
+    elif lang == 'ja':
+        module = yomikun.wikipedia_ja.parser
+    else:
+        raise Exception('invalid lang')
+
+    result = module.parse_wikipedia_article(
+        path.name, content, add_source=False)
     expected = build_namedata_from_test_header(metadata)
 
     assert result == expected
@@ -71,8 +88,17 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
             # Article title, unused
             pass
         elif key == 'gender':
-            # Gender tag, unused as gender detection is unimplemented
-            pass
+            # If gender is specified, it must match. Otherwise any gender
+            # is accepted.
+            if value == 'M':
+                namedata.add_tag('masc')
+            elif value == 'F':
+                namedata.add_tag('fem')
+            else:
+                raise Exception(f"Unknown gender value '{value}'")
+        elif key == 'tags':
+            for tag in value:
+                namedata.add_tag(tag)
         elif key == 'source':
             # Article source URL
             pass

@@ -1,0 +1,88 @@
+# No space in reading. We don't currently handle this, but
+# we parse the name using 'Infobox Scientist' instead.
+# Gender hint: '神戸女学院大学文学部を卒業後'
+name: 阿古 真理
+reading: あこ まり
+lifetime: 1968 ~
+source: https://ja.wikipedia.org/w/index.php?title=%E9%98%BF%E5%8F%A4%E7%9C%9F%E7%90%86&oldid=85271352
+---
+{{Infobox Scientist
+|name                    = 阿古 真理
+|native_name             = あこ まり
+|image                   = 
+|image_width             = 
+|alt                     = 
+|caption                 = 
+|birth_name              = 
+|birth_date              = {{Birth year and age|1968}}
+|birth_place             = {{Flagicon|JPN}} [[兵庫県]]
+|death_date              = 
+|death_place             = 
+|death_cause             = 
+|residence               = [[東京都]]
+|citizenship             = 
+|nationality             = {{JPN}}
+|field                   = [[生活史]]・[[食文化]]
+|workplaces              = 
+|alma_mater              = [[神戸女学院大学]]
+|doctoral_advisor        = 
+|academic_advisors       = 
+|doctoral_students       = 
+|notable_students        = 
+|known_for               = 
+|influences              = 
+|influenced              = 
+|awards                  = 
+|author_abbreviation_bot = 
+|author_abbreviation_zoo = 
+|signature               = 
+|signature_alt           = 
+|footnotes               = 
+}}
+
+'''阿古 真理'''（あこまり、[[1968年]] - ）は、[[日本]]の[[生活史]]・[[食文化]]研究家、[[ノンフィクション]]ライター。
+
+== 略歴 ==
+* [[1968年]]、[[兵庫県]]で生まれる<ref name="yahoo">{{Cite web |title=阿古真理 |publisher=Yahoo!ニュース |url=https://news.yahoo.co.jp/byline/akomari/ |accessdate=2021-05-05}}</ref><ref name="kangaeruhito">{{Cite web |title=私たちは「ダメ女」なのか？ |website=考える人 |publisher=新潮社 |url=https://kangaeruhito.jp/interview/1470 |accessdate=2021-05-05}}</ref>。
+* [[神戸女学院大学]]文学部を卒業後{{R|toykeizai}}、広告制作会社に勤務{{R|yahoo}}。
+* [[1996年]]、フリーライターとして活動を開始し、情報誌や広告分野の仕事を手掛ける<ref name="birdsinc">{{Cite web |title=About - 阿古真理 |publisher=birdsinc |url=https://birdsinc.jp/ako-about/ |accessdate=2021-05-05}}</ref>。
+* [[1999年]]、東京都に活動拠点を移す{{R|yahoo}}。
+* [[2001年]]、『[[AERA]]』での執筆活動を開始し、以後ノンフィクション分野を活動の軸に据える{{R|birdsinc}}。
+* [[2004年]]、自身初の単著となる『ルポ「まる子世代」』を出版{{R|birdsinc}}。
+* [[2018年]]、[[新しいカテイカ研究会]]を創設{{R|birdsinc}}。
+
+== 活動分野・評価 ==
+食の歴史を中心に暮らしや生活史を研究している{{R|yahoo}}<ref name="huffingtonpost">{{Cite web |title=阿古真理 |publisher=Huffington Post |url=https://www.huffingtonpost.jp/author/ako-mari |accessdate=2021-05-05}}</ref>{{R|kangaeruhito}}。このほか、ジェンダー{{R|yahoo}}{{R|huffingtonpost}}、女性の生き方{{R|kangaeruhito}}<ref name="toykeizai">{{Cite web |title=阿古 真理 |publisher=東洋経済 |url=https://toyokeizai.net/list/author/%E9%98%BF%E5%8F%A4+%E7%9C%9F%E7%90%86 |accessdate=2021-05-05}}</ref>、家族{{R|toykeizai}}、写真{{R|yahoo}}といったテーマで執筆活動を行うこともある。
+
+著書の『日本外食全史』は、300冊にも及ぶ文献を紐解いて執筆されたもので、木村衣有子によって外食の歴史を書き尽くした一冊と評価された<ref name="mainichi">{{Cite web |author=木村衣有子 |title=評『日本外食全史』阿古真理・著 |publisher=毎日新聞 |date=2021-04-13 |url=https://mainichi.jp/articles/20210413/org/00m/040/003000d |accessdate=2021-05-05}}</ref>。また、夫婦間の家事負担を論じた『料理は女の義務ですか』も好評を博した{{R|kangaeruhito}}。『料理に対する「ねばならない」を捨てたら、うつの自分を受け入れられた。』は、料理への義務感から[[うつ病]]を発症し、気ままな外食を通して本当の料理の楽しさを知った自らの体験を綴ったもので、精神科医の[[香山リカ (精神科医)|香山リカ]]から多くの人に読んでもらいたい著書として紹介された<ref name="tokyo-np">{{Cite web |author=香山リカ |title=料理に対する「ねばならない」を捨てたら、うつの自分を受け入れられた。 阿古真理著 |publisher=東京新聞 |url=https://www.tokyo-np.co.jp/article/108801 |date=2021-06-06 |accessdate=2021-08-29}}</ref>。
+
+== 著書 ==
+* {{Cite book |和書 |title=ルポ「まる子世代」 |publisher=[[集英社]] |year=2004}}
+* {{Cite book |和書 |title=うちのご飯の60年 祖母・母・娘の食卓 |publisher=[[筑摩書房]] |year=2009}}
+* {{Cite book |和書 |title=昭和の洋食 平成のカフェ飯 家庭料理の80年 |publisher=筑摩書房 |year=2013}}
+* {{Cite book |和書 |title=昭和育ちのおいしい記憶 |publisher=筑摩書房 |year=2014}}
+* {{Cite book |和書 |title=「和食」って何？ |publisher=筑摩書房 |year=2015}}
+* {{Cite book |和書 |title=小林カツ代と栗原はるみ 料理研究家とその時代 |publisher=[[新潮社]] |year=2015}}
+* {{Cite book |和書 |title=なぜ日本のフランスパンは世界一になったのか パンと日本人の150年 |publisher=[[NHK出版]] |year=2016}}
+* {{Cite book |和書 |title=料理は女の義務ですか |publisher=新潮社 |year=2017}}
+* {{Cite book |和書 |title=パクチーとアジア飯 |publisher=[[中央公論新社]] |year=2018}}
+* {{Cite book |和書 |title=母と娘はなぜ対立するのか 女性をとりまく家族と社会 |publisher=筑摩書房 |year=2019}}
+* {{Cite book |和書 |title=何が食べたいの、日本人？ 平成・令和食ブーム総ざらい |publisher=集英社 |year=2020}}
+* {{Cite book |和書 |title=日本外食全史 |publisher=[[亜紀書房]] |year=2021}}
+* {{Cite book |和書 |title=料理に対する「ねばならない」を捨てたら、うつの自分を受け入れられた。 |publisher=[[幻冬舎]] |year=2021}}
+
+== 脚注 ==
+{{Reflist}}
+
+== 外部リンク ==
+{{Official_website|https://birdsinc.jp/}}
+
+{{Normdaten}}
+{{DEFAULTSORT:あこ まり}}
+[[Category:日本の食文化史]]
+[[Category:日本の文化学者]]
+[[Category:女性学研究者]]
+[[Category:神戸女学院大学出身の人物]]
+[[Category:兵庫県出身の人物]]
+[[Category:1968年生]]
+[[Category:存命人物]]

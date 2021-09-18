@@ -15,15 +15,18 @@ Some examples:
 '''アイ・ジョージ'''（[[1933年]][[9月27日]] - ）は[[日本]]の元[[歌手]]、[[俳優]]。本名、'''石松 譲冶'''（いしまつ じょうじ）。
 
 本名は阿部寛（あべひろし）   (same as real name. infobox has empty section for 本名)
+
+# Not currently parsed
+'''山崎 哲'''（やまざき てつ、[[1946年]][[6月21日]] - ）は、日本の劇作家、評論家。本名・渡辺康徳。
 """
 
 # Patterns indicating that the article subject is using a pseudonym, with the real
 # name after.
 honmyo_pats = [
     regex.compile(
-        fr"本名(?:は、?|、|\s|：)\s*({name_pat})\s*{name_paren_start}({reading_pat})[）\)、]"),
+        fr"本名(?:は、?|、|\s|：|・)\s*({name_pat})\s*{name_paren_start}({reading_pat})[）\)、]"),
     regex.compile(
-        fr"本名(?:は、?|、|\s|：)\s*'''({name_pat})'''{name_paren_start}({reading_pat})[）\)、]"),
+        fr"本名(?:は、?|、|\s|：|・)\s*'''({name_pat})'''{name_paren_start}({reading_pat})[）\)、]"),
 ]
 
 

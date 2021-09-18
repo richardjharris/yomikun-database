@@ -2,6 +2,7 @@ title: アイ・ジョージ
 lifetime: 1933 ~
 name: 石松 譲冶
 reading: いしまつ じょうじ
+gender: M
 # Penname is nonsense but honmyou is included, we should use that
 # as the main name entry instead.
 ---

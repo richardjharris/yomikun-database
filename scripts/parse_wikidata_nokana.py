@@ -21,7 +21,7 @@ from yomikun.models import NameData, Lifetime, NameAuthenticity
 
 def year(date: str | None):
     if date:
-        return date[0:4]
+        return int(date[0:4])
     else:
         return None
 

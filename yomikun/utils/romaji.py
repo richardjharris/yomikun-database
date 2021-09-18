@@ -12,8 +12,9 @@ def romaji_to_hiragana(romaji: str, kanji: str | None = None):
     romaji = romaji.lower()
 
     # Special case to convert ō to oo
-    if kanji and kanji.startswith('大') and romaji.startswith('ō'):
-        romaji.replace('ō', 'oo', 1)
+    if kanji and kanji.startswith(('大', '太')) and \
+            romaji.startswith('ō'):
+        romaji = romaji.replace('ō', 'oo', 1)
 
     # TODO We don't handle ē -> ei at this time. Kanji name dictionary
     # may help here.
@@ -32,4 +33,8 @@ def test_basic():
 
 def test_gackt():
     assert romaji_to_hiragana('Ōshiro Gakuto') == 'おうしろ がくと'
-    assert romaji_to_hiragana('Ōshiro Gakuto', '大城 ガクト') == 'おうしろ がくと'
+    assert romaji_to_hiragana('Ōshiro Gakuto', '大城 ガクト') == 'おおしろ がくと'
+
+
+def test_ota_masanori():
+    assert romaji_to_hiragana('Ōta Masanori', '太田') == 'おおた まさのり'
