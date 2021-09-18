@@ -1,3 +1,6 @@
+# This is a nightmare. The article parse fails because the honymo is '本名及び映画監督としての名義は'
+# rather than '本名は'. There are two infoboxes, so we have one with a honmyo, and the other with
+# the honmyo listed as the real name.
 title: ビートたけし
 name: 北野 武
 reading: きたの たけし

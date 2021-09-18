@@ -4,6 +4,11 @@ name: 松嶋 菜々子
 reading: まつしま ななこ
 lifetime: 1973 ~
 gender: F
+type: pseudo
+subreadings:
+ - name: 野口 奈奈子
+   reading: のぐち ななこ
+   type: real
 ---
 {{半保護}}
 {{ActorActress

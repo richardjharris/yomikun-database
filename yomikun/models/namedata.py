@@ -74,6 +74,26 @@ class NameData():
         for sub in self.subreadings:
             sub.clean()
 
+        ### BEAT TAKESHI HACK ###
+        to_delete = []
+        for sub in self.subreadings:
+            if (self.kaki, self.yomi) == (sub.kaki, sub.yomi):
+                # Delete the subreading. One example case is beat takeshi which has two
+                # infoboxes:
+                # 1) name = ビートたけし, 本名 = 北野 武（きたの たけし）
+                # 2) name = 北野 武（きたの たけし）
+                # This creates 北野 武 (pseudo) -> 北野 武 (real) because both infoboxes
+                # are parsed together. An 'unknown' authenticity that gets resolved to
+                # 'real' later could help here. and/or parsing the boxes seperately...
+                if sub.authenticity == NameAuthenticity.REAL:
+                    # Was added as a honmyo subreading, which implies it is definitely the
+                    # real name.
+                    self.authenticity = NameAuthenticity.REAL
+                    to_delete += [sub]
+
+        for sub in to_delete:
+            self.subreadings.remove(sub)
+
         return self
 
     def to_dict(self) -> dict:

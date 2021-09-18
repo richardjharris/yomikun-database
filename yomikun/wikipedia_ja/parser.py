@@ -62,7 +62,7 @@ def parse_article_text(title: str, content: str) -> NameData:
         logging.info(f"Got headline reading {reading}")
     elif honmyo:
         # Make the honmyo the main reading
-        reading, honmyo = honmyo, None
+        reading = honmyo
         logging.info(f"No headline reading, using honymo {reading}")
         # Extract extra_raw from the article content, if possible
         # Quite often the name is Latin/Katakana and has no furigana reading,
@@ -119,13 +119,16 @@ def parse_article_text(title: str, content: str) -> NameData:
     if regex.search(r'架空', extra_raw):
         reading.authenticity = NameAuthenticity.FICTIONAL
     elif honmyo:
-        reading.add_subreading(honmyo)
-        reading.authenticity = NameAuthenticity.PSEUDO
-    else:
+        # This is a case where distinguishing unknown from 'confirmed real' would
+        # simplify this logic. TBD
+        if reading is not honmyo:
+            reading.add_subreading(honmyo)
+            reading.authenticity = NameAuthenticity.PSEUDO
+    elif reading.authenticity == NameAuthenticity.REAL:
         # Double-check that there isn't an unparsed 本名 here
         # FP: '本名同じ', '「巧」が姓、「舟」が名前である。ペンネームのようだが本名[3]。通称は「タクシュー」[4]。'
-        if m := regex.search(r'本名(.{0,10})', extra_raw):
-            trailing = m[1]
+        if m := regex.search(r'本名(.{0,4})', extra_raw):
+            trailing = clean(m[1])
             logging.debug(f'Unparsed 本名 found (following text: [{trailing}])')
             if regex.search(r'(同じ|。)', trailing):
                 logging.debug('Ignoring (looks like FP)')
@@ -166,18 +169,23 @@ def add_category_data(reading: NameData, content: str):
 
 
 def merge_namedata(box_data: NameData, article_data: NameData) -> NameData:
-    # Prefer box data if set
-    if box_data.has_name():
+    # Prefer article data if it has 2 readings and box has one.
+    if article_data.subreadings and not box_data.subreadings:
+        result = article_data
+        other = box_data
+    # otherwise prefer box data
+    elif box_data.has_name():
         result = box_data
         other = article_data
-
     else:
         result = article_data
         other = box_data
 
-    # Check the other source for subreadings
-    for extra in other.subreadings:
-        result.add_subreading(extra)
+    # Check the other source for subreadings, but only if we don't have
+    # any.
+    if not result.subreadings:
+        for extra in other.subreadings:
+            result.add_subreading(extra)
 
     # Prefer lifetime from Infobox. Will be overriden by category
     if box_data.lifetime:

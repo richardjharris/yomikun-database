@@ -1,11 +1,17 @@
 # We parse this from the infobox because the article uses a weird
 # hiragana annotation (dash for ゆう). This is fine!
-name: 赤沢 裕子
-reading: あかざわ ゆうこ
+# Bug: previously we only parsed the honmyo but now we get both
+# the pseudo and real names!
+name: 浅野 ゆう子
+reading: あさの ゆうこ
+type: pseudo
+subreadings:
+ - name: 赤沢 裕子
+   reading: あかざわ ゆうこ
+   type: real
 gender: F
 lifetime: 1960 ~
 source: https://ja.wikipedia.org/w/index.php?title=%E6%B5%85%E9%87%8E%E3%82%86%E3%81%86%E5%AD%90&oldid=85536404
-type: real
 ---
 {{簡易区別|小説家・エッセイスト・元作詞家の「[[浅野裕子|浅野裕子（あさのひろこ）]]」}}
 {{ActorActress

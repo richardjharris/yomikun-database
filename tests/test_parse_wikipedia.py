@@ -37,7 +37,8 @@ def load_test(file: Path) -> tuple[str, dict]:
 
 def pytest_generate_tests(metafunc):
     def get_id(test_page: tuple[Path, str]):
-        return str(test_page[0].name)
+        path, lang = test_page
+        return f"{lang}_{path.name}"
 
     if 'test_page' in metafunc.fixturenames:
         ja_files = ((file, 'ja') for file in Path(

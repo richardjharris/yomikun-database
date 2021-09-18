@@ -1,8 +1,8 @@
 # Test for parsing Chinese names.
 # TBD could tag the fact the person is Chinese: 中国の人物 category
-name: 于吉
+name: 于 吉
 reading: う きつ
-lifetime: 200 ~
+lifetime: ~ 200
 source: https://ja.wikipedia.org/w/index.php?title=%E4%BA%8E%E5%90%89&oldid=84933364
 ---
 {{三国志の人物

@@ -3,8 +3,8 @@
 name: 森 哲郎
 reading: もり てつろう
 lifetime: 1928 ~ 2008
-# We fail to detect the honmyo properly here (TODO)
-type: real
+# We should detect that this is a pseudonym -> 本名は正衛（＝まさもり）
+type: pseudo
 ---
 '''森 哲郎'''（もり てつろう、[[1928年]] - [[2008年]][[7月9日]]）は[[日本]]の[[漫画家]]。[[愛知県]][[名古屋市]]出身。本名は正衛（＝まさもり）。
 

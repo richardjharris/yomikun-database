@@ -1,10 +1,12 @@
 title: 内藤やす子
 # Name has a mix of hiragana and kanji
-# Real name is different ('本名は泰子') but we'll ignore that
 name: 内藤 やす子
 reading: ないとう やすこ
 lifetime: 1950 ~
 gender: F
+# Real name is different ('本名は泰子') - we should detect this
+type: pseudo
+source: https://ja.wikipedia.org/w/index.php?title=%E5%86%85%E8%97%A4%E3%82%84%E3%81%99%E5%AD%90&oldid=84793808
 ---
 {{Infobox Musician <!--プロジェクト:音楽家を参照-->
 | 名前 = 内藤 やす子
