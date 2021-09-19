@@ -34,3 +34,14 @@ class Lifetime():
 
     def to_dict(self) -> dict:
         return dataclasses.asdict(self)
+
+    @classmethod
+    def from_string(cls, value: str):
+        lifetime = Lifetime()
+        birth, death = value.split('~')
+        if len(birth.strip()):
+            lifetime.birth_year = int(birth)
+        if len(death.strip()):
+            lifetime.death_year = int(death)
+
+        return lifetime

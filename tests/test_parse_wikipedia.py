@@ -5,6 +5,7 @@
 from __future__ import annotations
 import itertools
 from pathlib import Path
+from yomikun.models.lifetime import Lifetime
 
 import yaml
 
@@ -80,11 +81,7 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
         elif key == 'type':
             namedata.authenticity = NameAuthenticity[value.upper()]
         elif key == 'lifetime':
-            birth, death = value.split('~')
-            if len(birth.strip()):
-                namedata.lifetime.birth_year = int(birth)
-            if len(death.strip()):
-                namedata.lifetime.death_year = int(death)
+            namedata.lifetime = Lifetime.from_string(value)
         elif key == 'title':
             # Article title, unused
             pass
