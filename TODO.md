@@ -1,9 +1,5 @@
 ## TODO List
 
- - Run tests again
- - Maybe work on older names ending with 子 (see below)
- - Re-run JSONL generation
-
  - Gender: generate gender dictionary and integrate it somehow
    - use ML only where we are unsure
    - make sure の values are gone (currently 3,872 entries)

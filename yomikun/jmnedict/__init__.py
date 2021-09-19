@@ -4,8 +4,6 @@ import re
 from dataclasses import dataclass, field
 from yomikun.utils.romaji import romaji_to_hiragana
 
-import romkan
-
 from yomikun.models import Lifetime
 from yomikun.utils.split import split_kanji_name
 
@@ -17,11 +15,11 @@ name_types_we_want = {'fem', 'given',
 @dataclass
 class JmneGloss:
     # Match a YYYY.MM.DD date and capture the year
-    DATE_PAT = r'(\d{3,4})(?:\.\d\d?(?:\.\d\d?)?)?'
+    DATE_PAT = r'(\d{3,4})(?:\.\d\d?(?:\.\d\d?)?|[?]|)'
     # Match (date-date) or (date-)
     # some are like 'Sōkokurai Eikichi (sumo wrestler from Inner Mongolia, 1984-)' so
     # we also match on a preceding comma.
-    DATE_SPAN_PAT = re.compile(fr'[\(, ]{DATE_PAT}-(?:{DATE_PAT})?\)$')
+    DATE_SPAN_PAT = re.compile(fr'[\(, ]{DATE_PAT}-(?:{DATE_PAT})?\)')
     NAME_PAT = re.compile(r'^(\w+ \w+)')
 
     name: str | None = None
@@ -42,11 +40,17 @@ class JmneGloss:
         obj = JmneGloss(source_string=gloss)
 
         if m := re.search(cls.DATE_SPAN_PAT, gloss):
-            birth, death = m.groups()
-            obj.lifetime = Lifetime(int(birth), int(
-                death) if death else None)
+            birth, death = None, None
 
-        if m := re.match(r'^(\w+ \w+)', gloss):
+            birth_str, death_str = m.groups()
+            if birth_str and birth_str != '?':
+                birth = int(birth_str)
+            if death_str:
+                death = int(death_str)
+
+            obj.lifetime = Lifetime(birth, death)
+
+        if m := re.match(r'^(\w+ (?:[Nn]o )?\w+)', gloss):
             obj.name = m[1]
 
         return obj
@@ -71,9 +75,17 @@ def parse(data: dict, with_orig=True) -> list[dict]:
             for kana in map(itemgetter('text'), data['kana']):
                 if gloss.name:
                     # Convert name to hiragana and use it to split the name
-                    # TODO other 4 vowels
                     split_kana = romaji_to_hiragana(gloss.name)
-                    split_kanji = split_kanji_name(kanji, split_kana)
+                    split_kanji = kanji
+
+                    if ' の ' in split_kana:
+                        # Middle name of 'の', used in some older names.
+                        # It will either be missing from the kanji, or before the firstname
+                        split_kana = re.sub(' の ', ' ', split_kana)
+                        split_kanji = re.sub('の', ' ', split_kanji)
+
+                    split_kanji = split_kanji_name(split_kanji, split_kana)
+
                     if kanji != split_kanji:
                         kanji, kana = split_kanji, split_kana
 
@@ -114,4 +126,34 @@ def test_sumo():
     assert result == [
         {'kaki': '蒼国来 栄吉', 'yomi': 'そうこくらい えいきち', 'tags': ['person'],
          'lifetime': {'birth_year': 1984, 'death_year': None}, 'source': 'jmnedict'},
+    ]
+
+
+def test_taira():
+    data = {'idseq': 5629450, 'kanji': [{'text': '平知盛'}], 'kana': [{'text': 'たいらのとももり', 'nokanji': 0}], 'senses': [
+        {'SenseGloss': [{'lang': 'eng', 'text': 'Taira No Tomomori (1151-1185.4.25)'}], 'name_type': ['person']}]}
+    result = parse(data, with_orig=False)
+    assert result == [
+        {'kaki': '平 知盛', 'yomi': 'たいら とももり', 'tags': ['person'],
+         'lifetime': {'birth_year': 1151, 'death_year': 1185}, 'source': 'jmnedict'},
+    ]
+
+
+def test_oumi():
+    data = {'idseq': 5228414, 'kanji': [{'text': '近江の君'}], 'kana': [{'text': 'おうみのきみ', 'nokanji': 0}], 'senses': [
+        {'SenseGloss': [{'lang': 'eng', 'text': 'Oumi no Kimi (Genji Monogatari)'}], 'name_type': ['person']}]}
+    result = parse(data, with_orig=False)
+    assert result == [
+        {'kaki': '近江 君', 'yomi': 'おうみ きみ', 'tags': [
+            'person'], 'source': 'jmnedict'},
+    ]
+
+
+def test_long_u():
+    data = {'idseq': 5459611, 'kanji': [{'text': '千の利休'}], 'kana': [{'text': 'せんのりきゅう', 'nokanji': 0}], 'senses': [{'SenseGloss': [
+        {'lang': 'eng', 'text': 'Sen no Rikyū (1522-1591) (founder of the Sen School of tea ceremony)'}], 'name_type': ['person']}]}
+    result = parse(data, with_orig=False)
+    assert result == [
+        {'kaki': '千 利休', 'yomi': 'せん りきゅう', 'tags': ['person'],
+         'lifetime': {'birth_year': 1522, 'death_year': 1591}, 'source': 'jmnedict'},
     ]
