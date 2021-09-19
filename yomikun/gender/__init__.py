@@ -49,6 +49,7 @@ import enum
 from collections import defaultdict, Counter
 import logging
 
+from yomikun.gender.ml import GenderML
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.utils.romaji import romaji_to_hiragana
 
@@ -70,6 +71,7 @@ def make_gender_dict(names: Iterable[NameData], name_lists: NameLists):
     counts_kana = defaultdict(Counter)
     counts_kanji = defaultdict(Counter)
     test_names = set()
+    model = GenderML(quiet=True)
 
     # Load name lists
     name_list_tags = defaultdict(set)
@@ -82,7 +84,7 @@ def make_gender_dict(names: Iterable[NameData], name_lists: NameLists):
 
     for name in names:
         source = name.source.split(':')[0]
-        if source not in ('wikidata', 'wikidata-nokana', 'wikipedia_en', 'wikipedia_ja'):
+        if source not in ('wikidata', 'wikidata-nokana', 'wikipedia_en', 'wikipedia_ja', 'custom'):
             continue
 
         # Instruct Aggregator that these are full names
@@ -95,8 +97,11 @@ def make_gender_dict(names: Iterable[NameData], name_lists: NameLists):
             counts_kana[part.yomi][gender] += 1
             counts_kanji[part][gender] += 1
 
+            if gender and gender != Gender.unknown:
+                model.train(part.kaki, part.yomi, gender == Gender.female)
+
             # TBD name part does not include fictional, so we have to discard both the real
-            # name and fictional name in this case..
+            # name and fictional name in this case.. (??)
             if source == 'wikipedia_ja' and name.authenticity == NameAuthenticity.REAL:
                 test_names.add(part)
 
@@ -108,6 +113,9 @@ def make_gender_dict(names: Iterable[NameData], name_lists: NameLists):
         tags = name_list_tags[test.yomi]
         err = None
         perc = None
+
+        # ML score is -1 (male) to 1 (female), adjust to 'male %'
+        prediction = model.predict(test.kaki, test.yomi)
 
         # First use by_kanji
         if by_kanji[Gender.male] > 0 or by_kanji[Gender.female] > 0:
@@ -139,11 +147,21 @@ def make_gender_dict(names: Iterable[NameData], name_lists: NameLists):
                 # No name list data - ignore
                 pass
 
-        if err:
-            logging.info(
-                f"{test.kaki} [m:{by_kanji[Gender.male]} f:{by_kanji[Gender.female]} u:{by_kanji[Gender.unknown]}] " +
-                f"({test.yomi}) [m:{by_kana[Gender.male]} f:{by_kana[Gender.female]} u:{by_kana[Gender.unknown]}] " +
-                f"{', '.join(tag.name for tag in tags)}"
-            )
-            logging.info(err)
-        pass
+        print("\t".join([
+            test.kaki,
+            str(by_kanji[Gender.male]),
+            str(by_kanji[Gender.female]),
+            str(by_kanji[Gender.unknown]),
+            str(by_kanji[Gender.male] +
+                by_kanji[Gender.female] + by_kanji[Gender.unknown]),
+            test.yomi,
+            str(by_kana[Gender.male]),
+            str(by_kana[Gender.female]),
+            str(by_kana[Gender.unknown]),
+            str(by_kana[Gender.male] +
+                by_kana[Gender.female] + by_kana[Gender.unknown]),
+            str(perc),
+            str(prediction),
+            ', '.join(tag.name for tag in tags),
+            err if err else ''
+        ]))

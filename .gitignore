@@ -13,6 +13,7 @@ tmp/
 *.sqlite
 data/enwiki-nihongo-articles.gz
 data/jawiki-articles.gz
+*.cache
 
 # wikidumps
 data/*.xml.bz2

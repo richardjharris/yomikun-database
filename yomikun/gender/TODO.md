@@ -1,5 +1,11 @@
 ### Notes
 
+  Make a simple gender model from stuff like 
+   - kana
+   - last kana
+   - kanji
+   - last kanji
+
   https://ja.wikipedia.org/wiki/%E9%95%B7%E6%BE%A4%E5%92%8C%E6%98%8E was marked
   as female, so maybe too many FPs. 長澤和明
   otoh we only got 1 fem result so we can determine FP easily here.
@@ -21,9 +27,6 @@
    女 (exclusing 帰国子女). This would help to identify more female names,
    as women are marked more often than men.
      - done: 29,356 female; 8,642 male (out of 218,418 entries)
-
-    - wikipedia_ja:小出真朱 should not be marked as real.
-    -  ditto https://ja.wikipedia.org/wiki/%E6%A2%93%E7%9C%9F%E5%BC%93
 
 ### JA wikipedia pages
 

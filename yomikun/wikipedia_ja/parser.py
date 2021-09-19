@@ -33,7 +33,7 @@ def parse_article_text(title: str, content: str) -> NameData:
     excerpt = content[0:10_000]
 
     # Remove references entirely, they can appear anywhere and are not semantically useful
-    excerpt = regex.sub('<ref>(.{1,1000})</ref>', '', excerpt)
+    excerpt = regex.sub('<ref>(.{1,1000}?)</ref>', '', excerpt)
 
     # Find 'real name is ...' -type sentences.
     honmyo = find_honmyo(excerpt)

@@ -10,6 +10,7 @@ ignore_words = [
     '道の駅',
     '学校',
     '地球',
+    '組合',
 ]
 ignore_words_pat = regex.compile(r"\L<words>", words=ignore_words)
 
@@ -53,6 +54,7 @@ max_family_name_length = 5
 
 
 # TODO handle logging here?
+# TODO ignore yomi=の
 def should_ignore_name(kaki: str) -> bool:
     sei, mei = kaki.split()
     if len(sei) > max_family_name_length:

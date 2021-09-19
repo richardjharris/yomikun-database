@@ -1,18 +1,31 @@
 ## TODO List
 
- - Gender stats + more detailed information
-  - going by last kana, last kanji or overall char score
+ - Run tests again
+ - Maybe work on older names ending with 子 (see below)
+ - Re-run JSONL generation
+
+ - Gender: generate gender dictionary and integrate it somehow
+   - use ML only where we are unsure
+   - make sure の values are gone (currently 3,872 entries)
 
  - (^) Person de-duping / merging birth/death data
-  - should be done before computing gender stats
+  - should be done before computing gender stats (?)
+  - possibly done in a preparatory step before data import.
 
  - Remove subreadings system, replace with list[NameData]
    - simplifies import
 
  - Force 'person' tag instead of adding it later.
 
- - Better merging
-  - fix tests broken as a result of the merging [11 failed / 105]
+ - improve handling of very old names e.g. 
+   小野妹子、蘇我馬子、中臣鎌子、 阿部鳥子
+    - tweak の handling
+    - old names with 妻 entry are probably men.
+     ^ 名に「子」の字が付くが男性である（当時は「子」が男女問わず用いられた）。子 (人名)を参照のこと。
+
+ 『日本書紀』の時代には、小野妹子、蘇我馬子、中臣鎌子（鎌足）、阿部鳥子など、主に男性に子型の名が付いた。
+
+ - Basic flutter app...
 
 ### Later stuff
 
