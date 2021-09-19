@@ -14,7 +14,7 @@ endif
 
 .PHONY: all clean test
 
-JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana
+JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
 names.sqlite: ${JSONLFILES}
