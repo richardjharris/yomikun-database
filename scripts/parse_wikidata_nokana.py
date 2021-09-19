@@ -21,6 +21,9 @@ from yomikun.models import NameData, Lifetime, NameAuthenticity
 
 def year(date: str | None):
     if date:
+        if date.startswith('t'):
+            # Is a bnode
+            return None
         return int(date[0:4])
     else:
         return None

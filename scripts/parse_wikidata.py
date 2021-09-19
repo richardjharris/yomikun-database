@@ -29,6 +29,9 @@ def extract(data: dict, path: str):
 
 def year(date: str):
     if date:
+        if date.startswith('t'):
+            # Is a bnode
+            return None
         return int(date[0:4])
     else:
         return None
@@ -70,23 +73,10 @@ for line in sys.stdin:
         if regex.search(r'^\p{Han}', kanji2):
             kanji = kanji2
         else:
-            logging.error(f"Entry with no surname kanji: {data}")
+            #logging.error(f"Entry with no surname kanji: {data}")
             # TBD possibly some of these are fine, but majority are junk
             # at least reject anything with all-romaji/katakana
             continue
-
-    """
-    TODO: above fails for
-
-    ERROR:root:Entry with no surname kanji: {'item': {'type': 'uri', 'value': 'http://www.wikidata.org/entity/Q11451380'},
-    'kana': {'type': 'literal', 'value': 'あんどう えみ'},
-    'nativeName': {'xml:lang': 'ja', 'type': 'literal', 'value': '安藤笑'},
-    'itemLabel': {'xml:lang': 'ja', 'type': 'literal', 'value': '安藤笑'},
-    'itemDescription': {'xml:lang': 'en', 'type': 'literal', 'value': 'Japanese dancer'},
-    'genderLabel': {'xml:lang': 'ja', 'type': 'literal', 'value': '女性'},
-    'countryLabel': {'xml:lang': 'ja', 'type': 'literal', 'value': '日本'},
-    'dob': {'datatype': 'http://www.w3.org/2001/XMLSchema#dateTime', 'type': 'literal', 'value': '1995-08-07T00:00:00Z'}}
-    """
 
     kana = extract(data, 'kana.value')
     assert kana is not None
