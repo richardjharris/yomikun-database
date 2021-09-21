@@ -1,6 +1,7 @@
 export PYTHONPATH := ${PYTHONPATH}:.
 export TMPDIR = ./tmp
-export SHELL = bash -o pipefail
+
+SHELL = /bin/bash -o pipefail
 
 mproc ?= 8
 
@@ -14,7 +15,7 @@ endif
 
 .PHONY: all clean test
 
-JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom
+JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
 names.sqlite: ${JSONLFILES}
@@ -50,6 +51,9 @@ jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
 
 jsonl/custom.jsonl: data/custom.yaml
 	python scripts/parse_custom_yaml.py < $< > $@
+
+jsonl/researchmap.jsonl: data/researchmap.jsonl
+	ln -fs $^ $@
 
 jsonl/jmnedict.jsonl:
 	python scripts/parse_jmnedict.py > $@

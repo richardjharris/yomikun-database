@@ -8,6 +8,7 @@ __pycache__
 
 # Build products
 *.jsonl
+!data/*.jsonl
 jsonl/
 tmp/
 *.sqlite
