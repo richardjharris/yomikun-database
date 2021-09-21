@@ -66,8 +66,9 @@ def extract_infoboxes(wikitext: str) -> list[Infobox]:
     cur = None
 
     for line in wikitext.splitlines():
-        if m := regex.search(r'^\{\{(\S+)', line):
-            # Start of new template?
+        # Match start of new template. Would check if line contains }} but there is
+        # one counter-example: '{{Anchors|坪田愛華}}{{Infobox 人物'
+        if (m := regex.search(r'^\{\{\s*(\S+.*?)$', line)):
             if cur is None:
                 cur = Infobox(name=m[1])
         elif m := regex.search(r'^\s*\|\s*(\S+)\s*=\s*(.*)$', line):
@@ -134,6 +135,12 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
                 subreading = NameData(kaki, yomi)
                 result.add_honmyo(subreading)
 
+        # 公家 entries are quite old, so safe to assume that if 妻 is populated then it's a man.
+        if box.name == '基礎情報 公家' and '妻' in box:
+            value = clean(box['妻'])
+            if value:
+                result.add_tag('masc')
+
     result.clean()
     return result
 
@@ -187,7 +194,7 @@ def test_two():
 """
     result = extract_infoboxes(text)
     assert len(result) == 1
-    assert result[0].name == "基礎情報"
+    assert result[0].name == "基礎情報 アナウンサー"
     assert result[0].data == {
         '名前': '松嶋 あすか',
         'ふりがな': 'まつしま あすか',

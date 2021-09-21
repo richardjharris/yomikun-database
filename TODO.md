@@ -2,7 +2,8 @@
 
  - Gender: generate gender dictionary and integrate it somehow
    - use ML only where we are unsure
-   - make sure の values are gone (currently 3,872 entries)
+   - ML may want to include birth year.
+   - Have to rebuild first
 
  - (^) Person de-duping / merging birth/death data
   - should be done before computing gender stats (?)
@@ -13,11 +14,8 @@
 
  - Force 'person' tag instead of adding it later.
 
- - improve handling of very old names e.g. 
-   小野妹子、蘇我馬子、中臣鎌子、 阿部鳥子
-    - tweak の handling
-    - old names with 妻 entry are probably men.
-     ^ 名に「子」の字が付くが男性である（当時は「子」が男女問わず用いられた）。子 (人名)を参照のこと。
+  - maybe names with no spaces? might be chinese
+    ones etc.
 
  『日本書紀』の時代には、小野妹子、蘇我馬子、中臣鎌子（鎌足）、阿部鳥子など、主に男性に子型の名が付いた。
 

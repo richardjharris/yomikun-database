@@ -16,5 +16,6 @@ for entry in entries:
         namedata.lifetime = Lifetime.from_string(entry['lifetime'])
     for tag in entry.get('tags', []):
         namedata.add_tag(tag)
+    namedata.source = 'custom'
 
     print(namedata.to_jsonl())
