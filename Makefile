@@ -53,7 +53,7 @@ jsonl/custom.jsonl: data/custom.yaml
 	python scripts/parse_custom_yaml.py < $< > $@
 
 jsonl/researchmap.jsonl: data/researchmap.jsonl
-	ln -fs $^ $@
+	cp $^ $@
 
 jsonl/jmnedict.jsonl:
 	python scripts/parse_jmnedict.py > $@
