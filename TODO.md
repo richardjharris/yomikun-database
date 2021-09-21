@@ -18,6 +18,9 @@
 
  - Force 'person' tag instead of adding it later.
 
+ - Remove gender tags from JMnedict data as it is usually incorrect.
+   Then we can remove the special casing from gender/__init__.py
+
   - maybe names with no spaces? might be chinese
     ones etc.
 
