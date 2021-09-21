@@ -17,17 +17,18 @@ from yomikun.utils.romaji import romaji_to_hiragana
 from yomikun.models import NameData, Lifetime, NameAuthenticity
 
 
-def extract(data: dict, path: str):
+def extract(data: dict, path: str) -> str | None:
     parts = path.split('.')
     try:
         while parts:
             data = data[parts.pop(0)]
+        assert isinstance(data, str)
         return data
     except KeyError:
         return None
 
 
-def year(date: str):
+def year(date: str | None):
     if date:
         if date.startswith('t'):
             # Is a bnode
@@ -37,7 +38,7 @@ def year(date: str):
         return None
 
 
-def gender(s: str):
+def gender(s: str | None):
     if s:
         if s == "男性":
             return "masc"

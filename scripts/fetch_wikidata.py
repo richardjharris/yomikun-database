@@ -6,10 +6,9 @@ import json
 from functools import reduce
 import time
 import logging
+from typing import cast, Any
 
 from SPARQLWrapper import SPARQLWrapper, JSON
-
-from yomikun.models import NameData
 
 endpoint_url = "https://query.wikidata.org/sparql"
 
@@ -32,12 +31,14 @@ WHERE
 """
 
 
-def get_results(endpoint_url, query):
+def get_results(endpoint_url, query) -> dict:
     user_agent = "rjh-fetch-japanese-name-data/0.1 (richardjharris@gmail.com)"
     sparql = SPARQLWrapper(endpoint_url, agent=user_agent)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
-    return sparql.query().convert()
+    result = sparql.query().convert()
+    assert isinstance(result, dict)
+    return result
 
 
 def fetch_wikidata(prefix: str):
