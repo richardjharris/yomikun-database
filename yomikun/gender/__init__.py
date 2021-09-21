@@ -84,7 +84,8 @@ def make_gender_dict(names: Iterable[NameData], name_lists: NameLists):
 
     for name in names:
         source = name.source.split(':')[0]
-        if source not in ('wikidata', 'wikidata-nokana', 'wikipedia_en', 'wikipedia_ja', 'custom'):
+        # TBD do this better
+        if source not in ('wikidata', 'wikidata-nokana', 'wikipedia_en', 'wikipedia_ja', 'custom', 'researchmap'):
             continue
 
         # Instruct Aggregator that these are full names
