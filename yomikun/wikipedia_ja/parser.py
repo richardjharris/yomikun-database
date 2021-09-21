@@ -153,7 +153,7 @@ def add_category_data(reading: NameData, content: str):
                 category in ('グラビアアイドル', 'レースクイーン', '女院'):
             if category != '日本の女子サッカー':
                 reading.add_tag('fem')
-        elif regex.search(r'(日本の男性|日本の男優)', category):
+        elif regex.search(r'(日本の男性|日本の男優|日本の男子)', category):
             reading.add_tag('masc')
 
         # TBD 架空 by itself may be enough

@@ -1,5 +1,9 @@
 ## TODO List
 
+ - Database preparation:
+   - dedupe Person. retain tags/lifetimes
+   - collect 
+
  - Gender: generate gender dictionary and integrate it somehow
    - use ML only where we are unsure
    - ML may want to include birth year.
@@ -37,6 +41,15 @@
 上村には「かみむら」と「うえむら」の読みがある。
 山崎は「やまざき」と読むのが普通なので、「やまさき」と読んで欲しいと思う人は「ヤマザキではなくヤマサキです」といった注意書きを付けておいたほうがいいという。
 「太田」ではなく「大田」という名前のヒットは、「太い「太田」ではなく、大きい「大田」です」という？
+
+rjh@ryzen:~/yomikun/database$ fgrep '"上村 ' jsonl/* | fgrep -c かみむら
+125
+rjh@ryzen:~/yomikun/database$ fgrep '"上村 ' jsonl/* | fgrep -c うえむら
+168
+rjh@ryzen:~/yomikun/database$ fgrep '"山崎 ' jsonl/* | fgrep -c やまさき
+217
+rjh@ryzen:~/yomikun/database$ fgrep '"山崎 ' jsonl/* | fgrep -c やまざき
+928
 
 ### JA Wikipedia
 
