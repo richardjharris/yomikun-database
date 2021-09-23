@@ -1,17 +1,18 @@
 ## TODO List
 
  - Database preparation:
-   - dedupe Person. retain tags/lifetimes
-   - collect 
+   - Consolidate JSONL to single file
+     - Dedupe people [retain tags/lifetimes]
+     - Fix tags
+     - Expand subreadings
+     - Include gender data?
+   - Person dedupe should be done in a way that can be re-used by
+     gender code.
 
  - Gender: generate gender dictionary and integrate it somehow
    - use ML only where we are unsure
    - ML may want to include birth year.
    - Have to rebuild first
-
- - (^) Person de-duping / merging birth/death data
-  - should be done before computing gender stats (?)
-  - possibly done in a preparatory step before data import.
 
  - Remove subreadings system, replace with list[NameData]
    - simplifies import
@@ -20,11 +21,6 @@
 
  - Remove gender tags from JMnedict data as it is usually incorrect.
    Then we can remove the special casing from gender/__init__.py
-
-  - maybe names with no spaces? might be chinese
-    ones etc.
-
- 『日本書紀』の時代には、小野妹子、蘇我馬子、中臣鎌子（鎌足）、阿部鳥子など、主に男性に子型の名が付いた。
 
  - Basic flutter app...
 
