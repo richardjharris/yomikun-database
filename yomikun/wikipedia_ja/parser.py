@@ -165,6 +165,8 @@ def add_category_data(reading: NameData, content: str):
             reading.lifetime.death_year = int(m[1])
         elif category == '存命人物':
             reading.lifetime.death_year = None
+        elif category == '生年不明':
+            reading.lifetime.birth_year = None
 
 
 def merge_namedata(box_data: NameData, article_data: NameData) -> NameData:
