@@ -100,10 +100,9 @@ def parse_article_text(title: str, content: str) -> NameData:
                 reading.lifetime = Lifetime(birth, death)
 
     # Look for gender declaration in the opening sentence.
-    # TODO maybe change to extra_raw
-    if regex.search(r'女性\s*。', extra):
+    if regex.search(r'女性\s*。', extra) or '、女性、' in extra_raw:
         reading.add_tag('fem')
-    elif regex.search(r'男性\s*。', extra):
+    elif regex.search(r'男性\s*。', extra) or '、男性、' in extra_raw:
         reading.add_tag('masc')
 
     # See 松本麻実, 長江麻美, 相沢真美,  山口真未, 華耀きらり
