@@ -39,7 +39,7 @@ class Gender(enum.Enum):
     female = 3
 
 
-CATEGORY_PAT = r'\[\[Category:(.*?)\]\]'
+CATEGORY_PAT = r'\[\[[cC]ategory:(.*?)\]\]'
 
 
 def get_categories(content: str) -> list[str]:
