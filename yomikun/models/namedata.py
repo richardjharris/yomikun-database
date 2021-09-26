@@ -42,6 +42,8 @@ class NameData():
     tags: list[str] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
+        # Do basic type checking, as dataclasses does not
+        assert isinstance(self.subreadings, list)
         self.clean()
 
     def add_subreading(self, subreading: NameData):
@@ -59,11 +61,34 @@ class NameData():
         if tag not in self.tags:
             self.tags.append(tag)
 
+    def is_person(self):
+        return 'person' in self.tags or (' ' in self.kaki and ' ' in self.yomi)
+
     def has_name(self) -> bool:
         """
         Returns True if this object has name data fully populated.
         """
         return len(self.kaki) > 0 and len(self.yomi) > 0
+
+    def gender(self) -> str | None:
+        if 'fem' in self.tags:
+            return 'fem'
+        elif 'masc' in self.tags:
+            return 'masc'
+        else:
+            return None
+
+    def set_gender(self, new_gender: str):
+        if 'masc' in self.tags:
+            self.tags.remove('masc')
+        if 'fem' in self.tags:
+            self.tags.remove('fem')
+
+        self.tags.append(new_gender)
+
+    def clone(self) -> NameData:
+        # Use our existing JSONL serialization rather than coding the logic again.
+        return NameData.from_jsonl(self.to_jsonl())
 
     def clean(self):
         """
@@ -124,11 +149,15 @@ class NameData():
         if 'lifetime' in data:
             data['lifetime'] = Lifetime(**data['lifetime'])
         if 'subreadings' in data:
-            data['subreadings'] = map(
-                lambda x: NameData.from_dict(x), data['subreadings'])
+            data['subreadings'] = list(map(
+                lambda x: NameData.from_dict(x), data['subreadings']))
         if 'orig' in data:
             del data['orig']
         return NameData(**data)
+
+    @classmethod
+    def from_jsonl(cls, jsonl: str) -> NameData:
+        return cls.from_dict(json.loads(jsonl))
 
 
 def test_normalise():
