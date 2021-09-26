@@ -18,15 +18,18 @@ endif
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
-names.sqlite: ${JSONLFILES}
+db/names.sqlite: ${JSONLFILES}
 	cat $^ | python scripts/load_data.py $@
 
 clean:
 	rm -f ${JSONLFILES}
-	rm -f names.sqlite
+	rm -f db/people.jsonl db/names.sqlite
 
 test:
 	pytest
+
+db/people.jsonl: ${JSONLFILES}
+	cat $^ | python scripts/person_dedupe.py > $@
 
 # We pre-filter the wikipedia XML dump for articles likely to be Japanese names
 # and also convert the XML to JSON. Takes ~2 hours.

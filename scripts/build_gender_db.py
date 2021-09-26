@@ -1,9 +1,7 @@
 """
-Process JSONL files and name lists from Wikipedia, produce a mapping of
-(kanji, kana) -> likelihood of name being male or female.
-
-Should be fed the wikidata and wikipedia JSONL as input. Also reads
-data/name_lists.json.
+Processes de-duped Person entries (from aggregate_data.py) and builds
+a gender dictionary and trains a machine learning model which can be
+used to guess missing gender information.
 """
 import json
 import sys
