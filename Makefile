@@ -52,8 +52,8 @@ jsonl/wikidata.jsonl: data/wikidata.jsonl.gz
 jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
 	pzcat $< | ${PARALELL} python scripts/parse_wikidata_nokana.py > $@
 
-jsonl/custom.jsonl: data/custom.yaml
-	python scripts/parse_custom_yaml.py < $< > $@
+jsonl/custom.jsonl: data/custom.csv
+	python scripts/parse_custom_data.py < $< > $@
 
 jsonl/researchmap.jsonl: data/researchmap.jsonl
 	cp $^ $@
