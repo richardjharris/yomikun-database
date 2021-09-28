@@ -18,8 +18,8 @@ endif
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
-db/gender.dict db/gender.model &: db/people.jsonl
-	cat $^ | python scripts/build_gender_db.py
+db/gender.jsonl db/gender.weights &: db/people.jsonl data/name_lists.json
+	cat db/people.jsonl | python scripts/build_gender_db.py > db/gender.jsonl
 
 db/names.sqlite: ${JSONLFILES} db/people.jsonl
 	cat $^ | python scripts/load_data.py $@

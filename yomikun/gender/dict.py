@@ -198,8 +198,11 @@ def make_gender_dict(
             'ct_score': ct_score,
             'ct_confidence': ct_confidence,
             'final_score': gender_score,
+            'hits_male': by_kanji[Gender.male],
+            'hits_female': by_kanji[Gender.female],
+            'hits_unknown': by_kanji[Gender.unknown],
             'err': err,
-        }), file=dict_out)
+        }, ensure_ascii=False), file=dict_out)
 
     if weights:
         model.save(weights)
