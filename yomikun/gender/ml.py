@@ -1,10 +1,8 @@
 """
 ML-based model for guessing first name genders
 """
-import sys
-import os
-
 import json
+
 from vowpalwabbit import pyvw
 
 # --nn didn't help

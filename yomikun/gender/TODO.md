@@ -1,21 +1,19 @@
-## Objectives
-
-To be able to answer questions like:
-
- * given a kanji or kana given name, what is the likely gender?
- * what are the most unisex names?
- * what kanji versions of a particular kana name are most often
-   associated with men or women?
-
-For improving our data:
-
- * what names have zero or very few gender-tagged results?
-
 ## Ideas
 
- - Try to remove FPs via person merging
+ - Person merge could maybe resolve 2 M + 1 F as just M (if wikidata is the wrong one)
    房之介 appears in wikidata as female (incorrectly) and male in
-   wikipedia_en, _ja (correctly).
+   wikipedia\_en, \_ja (correctly).
+
+ - The last 'two' kana of a name are useful for gender determination, could include
+   that.
+
+```
+{"kaki": "夏目 房之介", "yomi": "なつめ ふさのすけ", "authenticity": "real", "lifetime": {"birth_year": 1950, "death_year": null}, "subreadings": [], "source": "wikipedia_ja:夏目房之介", "tags": ["person", "masc"]}
+{"kaki": "夏目 房之介", "yomi": "''なつめ ふさのすけ''", "authenticity": "real", "lifetime": {"birth_year": 1950, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Fusanosuke Natsume", "tags": ["masc", "person"]}
+```
+
+稲荷家房之介 has male/female entries due to wikidata. Also years are different, so we don't
+merge in any case. That's probably fine.
 
 ### JA wikipedia pages
 

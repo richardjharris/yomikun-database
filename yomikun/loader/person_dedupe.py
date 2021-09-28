@@ -77,6 +77,8 @@ class PersonDedupe():
             merged.authenticity = not_real.pop()
 
         # Copy over subreadings from the first record that contains them.
+        # TODO may be interesting to dedupe the subreadings also??
+        # TODO or at least check if we've missed some
         for person in people:
             if person.subreadings:
                 merged.subreadings = []

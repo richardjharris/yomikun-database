@@ -27,6 +27,8 @@ for line in sys.stdin:
 
 for person in dedupe.deduped_people():
     try:
+        person.add_tag('person')
+
         print(person.to_jsonl())
         out_records += 1
     except TypeError as e:

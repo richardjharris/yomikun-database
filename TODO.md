@@ -1,5 +1,8 @@
 ## TODO List
 
+- some double dashes still (4 in wikipedia\_en.jsonl)
+ - rebuild after testing
+
 Aggregates the generated JSONL data files to make them easier to work with.
 
 - deduplicates people from people records
