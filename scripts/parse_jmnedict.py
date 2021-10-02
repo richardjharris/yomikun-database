@@ -19,22 +19,13 @@ import os
 import sys
 import json
 
-import jamdict
-
 import yomikun.jmnedict
+from yomikun.utils.name_dict import NameDict
 
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
 
-jam = jamdict.Jamdict(
-    memory_mode=False,
-)
-assert jam.has_jmne()
-
-# Jamdict requires pos to be non-empty but it is ignored for name queries
-result = jam.lookup_iter('%', pos=['dummy'])
-for name in result.names:
-    data = name.to_dict()
+for data in NameDict.all_data():
     try:
         for output in yomikun.jmnedict.parse(data):
             print(json.dumps(output, ensure_ascii=False))

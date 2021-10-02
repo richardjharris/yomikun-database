@@ -1,5 +1,9 @@
 ## TODO List
 
+ - don't think romaji name conversion handles stuff like
+   Yu -> Yuu, needs a think.
+ - researchamp
+
 - some double dashes still (4 in wikipedia\_en.jsonl)
  - rebuild after testing
 

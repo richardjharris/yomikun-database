@@ -6,3 +6,4 @@ mwclient==0.10.1
 romkan==0.2.1
 sqlalchemy==1.4.23
 sparqlwrapper==1.8.5
+jcconv3==1.2.3

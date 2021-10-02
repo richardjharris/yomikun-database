@@ -1,15 +1,27 @@
-from __future__ import annotations
-import re
+"""
+Utilities for splitting names where either the kana or kanji
+has no space.
 
-import jamdict
+This is used by Wikidata/nokana, Daijisen, Koujin, Wikipedia
+EN and JA so these importers should be re-run if this code is
+updated.
+
+TODO: this only looks at jamdict (JMnedict) which is missing
+a number of names e.g. 吉田＝よしだ. Using our own data would
+improve things.
+
+TODO: we try to match biggest surname, then biggest given name.
+In reality if we can match both sides we should prefer that?
+  An example is 和田慎二 (wada shinji)
+  jmnedict matches 和田 as わだし only
+  therefore we split, but んじ is not valid?
+"""
+
+from __future__ import annotations
+
 import pytest
 
-# TODO: turn on memory_mode outside of test mode
-# TODO: we use jamdict-data for now
-jam = jamdict.Jamdict(
-    memory_mode=False,
-)
-assert jam.has_jmne()
+from yomikun.utils.name_dict import NameDict
 
 
 def split_kanji_name(kaki: str, yomi: str) -> str:
@@ -36,6 +48,25 @@ def split_kanji_name(kaki: str, yomi: str) -> str:
         return f"{kaki[0:split_point]} {kaki[split_point:]}"
 
 
+def split_kana_name(kaki: str, yomi: str) -> str:
+    """
+    Given written form (kaki) WITH spaces, and read form (yomi)
+    without, split yomi into two parts that match the kanji,
+    and return the parts joined with a space.
+
+    Returns yomi as-is if unable to split.
+    """
+    assert len(kaki.split()) == 2
+    assert len(yomi.split()) == 1
+
+    sei, mei = kaki.split()
+    split_point = find_kana_split_point(sei, mei, yomi)
+    if split_point is None:
+        return yomi
+    else:
+        return f"{yomi[0:split_point]} {yomi[split_point:]}"
+
+
 def find_split_point(sei: str, mei: str, kanji: str) -> int | None:
     """
     Given the surname and first name (in kana), and the combined kanji,
@@ -44,96 +75,111 @@ def find_split_point(sei: str, mei: str, kanji: str) -> int | None:
 
     If we can't do it for some reason, returns None.
     """
-    def has_sense(senses: list, keyword: str):
-        """
-        Look into the senses object to find a sense entry
-        with a authenticity matching the given `keyword`.
-
-        keyword should be 'place', 'surname', 'fem' etc.
-        """
-        for sense in senses:
-            for name_type in sense.name_type:
-                if name_type == keyword:
-                    return True
-        return False
 
     # Try to match the largest string first.
     for chars in reversed(range(1, len(kanji))):
         kanji_prefix = kanji[0:chars]
-        result = jam.lookup(
-            query=kanji_prefix, strict_lookup=True, lookup_chars=False)
+        results = NameDict.find_surname(kanji_prefix)
 
-        for name in result.names:
-            if not has_sense(name.senses, 'surname'):
-                continue
-
-            # Gotcha: basic string comparison won't work, must
-            # use text attribute
-            kana_forms = [kf.text for kf in name.kana_forms]
-
-            if sei in kana_forms:
+        for result in results:
+            if sei in result.kana:
                 return chars
 
     # Try to match forenames instead
-    for chars in reversed(range(1, len(kanji))):
+    for chars in range(1, len(kanji)):
         kanji_suffix = kanji[chars:]
-        result = jam.lookup(
-            query=kanji_suffix, strict_lookup=True, lookup_chars=False)
+        results = NameDict.find_given_name(kanji_suffix)
 
-        for name in result.names:
-            if not any(has_sense(name.senses, x) for x in ('masc', 'fem', 'given')):
-                continue
-
-            # Gotcha: basic string comparison won't work, must
-            # use text attribute
-            kana_forms = [kf.text for kf in name.kana_forms]
-
-            if mei in kana_forms:
+        for result in results:
+            if mei in result.kana:
                 return chars
 
     return None
 
 
+def find_kana_split_point(sei: str, mei: str, kana: str) -> int | None:
+    """
+    Given the surname and first name (in KANJI), and the combined kana,
+    split the kana to separate the two name portions. Return the number
+    of chars in `kana` that corresponds to the surname.
+
+    If we can't do it for some reason, returns None.
+    """
+    # This is literally the above method but with kana/kanji swapped around.
+    # Might become more complicated later, as kana is more ambiguous.
+
+    # Try to match the largest string first.
+    for chars in reversed(range(1, len(kana))):
+        kana_prefix = kana[0:chars]
+        results = NameDict.find_surname(kana_prefix)
+
+        for result in results:
+            if sei in result.kanji:
+                return chars
+
+    # Try to match forenames instead
+    for chars in range(1, len(kana)):
+        kana_suffix = kana[chars:]
+        results = NameDict.find_given_name(kana_suffix)
+
+        for result in results:
+            if mei in result.kanji:
+                return chars
+
+    return None
+
+
+# Format: surname (kana), given name (kana), surname (kanji), given name (kana)
+# Tests are generated by removing the spaces in 1) yomi 2) kaki and checking if
+# the computed split point would add the space back correctly.
 tests = [
-    ("まつだいら‐ただなお【松平忠直】", 2),
-    ("ゆうき‐ひでやす【結城秀康】", 2),
-    ("なんじょう‐ぶんゆう【南条文雄】", 2),
-    ("なわ‐ながとし【名和長年】", 2),
-    ("なるせ‐みきお【成瀬巳喜男】", 2),
-    ("ひとみ‐きぬえ【人見絹枝】", 2),
-    ("ばば‐つねご【馬場恒吾】", 2),
-    ("ひなつ‐こうのすけ【日夏耿之介】", 2),
-    ("こいずみ‐やくも【小泉八雲】", 2),
-    ("さくらだ‐いちろう【桜田一郎】", 2),
-    ("とみた‐けいせん【富田渓仙】", 2),
-    ("あらし‐さんえもん【嵐三右衛門】", 1),
-    ("ありさか‐なりあきら【有坂成章】", 2),
-    ("おおもり‐よしたろう【大森義太郎】", 2),
-    ("おぐま‐ひでお【小熊秀雄】", 2),
-    ("かたくら‐かねたろう【片倉兼太郎】", 2),
-    ("たけぞえ‐しんいちろう【竹添進一郎】", 2),
-    ("たけだ‐ゆうきち【武田祐吉】", 2),
-    ("たじみ‐くになが【多治見国長】", 3),
-    ("たなべ‐はじめ【田辺元】", 2),
-    ("つじ‐じゅん【辻潤】", 1),
-    ("つじ‐ぜんのすけ【辻善之助】", 1),
-    ("つだ‐すけひろ【津田助広】", 2),
-    ("なつめ‐そうせき【夏目漱石】", 2),
+    "まつだいら ただなお 松平 忠直",
+    "ゆうき ひでやす 結城 秀康",
+    "なんじょう ぶんゆう 南条 文雄",
+    "なわ ながとし 名和 長年",
+    "なるせ みきお 成瀬 巳喜男",
+    "ひとみ きぬえ 人見 絹枝",
+    "ばば つねご 馬場 恒吾",
+    "ひなつ こうのすけ 日夏 耿之介",
+    "こいずみ やくも 小泉 八雲",
+    "さくらだ いちろう 桜田 一郎",
+    "とみた けいせん 富田 渓仙",
+    "あらし さんえもん 嵐 三右衛門",
+    "ありさか なりあきら 有坂 成章",
+    "おおもり よしたろう 大森 義太郎",
+    "おぐま ひでお 小熊 秀雄",
+    "かたくら かねたろう 片倉 兼太郎",
+    "たけぞえ しんいちろう 竹添 進一郎",
+    "たけだ ゆうきち 武田 祐吉",
+    "たじみ くになが 多治見 国長",
+    "たなべ はじめ 田辺 元",
+    "つじ じゅん 辻 潤",
+    "つじ ぜんのすけ 辻 善之助",
+    "つだ すけひろ 津田 助広",
+    "なつめ そうせき 夏目 漱石",
     # SUPER HARD MODE
-    ("あいしんかくら‐い【愛新覚羅維】", 4),
+    "あいしんかくら い 愛新覚羅 維",
     # Chinese? Can identify these via 中国 after the year.
-    # ("き‐ゆうこう【帰有光】", 1),
-    # ("そ‐じゅん【蘇洵】", 1),
+    # ("き ゆうこう 帰有光", 1
+    # ("そ じゅん 蘇洵", 1
 
     # This requires a forename lookup
-    ("あびる‐えいさぶろう【阿比類鋭三郎】", 3),
+    "あびる えいさぶろう 阿比類 鋭三郎",
+    "まや みねお 魔夜 峰央",
 ]
 
 
-@ pytest.mark.parametrize('test', tests)
-def test_split_name(test):
-    dict_entry, expected_split_point = test
-    m = re.fullmatch(r'(.*?)‐(.*?)【(.*?)】', dict_entry)
-    assert m is not None
+@pytest.mark.parametrize('test', tests)
+def test_split_kanji(test):
+    sei_yomi, mei_yomi, sei_kaki, mei_kaki = test.split(' ')
 
-    assert find_split_point(m[1], m[2], m[3]) == expected_split_point
+    result = find_split_point(sei_yomi, mei_yomi, f"{sei_kaki}{mei_kaki}")
+    assert result == len(sei_kaki)
+
+
+@pytest.mark.parametrize('test', tests)
+def test_split_kana(test):
+    sei_yomi, mei_yomi, sei_kaki, mei_kaki = test.split(' ')
+
+    result = find_kana_split_point(sei_kaki, mei_kaki, f"{sei_yomi}{mei_yomi}")
+    assert result == len(sei_yomi)
