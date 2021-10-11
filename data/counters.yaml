@@ -1,5 +1,4 @@
 # Japanese counter readings, with notes.
-# TODO: split notes about readings from other stuff.
 # Format:
 #  * written:
 #      written form, separated by 、. First one is considered representative.
@@ -8,22 +7,25 @@
 #  * reading:
 #      reading form, separated by 、.
 #  * counts:
-#      CSV of countable objects. More general advice can go in the `notes` field.
-#      All phrases should be plural. It is intended that any application doing
-#      full-text search on this field performs stemming so singular nouns match.
-#      Commas inside parentheses will not be used to split terms.
-#      May contain hyperlinks as with notes.
+#      Array or CSV string of countable objects.
+#       - should be plural
+#       - more common or general items should go first
+#       - more general advice can go in the 'notes' field
+#       - applications performing full-text search on these values should perform
+#         stemming so that singular forms match too.
+#       - may contain hyperlinks as with notes.
+#       - may be a hash like {en: foo, ja: ふー} which has both English and Japanese
+#         translations
 #  * notes:
 #      Either a hash or a string. Hash may add notes to particular numbers (e.g.
 #      4, 7) or 'all' for notes that apply to everything.
-#      A string is interpreted as a note for 'all'.
+#      A plain string is interpreted as a note for 'all'.
 #      The note may contain links to other counters: [X] where X is either the
 #      written form of a counter, or <written>・<reading> if there are multiple
 #      counters with the same written form.
 #      Furigana should be specified using ASCII parenetheses.
 #  * juku:
-#      Readings for individual counts, separated by spaces. Anything missing will
-#      be auto-populated based on the counts provided + general kango rules.
+#      Readings for individual counts, separated by spaces.
 #      Wide brackets afterward denote an alternate reading. If the reading has a
 #      * or ＊ after it, the reading is considered rare or archaic.
 #      If the reading has = after it, this stresses that this reading is just as
@@ -31,32 +33,55 @@
 #      Readings for 100, 1,000 and 10,000 may be added at the end and will be
 #      auto-detected based on the initial ひゃ, せん and いちまん.
 #      There may be >1 alternate forms, each inside their own parens.
+#      Square brackets [0] [1] [2] etc. can be used to indicate pitch accent:
+#       0 = 平板式 = LH+  (including particle after)
+#       1 = 頭高型 = HL+  (including particle after)
+#       2 = 中高型 = LHL+
+#       3         = LHHL+
+#       Can be more than one with commas. For example １曲 is either LHHHH(L)
+#       or LHHHH(H) which is [5,0]
 #  * howmany:
 #      Denotes the reading for 何+counter (or いくつ). As above may also include
-#      alternate forms. If omitted it defaults to なん+reading.
+#      alternate forms.
 #  * unit: yes
 #      Indicates that the 'counter' is not actually for counting but for naming
 #      specific things in a set. Example: がつ for the names of the months.
 #  * limit: N
 #      If set, specifies that the counter can only be used with values <= N.
+#  * source: ...
+#      Optional URL or array of URLs backing up the information
+#  * class: CLASS
+#      'basic', 'beginner', 'intermediate', 'advanced', 'rare', 'archaic'. Provides hints on
+#      how to order the counters in a menu.
 ---
 - written: つ
   reading: つ
-  counts: almost everything, ages of children
+  counts:
+   - almost everything
+   - things with an indeterminate form (puddles, stains, shadows)
+   - ages of children
+   - abtract things
   notes:
     Can be used to count almost all items if the quantity is 10
-    or less. For larger quantities, use [個].
+    or less. For larger quantities, use [個]. Zero is なし.
 
     とお is read as 十, not 十つ.
+    The っ in みっつ, よっつ, むっつ and やっつ is sometimes elided.
 
     Use [歳] for ages above 9.
   juku:
     ひとつ　ふたつ　みっつ　よっつ　いつつ　むっつ　ななつ　やっつ　ここのつ　とお
   howmany: いくつ
+  class: basic
+  category: Essential
+  irregular: true
   
 - written: 個
   reading: こ
-  counts: almost everything
+  counts:
+   - small or round items
+   - items that form a cluster
+   - almost any physical item (personal taste)
   notes:
     Generic counter. The 個 can also be left out, e.g. 十一個(じゅういっこ)
     can be said as 十一(じゅういち)
@@ -65,6 +90,8 @@
     ろっこ　ななこ　はっこ　きゅうこ　じゅっこ
     じゅういっこ　じゅうにこ　ひゃっこ　せんこ　いちまんこ
   howmany: なんこ
+  class: basic
+  category: Essential
 
 - written: 品
   reading: しな
@@ -78,6 +105,7 @@
     3: みしな is common among older speakers.
   counts: different items of food, courses of food, dishes of food
   howmany: なんしな
+  category: Food
 
 - written: 品
   reading: ひん
@@ -90,21 +118,40 @@
   notes:
     Prefer [品・しな] in the restaurant business or when using ~目.
     Must be used with phrases like 一品料理 and 天下一品. 
+  category: Foo
 
 - written: 本
   reading: ほん
   juku:
     いっぽん　にほん　さんぼん　よんほん　ごほん　ろっぽん　ななほん（しちほん*）
-    はっぽん（はちほん）　きょうほん　じゅっぽん（じっぽん*）
+    はっぽん（はちほん*）　きょうほん　じゅっぽん（じっぽん*） ひゃっぽん
   counts:
-     stick-shaped or long objects, pens, pencils, trees, films,
-     soda cans, carrots, sticks of chalk, tree branches, cigarettes,
-     umbrellas, beer bottles, plastic bottles, fire extinguishers,
-     spray cans, tunnels, flutes, clarinets, guitars, basses,
-     ukeleles, run (of a train), teeth (or [歯])
+    - stick-shaped, long or thin objects
+    - string
+    - laces
+    - cans and bottles (soda, beer etc.)
+    - roads
+    - movies/films
+    - train lines
+    - phone calls
+    - home-runs
+    - rivers
+    - moves in martial arts
+    - pens and pencils
+    - fingers
+    - trees
+    - tunnels
+    - flutes
+    - clarinets
+    - fire extinguishers
+    - carrots and leeks
+    - cigarettes
+    - teeth ([歯] is used by dentists)
   notes:
     General rule is 'twice as long as it is wide'
   howmany: なんぼん（なんほん*）（なんぽん*）
+  class: basic
+  category: Essential
 
 - written: 枚
   reading: まい
@@ -116,28 +163,42 @@
     flat things, paper, playing cards, credit cards, t-shirts, signs,
     mats, walls, windows, roofs, CDs, DVDs, contact lenses, pancakes,
     plates, coins, cookies, single bill (of money), postcards,
-    towels, scarves, most clothing (clothes)
+    towels, scarves, most clothing (clothes), zarusoba serving
+  class: basic
+  category: Essential
 
-- written: 匹
+- written: 匹　
   reading: ひき
   juku:
     いっぴき　にひき　さんびき　よんひき　ごひき
     ろっぴき　ななひき（しちひき*）　はっぴき（はちひき）　きゅうひき　じゅっぴき（じっぴき*）
     じゅういっぴき　じゅうにひき　ひゃっぴき　せんびき　いちまんびき
   counts:
-    dogs, cats, puppies, kittens, Godzilla, small monsters, insects, monkeys,
-    other small animals
+    - cats and dogs
+    - other small animals
+    - Godzilla (for some reason)
+    - small monsters
+    - insects
+    - fish (dead or alive, but not as food)
+    - monkeys
+    - bacteria
+    - butterflies
   notes:
     For larger animals use [頭]. Rabbits can be counted with [羽].
   howmany: なんびき
+  class: basic
+  category: Animals
 
 - written: 頭
   reading: とう
   counts:
-    livestock, cows, horses, animals for sale, elephants, crocodiles,
-    elephants, dinosaurs, ostriches, emus, police dogs, guide dogs,
-    rescue dogs, drug-sniffing dogs, lab rats, laboratory rats,
-    farm animals (in paperwork), animals in zoos
+   - livestock (cows, horses, other farm animals)
+   - animals in zoos
+   - large animals like elephants and crocodiles
+   - dinosaurs
+   - animals in professional capacity (police dogs, guide dogs, etc.)
+   - laboratory rats
+   - butterflies (specialist term)
   notes:
     Used for large animals and animals in a professional capacity
     (guide dogs, animals kept in zoos, animals kept for farming etc.)
@@ -146,21 +207,39 @@
     ろくとう（ろっとう）　ななとう（しちとう＊）　はっとう（はちとう）　きゅうとう　じゅっとう（じっとう＊）
     じゅういっとう　じゅうにとう　ひゃくとう（ひゃっとう）　せんとう　いちまんとう
   howmany: なんとう
+  class: beginner
+  category: Animals
 
 - written: 羽
   reading: わ
   counts:
-    birds, chickens, rabbits
+    birds, chickens, rabbits, large birds, ostriches, penguins
   juku:
-    いちわ　にわ　さんわ（さんば）　よんわ（よんば）（よわ＊）　ごわ
-    ろくわ（ろっぱ＊）　ななわ（しちわ＊）　はちわ（はっぱ＊）　きゅうわ　じゅうわ（じゅっぱ）（じっぱ＊）
-    じゅういちわ　じゅうにわ　ひゃくわ（ひゃっぱ）　せんわ（せんば）　いちまんわ（いちまんば）
+    いちわ
+    にわ
+    さんわ（さんば）
+    よんわ（よんば）（よわ*）
+    ごわ
+    ろっぱ（ろくわ=）
+    ななわ（しちわ*）
+    はちわ（はっぱ）
+    きゅうわ
+    じゅうわ（じゅっぱ=）（じっぱ）
+    じゅういちわ
+    じゅうにわ
+    ひゃくわ（ひゃっぱ=）
+    せんわ（せんば=）
+    いちまんわ（いちまんば=）
   howmany:
-    なんわ（なんば）
+    なんわ（なんば=）
   notes:
     ~わ is the standard pronouciation, but ~ば is the preferred reading in
-    the NHK Accent Dictionary.
+    the NHK Accent Dictionary.　Both ば and ぱ are old pronounciations, and
+    are especially seen in expressions such as 千羽鶴(せんばづる).
     じっぱ and ひゃっぱ, while rare, can be heard in news reports.
+  class: beginner
+  category: Animals
+  irregular: true
 
 - written: 冊
   reading: さつ
@@ -171,18 +250,24 @@
     いっさつ　にさつ　さんさつ　よんさつ　ごさつ
     ろくさつ　ななさつ　はっさつ　きゅうさつ　じゅっさつ（じっさつ）
     じゅういっさつ　じゅうにさつ　ひゃくさつ（ひゃっさつ*）　せんさつ　いちまんさつ
+  notes: See also [冊・さく] for rectangular cuts of fish
+  class: beginner
+  category: Objects
 
 - written: 台
   reading: だい
   counts:
     mechanical objects, vehicles, large musical instruments, furniture
     platforms, cars, trucks, washing machines, ovens, air conditioners,
-    microwaves, tables, pianos, beds, harps
+    microwaves, tables, pianos, beds, harps, standing mirrors, sinks,
+    wall clocks
   juku:
     いちだい　にだい　さんだい　よんだい　ごだい
     ろくだい　ななだい（しちだい＊）　はちだい　きゅうだい　じゅうだい
     じゅういちだい　じゅうにだい　ひゃくだい　せんだい　いちまんだい
   howmany: なんだい
+  class: beginner
+  category: Objects
 
 - written: 分
   reading: ふん
@@ -190,35 +275,72 @@
   counts:
     minutes
   juku:
-    いっぷん　にふん　さんぷん（さんふん）　よんぷん（よんふん）　ごふん
-    ろっぷん　ななふん（しちふん＊）　はっぷん（はちふん）　きゅうふん　じゅっぷん（じっぷん）
-    じゅういっぷん　じゅうにふん　ひゃっぷん　せんぷん（せんふん）　いちまんぷん（いｃｈまんふん）
+    いっぷん
+    にふん
+    さんぷん（さんふん*）
+    よんぷん（よんふん*）
+    ごふん
+    ろっぷん
+    ななふん（しちふん*）
+    はっぷん（はちふん）
+    きゅうふん
+    じゅっぷん（じっぷん）
+    じゅういっぷん
+    じゅうにふん
+    ひゃっぷん
+    せんぷん（せんふん*）
+    いちまんぷん（いちまんふん*）
   howmany:
     なんぷん（なんふん）
+  category: Time
 
 - written: 日
   reading: か、にち
   juku:
-    いちにち　ふつか　みっか　よっか　いつか　むいか　なのか　ようか
-    ここのか　とおか じゅういちにち　じゅうににち　じゅうさんにち
-    じゅうよっか（じゅうよんにち）　じゅうごにち　じゅうろくにち
-    じゅうしちにち（じゅうななにち*）　じゅうはちにち
+    いちにち　ふつか　みっか　よっか　いつか
+    むいか　なのか　ようか ここのか　とおか
+    じゅういちにち
+    じゅうににち
+    じゅうさんにち
+    じゅうよっか（じゅうよんにち*）
+    じゅうごにち
+    じゅうろくにち
+    じゅうしちにち（じゅうななにち）
+    じゅうはちにち
     じゅうくにち
-    はつか（にじゅうにち）
+    はつか（にじゅうにち＊）
+    にじゅういちにち
+    にじゅうににち
+    にじゅうさんにち
+    にじゅうよっか
+    にじゅうごにち
+    にじゅうろくにち
+    にじゅうしちにち
+    にじゅうはちにち
+    にじゅうくにち
+    さんじゅうにち
+    さんじゅういちにち
+    ひゃくにち
   counts:
     specific days of the month
   notes:
     1:
       ついたち is used for the first day of the calendar month.
       いちにち is used for a whole day (unit of time)
-      Rarely read as いっぴ in some formal situations.
-    8: Special reading
-    14: Special reading
+      Also read as いっぴ in some formal situations.
+    7: You may also encounter なぬか
+    8: Special reading (18 is じゅうはちにち). はちにち might rarely be used to avoid confusion with よっか.
+    14: Special reading (and for 24)
+    19: Special reading (and for 19)
+    20: 
     all:
       If preceded with 第, follows a more standard pronounciation,
-      e.g. 第一日(だいいちにち)
+      e.g. 第一日(だいいちにち) 第二日(だいににち) not だいふつか
   howmany:
     なんにち
+  class: basic
+  category: Time
+  irregular: true
 
 - written: 人
   reading: ひと、にん
@@ -238,12 +360,19 @@
     9: くにん is avoided (く sounds like 苦)
     19: くにん becomes more common for 19, 29 and up.
     all: 4 is consistently よ here, different to most counters.
+  category: People
+  irregular: true
 
 - written: 駅
   reading: えき
   juku:
-    ひとえき　ふたえき　さんえき
-  counts: station, stop
+    ひとえき　ふたえき　さんえき　よんえき　ごえき
+    ろくえき　ななえき　はちえき　きゅうえき　じゅうえき
+    じゅういちえき　じゅうにえき
+  counts: train stations, stops, number of stations away from somewhere
+  class: intermediate
+  howmany: なんえき
+  category: Locations
 
 - written: 年
   reading: ねん
@@ -253,7 +382,41 @@
     ろくねん　ななねん（しちねん）　はちねん　きゅうねん（くねん＊）　じゅうねん
     じゅういちねん　じゅうにねん　ひゃくねん　せんねん　いちまんねん
   notes:
-    all: 4 is consistently よ here, different to most counters.
+    4: 4 is consistently よ here, different to most counters.
+    7:
+      Read as しち for numbers after 10. For example, 2017年 is にせんじゅうしちねん, even though
+      17 on its own would usually be read じゅうなな. The vowel in し is unvoiced.
+      The same occurs for [日], [時], [時間] and [人].
+    9:
+      Read as く for numbers after 10. For example, (平成)29年 is にじゅうくねん, even though
+      29 on its own would usually be read にじゅうきゅう.
+  source: https://www.nhk.or.jp/bunken/research/kotoba/20170301_4.html
+  category: Time
+
+- written: 年生
+  reading: ねんせい
+  counts: (school) grade, (school) year
+  limit: 12
+  notes:
+    The Japanese school system only uses up to 6 grades (for elementary school) but
+    higher numbers can be used when referencing the American school system.
+  juku:
+    いちねんせい　にねんせい　さんねんせい　よねんせい　ごねんせい
+    ろくねんせい　ななねんせい　はちねんせい　きゅうねんせい　じゅうねんせい
+    じゅういちねんせい　じゅうにねんせい
+  howmany: なんねんせい
+  unit: yes
+  category: Time
+
+- written: 学年
+  reading: がくねん
+  counts: academic years
+  juku:
+    いちがくねん　にがくねん　さんがくねん　よんがくねん　ごがくねん
+    ろくがくねん　なながくねん（しちがくねん）　はちがくねん　きゅうがくねん　じゅうがくねん
+    じゅういちがくねん
+  howmany: なんがくねん
+  category: Time
 
 - written: 回
   reading: かい
@@ -279,6 +442,7 @@
     3: 階 uniquely has optional rendaku for 3 (がい) unlike 回.
     8: はちかい is preferred to avoid confusion.
     all: When asking 'how many floors', use 何階建て(なんがいだて)
+  irregular: true
 
 - written: 月
   reading: つき
@@ -289,8 +453,9 @@
     ここのつき　とつき
   notes:
     Uncommon for three or more months, use [ヶ月] instead.
+  category: Time
 
-- written: ヶ月、か月、箇月、カ月、ヵ月、ケ月
+- written: 箇月
   reading: かげつ
   counts:
     number of months
@@ -299,6 +464,56 @@
     ろっかげつ　ななかげつ　はちかげつ（はっかげつ）　きゅうかげつ
     じゅっかげつ（じっかげつ）　じゅういっかげつ　じゅうにかげつ
     ひゃっかげつ　せんかげつ　いちまんかげつ
+  howmany: なんかげつ
+  notes:
+    In spoken language, the terms 一月(ひとつき), ふたつき, みつき and よつき
+    are also common for counting a period of 1-4 months.
+  category: Time
+
+- written: 箇年
+  reading: かねん
+  counts:
+    number of years (business)
+  juku:
+    いっかねん　にかねん　さんかねん　よんかねん　ごかねん
+    ろっかねん　ななかねん　はちかねん（はっかねん）　きゅうかねん　じゅっかねん（じっかねん）
+    ひゃっかねん
+  howmany: なんかねん
+  notes:
+    Used in business settings for things like a five-year plan or strategy. 一ヶ年 is
+    infrequently used.
+  category: Time
+
+- written: 箇条
+  reading: かじょう
+  counts: number of articles/clauses/sections (official documents), number of points
+  juku:
+    いっかじょう　にかじょう　さんかじょう　よんかじょう　ごかじょう
+    ろっかじょう　ななかじょう　はちかじょう（はっかじょう）　きゅうかじょう　じゅっかじょう（じっかじょう）
+    ひゃっかじょう
+  howmany: なんかじょう
+
+- written: 箇国語
+  reading: かこくご
+  counts: languages (national languages)
+  usage:
+    Use [言語] to count languages where the country is not emphasised, or when
+    counting non-national languages.
+  juku:
+    いっかこくご　にかこくご　さんかこくご　よんかこくご　ごかこくご
+    ろっかこくご　ななかこくご　はちかこくご（はっこくご）　きゅうかこくご　じゅっかこくご（じっかこくご）
+    ひゃっかこくご
+  howmany: なんかこくご
+
+- written: 言語
+  reading: げんご
+  counts: languages
+  usage: See also [箇国語].
+  juku:
+    いちげんご　にげんご　さんげんご　よんげんご　ごげんご
+    ろくげんご　ななげんご　はちげんご　きゅうげんご　じゅうげんご
+    ひゃくげんご
+  howmany: なんげんご
 
 - written: 月
   reading: がつ
@@ -306,12 +521,13 @@
   counts: calendar month
   notes:
     all: Used when referring to a specific month, not when counting them.
-    7: Unusual, but useful to avoid confusion with いちがつ (January)
+    7: Dialect. Also useful to avoid confusion with いちがつ (January)
   juku:
     いちがつ　にがつ　さんがつ　しがつ　ごがつ
     ろくがつ　しちがつ（なながつ*）　はちがつ　くがつ　じゅうがつ
     じゅういちがつ　じゅうにがつ
   limit: 12
+  category: Time
 
 - written: 時
   reading: じ
@@ -324,6 +540,13 @@
     じゅうろくじ　じゅうしちじ（じゅうななじ）　じゅうはちじ　じゅうくじ　にじゅうじ
     にじゅういちじ　にじゅうにじ　にじゅうさんじ　にじゅうよじ
   limit: 24
+  notes:
+    0:00/midnight is 零時(れいじ), although ゼロ and にじゅうよん can also be used.
+    ななじ is used in dialects or to avoid confusion with いちじ.
+    TV commonly uses hours beyond 24, which wrap around. For example 27時 means
+    '3 am' (tonight)
+  howmany: なんじ
+  category: Time
 
 - written: 時間
   reading: じかん
@@ -331,10 +554,14 @@
   counts: amount of time in hours, interval in hours
   juku:
     いちじかん　にじかん　さんじかん　よじかん　ごじかん
-    ろくじかん　しちじかん（ななじかん）　はちじかん　くじかん　じゅうじかん
+    ろくじかん　ななじかん（しちじかん=）　はちじかん　くじかん　じゅうじかん
     じゅういちじかん　じゅうにじかん　じゅうさんじかん　じゅうよじかん　じゅうごじかん
     じゅうろくじかん　じゅうしちじかん（じゅうななじかん）　じゅうはちじかん　じゅうくじかん　にじゅうじかん
     にじゅういちじかん　にじゅうにじかん　にじゅうさんじかん　にじゅうよじかん
+  notes:
+    4: must be read as よ
+    7: Be careful to distinguish it from いちじかん.
+  category: Time
 
 - written: 歳、才
   reading: さい
@@ -352,6 +579,7 @@
     ひゃくさい
   howmany:
     なんさい（いくつ）
+  category: Time
 
 - written: 円
   reading: えん
@@ -362,10 +590,27 @@
   howmany: いくら（なんえん）
   notes:
     4: よんえん is not correct.
+  source: https://www.nhk.or.jp/bunken/research/kotoba/pdf/20160901_5.pdf
 
-- written: ヶ所、箇所
+- written: 箇所
   reading: かしょ
-  counts: places, points (on map)
+  counts: places, locations, points (on map)
+  juku:
+    いっかしょ　にかしょ　さんかしょ　よんかしょ　ごかしょ
+    ろっかしょ　ななかしょ　はちかしょ（はっかしょ）　きゅうかしょ　じゅっかしょ（じっかしょ）
+    ひゃっかしょ
+  howmany: なんかしょ
+
+- written: 週間
+  reading: しゅうかん
+  counts: weeks
+  juku:
+    いっしゅうかん　にしゅうかん　さんしゅうかん　よんしゅうかん　ごしゅうかん
+    ろくしゅうかん　ななしゅうかん　はちしゅうかん（はっしゅうかん）　きゅうしゅうかん
+    じゅっしゅうかん（じっしゅうかん）
+    ひゃくしゅうかん
+  howmany: なんしゅうかん
+  category: Time
 
 - written: 缶
   reading: かん
@@ -373,19 +618,49 @@
   notes:
     Use [個] for empty cans or garbage cans.
   juku:
-    いっかん（ひとかん）　にかん（ふたかん）
+    ひとかん（いっかん）　ふたかん（にかん）　さんかん（みかん）　よんかん　ごかん
+    ろっかん　ななかん　はちかん　きゅうかん　じゅっかん（じっかん）
+  category: Food
+
+- written: 瓶
+  reading: びん
+  counts: bottles, beer bottles
+  juku:
+    ひとびん　ふたびん　さんびん　よんびん　ごびん
+    ろくびん　ななびん　はちびん　きゅうびん　じゅうびん
+    じゅういちびん　じゅうにびん
+    ひゃくびん　せんびん
+  howmany: なんびん
+  category: Food
 
 - written: 巻
   reading: かん
   counts: volumes of books, volumes of manga, scrolls
+  juku:
+    いっかん　にかん　さんかん　よんかん　ごかん
+    ろっかん（ろくかん）　ななかん　はっかん（はちかん）　きゅうかん
+    じゅっかん（じっかん）　じゅういっかん　じゅうにかん
+    ひゃっかん　せんかん
+  howmany: なんかん
 
 - written: 曲
   reading: きょく
-  counts: songs
+  counts: songs, tunes, melodies, jingles
+  juku:
+    いっきょく　にきょく　さんきょく　よんきょく　ごきょく
+    ろっきょく（ろくきょく）　ななきょく　はっきょく（はちきょく）　きゅうきょく
+    じゅっきょく（じっきょく）　じゅういっきょく　じゅうにきょく
+  howmany: なんきょく
 
 - written: 箇国
   reading: かこく
   counts: number of (different) countries
+  juku:
+    いっかこく　にかこく　さんかこく　よんかこく　ごかこく
+    ろっかこく　ななかこく　はちかこく（はっかこく）　きゅうかこく　じゅっかこく（じっかこく）
+    ひゃっかこく
+  howmany: なんかこく
+  notes: 二つの国 etc. can also be used.
 
 - written: 切れ
   reading: きれ
@@ -396,65 +671,135 @@
     ろっきれ　ななきれ　はちきれ（はっきれ）　きゅうきれ　じゅっきれ（じっきれ）
     ひゃっきれ
   howmany: なんきれ
+  category: Food
 
 - written: 口
   reading: くち
-  counts: bites (of food), sips (of drink)
+  counts:
+   - bites (of food)
+   - sips (of drink)
+   - {en: lottery ticket, ja: 宝くじ}
+  juku:
+    ひとくち　ふたくち　みくち（さんくち=）　よんくち　ごくち　ろっくち　ななくち　はっくち
+    きゅうくち　じゅっくち
+  howmany: なんくち
+  notes:
+   3: さんくち is more common among younger speakers.
 
-- written: 組
+- written: 組、組み
   reading: くみ
   counts:
-    romantic couple, pair of gloves, set of playing cards, class or group number
+   - class or group in school
+   - homeroom in school
+   - groups of people
+   - romantic couples
+   - sets of playing cards
+  juku:
+    ひとくみ　ふたくみ、さんくみ（みくみ）　よんくみ（よくみ）　ごくみ
+    ろっくみ　ななくみ　はっくみ（はちくみ）　きゅうくみ　じゅっくみ（じっくみ）
+    ひゃっくみ
+  howmany: なんくみ
+  source: https://www.nhk.or.jp/bunken/research/kotoba/pdf/20160901_5.pdf
+  category: People
 
 - written: 件
   reading: けん
   counts:
     incidents, crimes, projects, plans, proposals, suggestions, objections,
-    voicemail messages, e-mails, emails, contracts, views (of a web page)
+    voicemail messages, e-mails, emails, contracts, views (of a web page),
+    bugs (software), cases (disease etc.), inquiries, search results, news articles
+  juku:
+    いっけん　にけん　さんけん　よんけん　ごけん
+    ろっけん　ななけん　はちけん（はっけん）　きゅうけん　じゅっけん（じっけん）
+    ひゃっけん
+  howmany: なんけん
+  class: intermediate
 
 - written: 軒
   reading: けん
   counts:
-    houses, shops, restaurants, households,
-    places to eat or drink (as part of a night out)
+    houses (individual houses not connected to each other),
+    shops, stores, restaurants, households, places to eat or drink (as part of a night out)
+  juku:
+    いっけん　にけん　さんけん（さんげん）　よんけん　ごけん
+    ろっけん　ななけん　はっけん　きゅうけん　じゅっけん（じっけん）
+    ひゃっけん
+  howmany: なんけん（なんげん）
 
 - written: 語
   reading: ご
   counts: words
+  juku:
+    いちご　にご　さんご　よんご　ごご
+    ろくご　ななご　はちご　きゅうご　じゅうご
+    じゅういちご　じゅうにご
+    ひゃくご　せんご
+  howmany: なんご
 
 - written: 校
   reading: こう
   counts: schools, universities, colleges
+  juku:
+    いっこう　にこう　さんこう　よんこう　ごこう
+    ろっこう　ななこう　はっこう　きゅうこう　じゅっこう
+    じゅういっこう　じゅうにこう
+    ひゃっこう　せんこう
+  howmany: なんこう
 
 - written: 皿
   reading: さら
-  counts: dishes, plates
+  counts: dishes of food, plates of food, conveyor belt sushi dishes
   notes:
-    For empty places you can use [枚]. To count individual foods on the plate,
+    For empty places you should use [枚]. To count individual foods on the plate,
     use [品・しな].
   juku:
-    ひとさら　ふたさら　さんさら（みさら）
-
-- written: 試合
-  reading: しあい
-  counts: games, matches
+    ひとさら　ふたさら　みさら（さんさら）　よんさら　ごさら
+    ろくさら　ななさら　はっさら（はちさら）　きゅうさら　じゅっさら（じっさら）
+    ひゃくさら
+  howmany: なんさら
 
 - written: 社
   reading: しゃ
-  counts: companies, publishers, publishing houses, newspaper companies, shrines(神社)
+  counts:
+   - companies
+   - publishers / publishing houses
+   - newspaper companies
+   - {en: shrines, ja: 神社}
+  juku:
+    いっしゃ　にしゃ　さんしゃ　よんしゃ　ごしゃ　ろくしゃ　ななしゃ　はっしゃ　きゅうしゃ　じゅっしゃ
+    じゅういっしゃ　じゅうにしゃ　ひゃくしゃ　せんしゃ
+  howmany: なんしゃ
 
 - written: 種類
   reading: しゅるい
   counts: kinds, varieties, types
+  notes: Can also use [種].
+  juku:
+    いっしゅるい　にしゅるい　さんしゅるい　よんしゅるい　ごしゅるい
+    ろくしゅるい　ななしゅるい　はちしゅるい（はっしゅるい）　きゅうしゅるい
+    じゅっしゅるい（じっしゅるい）　ひゃくしゅるい
+  howmany: なんしゅるい
 
 - written: 週
   reading: しゅう
   counts: weeks
   notes: Used with 〜間 or 〜目 or preceded with 第〜.
+  juku:
+    いっしゅう　にしゅう　さんしゅう　よんしゅう　ごしゅう
+    ろくしゅう　ななしゅう　はっしゅう　きゅうしゅう　じゅっしゅう
+    じゅういっしゅう　じゅうにしゅう
+    ひゃくしゅう　せんしゅう
+  howmany: なんしゅう
 
 - written: 周
   reading: しゅう
   counts: circuits, rounds, revolutions
+  juku:
+    いっしゅう　にしゅう　さんしゅう　よんしゅう　ごしゅう
+    ろくしゅう　ななしゅう　はっしゅう　きゅうしゅう　じゅっしゅう
+    じゅういっしゅう　じゅうにしゅう
+    ひゃくしゅう　せんしゅう
+  howmany: なんしゅう
 
 - written: 色
   reading: しょく、いろ
@@ -462,6 +807,13 @@
   notes:
     When counting colours use ~しょく, although the seven colours of the rainbow are
     usually called なないろ.
+  juku:
+    いっしょく　にしょく　さんしょく　よんしょく　ごしょく
+    ろくしょく　ななしょく　はっしゃく　きゅうしょく　じゅっしょく
+    じゅういっしょく　じゅうにしょく
+    ひゃくしょく
+    せんしょく
+  howmany: なんしょく
 
 - written: 席
   reading: せき
@@ -471,6 +823,8 @@
 - written: 戦
   reading: せん
   counts: fights (sports, martial arts, real war), matches, games
+  notes:
+    Counts fights where winning is important - not exhibition matches, practices etc.
 
 - written: 足
   reading: そく
@@ -480,13 +834,32 @@
   juku:
     いっそく　にそく　さんぞく（さんそく）　よんそく　ごそく
     ろくそく　ななそく　はっそく　きゅうそく　じゅっそく（じっそく）
+    じゅういっそく　じゅうにそく
     ひゃくそく　せんぞく（せんそく）　いちまんぞく（いちまんそく）
   howmany: なんぞく（なんそく）
 
 - written: 束
   reading: たば
-  counts: bunch, bundles (of vegetables etc.), stack of bills (of money)
-  # notes: wago for 1,2, kango/wago for 3, kango 4+
+  counts:
+   - bundles of leafy vegetables
+   - bundles of nappa
+   - stacks of bills (money)
+  juku:
+    ひとたば　ふたたば　みたば（さんたば）　よんたば　ごたば
+    ろくたば　ななたば　はちたば　きゅうたば　じゅったば（じったば）
+    ひゃくたば
+  howmany: なんたば
+  class: intermediate
+
+- written: 束
+  reading: そく
+  counts:
+   - quantities of a hundred (vegetables, bamboo, rice plants, firewood)
+  juku:
+    いっそく　にそく　さんぞく（さんそく）　よんそく　ごそく　ろくそく　ななそく　はっそく
+    きゅうそく　じっそく（じゅっそく）　ひゃくそく
+  howmany: なんぞく（なんそく）
+  class: advanced
 
 - written: 玉
   reading: たま
@@ -502,16 +875,42 @@
   counts:
     stairs, steps, vertical shelves, layers, paragraphs, levels/ranks (martial arts),
     cake tiers, vertical drawers
+  yoku:
+    いちだん　にだん　さんだん　よんだん　ごだん
+    ろくだん　ななだん　はちだん　きゅうだん　じゅうだん
+    じゅういちだん　じゅうにだん
+    ひゃくだん　せんだん
+  howmany: なんだん
 
 - written: 着
   reading: ちゃく
   counts:
-    suits, yukata, kimono, coats, skirts, dresses, jackets, costumes,
-    race finishing position (first, second etc.)
+    suits, yukatas, kimono, coats, skirts, dresses, jackets, costumes,
+    race finishing position (first, second etc.), business suits,
+    order of arrival
+  notes: Use [枚] for shirts, blouses, sweaters, skirts, pants, underwear, etc.
+  class: intermediate
+  juku:
+    いっちゃく　にちゃく　さんちゃく　よんちゃく　ごちゃく
+    ろくちゃく　ななちゃく　はっちゃく（はちちゃく）　きゅうちゃく　じゅっちゃく（じっちゃく）
+    ひゃっちゃく
+  howmany: なんちゃく
 
 - written: 通
   reading: つう
-  counts: letters, messages (mails, e-mails, answering machine), sealed documents, reports
+  counts:
+   - letters (手紙)
+   - e-mails
+   - notes
+   - written reports, 
+   - sealed documents, answering machine messages
+   - internet chat messages (LINE, Whatsapp etc.)
+   - text messages
+  juku:
+    いっつう　につう　さんつう　よんつう　ごつう　ろくつう　ななつう　はちつう（はっつう）
+    きゅうつう　じゅっつう（じっつう）　ひゃくつう
+  howmany: なんつう
+  class: intermediate
 
 - written: 粒
   reading: つぶ
@@ -527,20 +926,33 @@
 - written: 点
   reading: てん
   counts:
-    points (exam, sports), score (exam, sports), dots, vases, pottery, watches
+   - points/score (e.g. exams, sports)
+   - commodities
+   - merchandise
+   - dots
+  juku:
+    いってん　にてん　さんてん　よんてん　ごてん　ろくてん　ななてん　はってん（はちてん）
+    きゅうてん　じゅってん（じってん）　ひゃくてん
+  notes:
+    0 is れいてん.
+  howmany: なんてん
+  class: beginner
 
 - written: 度
   reading: ど
   counts:
-    number of times something happens, degrees (temperature)
-  notes:
-    all: たび　（ひとたび、ふたたび、みたび） can also be used.
+    number of times something happens, frequency, degrees (temperature), angle
+  notes: たび　（ひとたび、ふたたび、みたび） can also be used. For frequencies above 2, [回] is more common.
+  juku:
+    いちど　にど　さんど　よんど　ごど
+    ろくど　ななど　はちど　きゅうど　じゅうど
+  howmany: なんど
 
 - written: 杯
   reading: はい
   counts:
     drinks (water, beer, cocktails, juice, tea, coffee), bowls of rice, donburi,
-    soba, ramen, udon, stew, curry
+    soba, ramen, udon, stew, curry, crabs/octopuses/squid (as food)
   juku:
     いっぱい　にはい　さんばい（さんぱい）　よんはい　ごはい
     ろっぱい　ななはい（しちはい）　はっぱい　きゅうはい　じゅっぱい（じっぱい）
@@ -554,12 +966,15 @@
 - written: 泊
   reading: はく
   counts:
-    number of nights (hotel stays), number of overnight rentals
+   - nights (of a stay - hotels etc.)
+   - number of overnight rentals
   juku:
-    いっぱく　にはく　さんぱく　よんはく　ごはく
-    ろっぱく　ななはく　はっぱく　きゅうはく　じゅっぱく
+    いっぱく　にはく　さんぱく　よんはく（よんぱく）　ごはく
+    ろっぱく　ななはく　はっぱく　きゅうはく　じゅっぱく（じっぱく）
     じゅういっぱく　じゅうにはく
+    ひゃっぱく
   howmany: なんぱく
+  class: beginner
 
 - written: 箱
   reading: はこ
@@ -590,6 +1005,7 @@
     いちまんはこ（いちまんぱこ）
   howmany:
     なんぱこ
+  irregular: true
 
 - written: パック
   reading: ぱっく
@@ -629,13 +1045,25 @@
 - written: 発
   reading: はつ
   counts:
-    bullets, bullet marks, shots fired, jokes, rockets, cannons, kicks, punches,
-    explosives, blast (of a laser), physical attacks, shots/hits (sports)
+    bullets, explosions, attacks, sneezes, anything explosive, bullet marks, shots fired,
+    jokes, rockets, cannons, kicks, punches, blasts (of a laser), physical attacks,
+    shots/hits (sports)
   juku:
-    いっぱつ　にはつ　さんぱつ（さんはつ）　よんぱつ（よんはつ）　ごはつ
-    ろっぱつ（ろくはつ）　ななはつ（しちはつ＊）　はっぱつ（はちはつ）　きゅうはつ　じゅっぱつ（じっぱつ＊）
-    じゅういっぱつ　じゅうにはつ
-    ひゃっぱつ（ひゃくはつ）　せんぱつ（せんはつ）　いちまんぱつ（いちまんはつ）
+    いっぱつ
+    にはつ
+    さんぱつ（さんはつ*）
+    よんぱつ（よんはつ*）
+    ごはつ
+    ろっぱつ（ろくはつ*）
+    ななはつ（しちはつ＊）
+    はっぱつ（はちはつ*）
+    きゅうはつ
+    じゅっぱつ（じっぱつ）
+    じゅういっぱつ
+    じゅうにはつ
+    ひゃっぱつ（ひゃくはつ*）
+    せんぱつ（せんはつ*）
+    いちまんぱつ（いちまんはつ*）
   howmany:
     なんぱつ（なんはつ）
 
@@ -644,12 +1072,23 @@
   unit: yes
   counts:
     seconds
+  juku:
+    いちびょう　にびょう　さんびょう　よんびょう　ごびょう
+    ろくびょう　ななびょう　はちびょう　きゅうびょう　じゅうびょう
+    にじゅうびょう
+  howmany: なんびょう
 
 - written: 便
   reading: びん
   counts:
     flights, boats, buses (long-distance), flight number (suffix), ships shipping out,
     deliveries, bus number (suffix)
+  juku:
+    いちびん　にびん　さんびん　よんびん　ごびん
+    ろくびん　ななびん　はちびん　きゅうびん　じゅうびん
+    じゅういちびん　じゅうにびん
+    ひゃくびん　せんびん
+  howmany: なんびん
 
 - written: 袋
   reading: ふくろ
@@ -664,6 +1103,7 @@
     　　じゅっぷくろ（じっぷくろ）（とふくろ*）
     ひゃっぷくろ（ひゃくふくろ）
   howmany: なんふくろ
+  class: intermediate
   
 - written: 袋
   reading: たい
@@ -674,11 +1114,14 @@
     ひゃくたい（ひゃったい）
   howmany: なんたい
   notes: For business/industrial settings. More usually [袋・ふくろ].
+  class: advanced
 
 - written: 部屋
   reading: へや
   counts:
     rooms, bedrooms, hotel rooms, living rooms, bathrooms, closets
+  juku:
+    ひとへや　ふたへや　さんへや　よんへや　ごへや
 
 - written: 歩
   reading: ほ
@@ -703,7 +1146,7 @@
 - written: 文字
   reading: もじ
   counts:
-    letters, characters (きゃ is treated as one), morae (mora), kanji, kana
+   - letters (kana, kanji)
   juku:
     ひともじ　ふたもじ　さんもじ　よんもじ　ごもじ
     ろくもじ　ななもじ　はちもじ　きゅうもじ　じゅうもじ
@@ -712,28 +1155,43 @@
 
 - written: 字
   reading: じ
-  counts: letters, characters (e.g. Twitter's 140) including punctuation and small kana
+  counts: characters (letters, punctuation, etc.)
   juku:
-    いちじ　にじ　さんじ　よんじ　ごじ
-    ろくじ　ななじ　はちじ　きゅうじ　じゅうじ　ひゃくじ
-  howmany: なんじ
-    
+    いちじ　にじ　さんじ　よんじ（よじ）　ごじ
+    ろくじ　ななじ　はちじ　きゅうじ　じゅうじ（くじ）
+    ひゃくじ　せんじ
+  howmany: なんじ  
 
 - written: 問
   reading: もん
   counts:
     problems/questions (in an exam or textbook), questions
+  juku:
+    いちもん　にもん　さんもん　よんもん　ごもん
+    ろくもん　ななもん　はちもん　きゅうもん　じゅうもん
+    ひゃくもん　せんもん
+  howmany: なんもん
 
 - written: 話
   reading: わ
   counts:
     stories, episodes (TV, anime etc), chapters (manga), folk tales
+  juku:
+    いちわ　にわ　さんわ　よんわ　ごわ
+    ろくわ　ななわ　はちわ　きゅうわ　じゅうわ
+    じゅういちわ　じゅうにわ
+    ひゃくわ　せんわ
+  howmany: なんわ
 
 - written: 位
   reading: い
   unit: yes
   counts:
     place/finish in a contest or race, position in a race
+  juku:
+    いちい　にい　さんい　よんい　ごい　ろくい　なない　はちい　きゅうい　じゅうい
+  source: https://www.mlcjapanese.co.jp/cou_36.html
+  howmany: なんい
 
 - written: 折り、折
   reading: おり
@@ -741,7 +1199,11 @@
     folds, train station bento (ekiben), boxes of sweets or cakes often given as gifts,
     bento in folded boxes
   juku:
-    ひとおり　ふたおり　みおり（さんおり）
+    ひとおり　ふたおり　みおり（さんおり）　よんおり（よおり）　ごおり
+    ろくおり　ななおり　はちおり（やおり）　きゅうおり　じゅうおり（とおり）
+    じゅういちおり　じゅうにおり
+    ひゃくおり　せんおり
+  howmany: なんおり
 
 - written: 片
   reading: かけ
@@ -749,6 +1211,8 @@
     garlic cloves, small or broken pieces of something
   juku:
     ひとかけ　ふたかけ
+  limit: 2
+  notes: Also read [片・へん]  and [片・ひら].
 
 - written: 欠片
   reading: かけら
@@ -756,6 +1220,7 @@
     pieces of something, slices of bread, garlic gloves, shards of glass
   juku:
     ひとかけら　ふたかけら
+  limit: 2
 
 - written: 方
   reading: かた
@@ -769,13 +1234,19 @@
 
 - written: 斤
   reading: きん
-  counts:
-    loaves of bread
+  counts: loaves of bread
+  juku:
+    いっきん　にきん　さんきん　よんきん　ごきん
+    ろっきん　ななきん　はっきん　きゅうきん　じゅっきん
+    じゅういっきん　じゅうにきん
+    ひゃっきん　せんきん
+  howmany: なんきん
+  category: Food
 
 - written: 桁
   reading: けた
   counts:
-    digits, decimal places
+    numerical digits, decimal places
   juku:
     ひとけた　ふたけた　みけた（さんけた）　よけた（よんけた）　ごけた
     ろっけた　ななけた　はっけた（はちけた）　きゅうけた　じゅっけた
@@ -791,6 +1262,7 @@
     ひとくらす（いちくらす）　ふたくらす（にくらす）　さんくらす　よんくらす　ごくらす
     ろっくらす（ろくくらす）　ななくらす　はちくらす　きゅうくらす　じゅっくらす（じっくらす）
   howmany: なんくらす
+  notes: Use [学級] to count individual home rooms.
 
 - written: 房
   reading: ふさ
@@ -831,47 +1303,104 @@
 - written: 種
   reading: しゅ
   counts: types, kinds, varieties
+  juku:
+    いっしゅ　にしゅ　さんしゅ　よんしゅ　ごしゅ
+    ろくしゅ　ななしゅ　はちしゅ（はっしゅ）　きゅうしゅ
+    じゅっしゅ（じっしゅ）　ひゃくしゅ
+  howmany: なんしゅ
 
 - written: 升
   reading: しょう
   counts: 1.8L bottles of sake, 1.8L bottles of shochu, 20 bowls of rice
+  class: advanced
 
 - written: 畳
   reading: じょう
   counts: tatami, tatami mats, size (of a room, flat, apartment)
+  juku:
+    いちじょう　にじょう　さんじょう　よじょう（よんじょう）　ごじょう
+    ろくじょう　ななじょう　はちじょう　きゅうじょう（くじょう）　じゅうじょう
+    ひゃくじょう　せんじょう
+  howmany: なんじょう
+  source: https://www.nhk.or.jp/bunken/research/kotoba/pdf/20160901_5.pdf
 
 - written: 隻
   reading: せき
   counts: big ships, battleships, vessels
+  juku:
+    いっせき　にせき　さんせき　よんせき　ごせき
+    ろくせき　ななせき　はっせき　きゅうせき　じゅっせき
+    じゅういっせき　じゅうにせき
+    ひゃくせき　せんせき
+  howmany: なんせき
+  source: http://www.ogurano.net/hishamu/josuushi.pdf
 
 - written: 説
   reading: せつ
   counts: theories, explanations, differing opinions, rumours, rumors
+  class: advanced
 
 - written: 膳
   reading: ぜん
-  counts: chopsticks (as utensils), bowls of rice (more polite than [杯])
+  counts:
+   - {ja: お箸, en: chopsticks (as utensils)}
+   - bowls/bowlfuls of rice (more polite than [杯])
+  class: intermediate
+  notes: 一膳 is the 'correct' way to describe a pair of chopsticks; 2膳 would be '2 pairs'
+  juku:
+    いちぜん　にぜん　さんぜん　よんぜん　ごぜん　ろくぜん　ななぜん　はちぜん　きゅうぜん　じゅうぜん
+    ひゃくぜん
+  howmany: なんぜん
 
 - written: 対
   reading: つい
-  counts: pairs of things, earrings
+  counts: pairs of earrings, pairs of teeth (left/right), pairs of chromosones, pears of nerves
+  notes:
+    Not used to count teams ([組]), footwear ([足]) or other things that have
+    a more common counter.
+  juku:
+    いっつい　につい　さんつい　よんつい　ごつい　ろくつい　ななつい　はっつい　きゅうつい　じゅっつい（じっつい）
+    ひゃくつい
+  howmany: なんつい
+  class: intermediate
 
 - written: 滴
   reading: てき
-  counts: drops (of water, oil, blood, sweat, tears etc.), drips (IV)
+  counts: drops (of liquid: water, oil, blood, sweat, tears etc.), drips (IV)
+  juku:
+    いってき　にてき　さんてき　よんてき　ごてき　ろくてき　ななてき　はってき　きゅうてき
+    じゅってき（じってき）　ひゃくてき
+  howmany: なんてき
+  class: intermediate
 
 - written: 通り
   reading: とおり
-  counts: ways, methods, procedures, permutations
-  # 1-3 are wago/kango, rest kango
+  counts: ways, methods, procedures, combinations (mathematics), readings (of a kanji)
+  juku:
+    ひととおり　ふたとおり（にとおり）　さんとおり（みとおり）　よんとおり　ごとおり
+    ろくとおり　ななとおり　はちとおり　きゅうとおり　じゅっとおり（じっとおり）
+    ひゃくとおり
+  howmany: なんとおり
 
 - written: 倍
   reading: ばい
   counts: multiples of something (twice, thrice etc.), magnifications
+  juku:
+    いちばい　にばい　さんばい　よんばい　ごばい
+    ろくばい　しちばい　はちばい　きゅうばい　じゅうばい
+    ひゃくばい
+  notes:
+   1: More commonly just '倍' except in cases like 一倍半(いちばいはん) 'one and half times'
+   2: Same as 倍 (twice)
+   3: Three times
+  howmany: なんばい 
 
 - written: 班
   reading: はん
   counts: groups, squads
+  juku:
+    いっぱん　にはん　さんぱん（さんばん）（さんはん）　よんぱん（よんはん）　ごはん
+    ろっぱん　ななはん（はちはん）　はっぱん　きゅうはん　じゅっぱん（じっぱん）
 
 - written: 晩
   reading: ばん
@@ -880,17 +1409,30 @@
     ひとばん　ふたばん　みばん
   limit: 3
   notes:
-    みばん is only used as part of the phrase 三日三晩. Consider 三夜（さんや）
+    みばん is only used as part of the phrase 三日三晩. Use [泊] for more than two nights.
+  howmany: いくばん
 
 - written: 分
   reading: ぶ
   counts: ten-percent units, 1/10th of a degree (body temperature), bank rates, interest rates
+  class: intermediate
+  juku:
+    いちぶ　にぶ　さんぶ　よんぶ　ごぶ
+    ろくぶ　ななぶ　はちぶ　きゅうぶ　じゅうぶ
+  howmany: なんぶ
+  source: https://www.mlcjapanese.co.jp/cou_12.html
 
 - written: 部
   reading: ぶ
   counts:
-    copies (of books, magazines, documents), parts of something, company division,
-    company department
+    copies (of books, magazines, documents), parts of something, company divisions,
+    company departments, packets of paper
+  juku:
+    いちぶ　にぶ　さんぶ　よんぶ　ごぶ
+    ろくぶ　ななぶ　はちぶ　きゅうぶ　じゅうぶ
+    ひゃくぶ
+  howmany: なんぶ
+  class: intermediate
 
 - written: 面
   reading: めん
@@ -908,7 +1450,13 @@
   reading: や、よ
   counts: nights, nights in the lunar moon calendar
   juku:
-    いちや（ひとよ）　にや（ふたよ）　さんや
+    いちや（ひとよ）　にや（ふたよ）　さんや よんや ごや
+    ろくや　ななや　はちや　きゅうや　じゅうや
+    じゅういちや
+  howmany: なんや
+  notes:
+    1: よ-form is literary
+    2: よ-form is literary
 
 - written: 課
   readings: か
@@ -920,3 +1468,355 @@
     ろっか　ななか（しちか）　はちか（はっか）　きゅうか　じゅっか（じっか）
     じゅういっか　ひゃっか
   howmany: なんか
+
+- written: 基
+  reading: き
+  counts:
+   - CPUs
+   - reactors
+   - dams
+   - elevators
+   - graves/gravestones
+   - large machines
+   - {en: Torii, ja: 鳥居}
+  juku:
+    いっき　にき　さんき　よんき　ごき
+    ろっき　ななき　はっき　きゅうき　じゅっき（じっき）
+    ひゃっき
+  howmany: なんき
+  class: intermediate
+
+- written: 票
+  reading: ひょう
+  counts: votes
+  juku:
+    いっぴょう　にひょう　さんぴょう（さんびょう）（さんひょう）　よんひょう　ごひょう
+    ろっぴょう　ななひょう　はっぴょう（はちひょう）　きゅうひょう　じゅっぴょう（じっぴょう）
+    ひゃっぴょう
+  howmany: なんぴょう（なんびょう）（なんひょう）
+
+- written: 行
+  reading: ぎょう
+  counts: lines of text
+  juku:
+    いちぎょう　にぎょう　さんぎょう　よんぎょう　ごぎょう
+    ろくぎょう　ななぎょう　はちぎょう　きゅうぎょう　じゅうぎょう
+    ひゃくぎょう
+  howmany: なんぎょう
+
+- written: 行
+  reading: こう
+  counts: banks
+  juku:
+    いっこう　にこう　さんこう　よんこう　ごこう
+    ろっこう　ななこう　はちこう（はっこう）　きゅうこう　じゅっこう（じっこう）
+    ひゃっこう
+  howmany: なんこう
+
+- written: 画
+  reading: かく
+  counts: number of strokes in kanji
+  juku:
+    いっかく　にかく　さんかく　よんかく　ごかく
+    ろっかく　ななかく　はっかく（はちかく）　きゅうかく　じゅっかく（じっかく）
+    じゅういっかく
+  howmany: なんかく
+  notes: Can also be used to count plots of land, but [区画] is more common.
+
+- written: 脚
+  reading: きゃく
+  counts:
+    things with legs, legs of a tripod, chairs, desks, seats, office chairs, fold-up chairs,
+    steel desks
+  juku:
+    いっきゃく　にきゃく　さんきゃく　よんきゃく　ごきゃく　ろっきゃく　ななきゃく　はっきゃく
+    きゅうきゃく　じゅっきゃく（じっきゃく）　ひゃっきゃく
+  howmany: なんきゃく
+  class: intermediate
+  notes:
+    Although the kanji means 'leg', aside from tripods (三脚) and mono-pods (一脚) this
+    counter counts the entire item, not just its legs. For example ４脚のいす means '4 chairs'.
+
+- written: 貫
+  reading: かん
+  counts: pieces of sushi
+  notes:
+    Can also use [個]. Half of speakers treat 1貫 as 2個, as sushi is usually served as
+    two pieces, however this practice itself is called ２貫付け. Confusing.
+  source: https://www.imabi.net/countersviii.htm
+  juku:
+    いっかん　にかん　さんかん　よんかん　ごかん
+    ろっかん　ななかん　はっかん　はちかん　きゅうかん　じゅっかん（じっかん）
+    ひゃっかん
+  howmany: なんかん
+  class: intermediate
+
+- written: 輪
+  reading: りん
+  counts:
+   - {en: flowers (in bloom), ja: 咲いた花}
+   - wheels (on a vehicle)
+  juku:
+    いちりん　にりん　さんりん　よんりん　ごりん　ろくりん　ななりん　はちりん　きゅうりん　じゅうりん
+    ひゃくりん
+  howmany: なんりん
+  notes:
+    七輪(しちりん) is a small charcoal grill. 三輪車(さんりんしゃ) is a tricycle.
+
+    輪 can only be used to count flowers in bloom (the petals look like a wheel).
+    At other times you can use [個] or [つ]; or [本] which counts by the stem.
+  class: intermediate
+
+- written: 男
+  reading: なん
+  counts:
+   - sons (in a family)
+   - male offspring
+  juku:
+    いちなん　じなん　さんなん　よんなん　ごなん
+  limit: 5
+  notes:
+    1: Use 長男(ちょうなん) to refer to the 'first son' or 'oldest son', いちなん is for counting.
+    2: Kanji is 次男. You may also see it written 二男(じなん).
+  class: intermediate
+
+- written: 女
+  reading: じょ
+  counts:
+   - daughters (in a family)
+   - female offspring
+  juku:
+    いちじょ　じじょ　さんじょ　よんじょ　ごじょ
+  limit: 5
+  notes:
+    1: Use 長女(ちょうじょ) to refer to the 'first/oldest daughter', いちじょ is for counting.
+    2: Kanji is 次女.
+  class: intermediate
+
+- written: 戸
+  reading: こ
+  counts:
+   - houses
+   - homes (physical buildings)
+  juku:
+    いっこ　にこ　さんこ　よんこ　ごこ
+    ろっこ　ななこ　はっこ（はちこ）　きゅうこ　じゅっこ（じっこ）
+    ひゃっこ
+  howmany: なんこ
+  class: intermediate
+
+- written: 人前
+  reading: にんまえ
+  counts: food portions (food for that many people)
+  juku:
+    いちにんまえ　ににんまえ　さんにんまえ　よにんまえ　ごにんまえ
+    ろくにんまえ　しちにんまえ（ななにんまえ）　はちにんまえ
+    きゅうにんまえ（くにんまえ）　じゅうにんまえ　ひゃくにんまえ
+  howmany: なんにんまえ
+  notes: The 人 is pronounced closer to 'nim-' due to the following まえ.
+  class: intermediate
+
+- written: 丁
+  reading: ちょう
+  counts:
+   - {en: tofu, ja: 豆腐}
+   - {en: ramen (servings), ja: ラーメンの一杯}
+   - guns
+   - scissors
+   - servings of food at a restaurant
+   - {en: konnyaku, ja: こんにゃく}
+   - {en: scissors, ja: はさみ}
+   - candles on a candlestick
+   - saws
+   - town blocks
+   - violins and guitars
+   - ink sticks
+   - photo attempts
+  juku:
+    いっちょう　にちょう　さんちょう　よんちょう　ごちょう　ろくちょう　ななちょう　はっちょう
+    きゅうちょう　じゅっちょう（じっちょう）　ひゃくちょう
+  howmany: なんちょう
+
+- written: 尾
+  reading: び
+  class: intermediate
+  counts:
+   - small fish and shrimp
+   - high-quality fish or fish treated as food (industrial)
+  juku:
+   いちび　にび　さんび　よんび　ごび　ろくび　ななび　はちび　きゅうび　じゅうび　ひゃくび
+  howmany: なんび
+
+- written: 億
+  reading: おく
+  class: intermediate
+  counts:
+   - multiples of 100 million
+  juku:
+    いちおく　におく　さんおく　よんおく　ごおく
+    ろくおく　ななおく　はちおく　きゅうおく　じゅうおく
+    ひゃくおく
+  notes: 100 billion is (いっ)せんおく.
+  howmany: なんおく
+
+- written: 兆
+  reading: ちょう
+  class: intermediate
+  counts:
+   - multiples of 1 trillion
+  juku:
+    いっちょう　にちょう　さんちょう　よんちょう　ごちょう
+    ろくちょう（ろっちょう）　ななちょう　はっちょう　きゅうちょう　じゅっちょう（じっちょう）
+    ひゃくちょう
+  notes: 1 quadrillion is (いっ)せんちょう.
+  howmany: なんちょう
+
+- written: 棟
+  reading: むね
+  class: intermediate
+  counts:
+   - buildings
+  notes: [棟・とう] is used by some speakers, especially for larger buildings.
+  juku:
+    ひとむね　ふたむね　さんむね（みむね）　よんむね（よむね）　ごむね
+    ろくむね　ななむね　はちむね　きゅうむね　じゅうむね
+    ひゃくむね　せんむね
+  howmany: なんむね
+
+- written: 棟
+  reading: とう
+  class: intermediate
+  counts: buildings
+  usage:
+    Used instead of [棟・むね] by some speakers, especially for larger buildings such as
+    high-rises. Not used in news broadcosts.
+  juku:
+    いっとう　にとう　さんとう　よんとう　ごとう
+    ろくとう　ななとう　はちとう（はっとう）　きゅうとう　じゅっとう（じっとう）
+    ひゃくとう（ひゃっとう）
+  howmany: なんとう
+
+- written: 床
+  reading: しょう
+  class: intermediate
+  counts: beds (in a hospital)
+  juku:
+    いっしょう　にしょう　さんしょう　よんしょう　ごしょう
+    ろくしょう　ななしょう　はっしょう　きゅうしょう　じゅっしょう
+    じゅういっしょう　じゅうにしょう
+    ひゃくしょう
+    せんしょう
+  howmany: なんしょう
+
+- written: 棹
+  reading: さお
+  counts:
+   - {en: chest of drawers, ja: 箪笥}
+   - {en: shamisen, ja: 三味線}
+  juku:
+    ひとさお　ふたさお
+
+- written: 腹
+  reading: はら
+  counts:
+   - {en: Alaska pollock roe, ja: '明太子, たらこ'}
+  notes:
+    Tarako are cod eggs taken from the cod's stomach, hence the counter. One 腹 is two eggs (2本).
+  juku:
+    ひとはら　ふたはら
+  class: advanced
+
+- written: 柱
+  reading: はしら
+  counts:
+   - {en: Gods & goddesses, ja: 神様}
+   - {en: spirit tablet, ja: 位牌}
+   - {en: remains of a dead person, ja: 遺骨}
+  juku:
+    ひとはしら　ふたはしら
+
+- written: 体
+  reading: たい
+  counts: {en: omamori, ja: 'お守り, 御札'}
+  notes: Due to omamori being considered part of God/Buddha's body, 一体.
+  juku:
+    いったい　にたい
+
+- written: 座
+  reading: ざ
+  counts:
+   - {en: tall mountains, ja: 高い山}
+   - {en: theatre troupes, ja: 劇団}
+  juku:
+    いちざ　にざ
+  notes:
+    Because God was thought to sit upon tall mountains. [山] is a more common
+    counter.
+
+- written: 尊
+  reading: そん
+  counts: {en: Buddha statues, ja: 仏像}
+  juku:
+    いっそん　にそん　さんぞん　よんそん　ごそん
+    ろくそん　ななそん　はっそん　きゅうそん　じゅっそん
+    じゅういっそん　じゅうにそん
+    ひゃくそん
+    せんぞん
+  howmany: なんぞん
+  source: http://www.ogurano.net/hishamu/josuushi.pdf
+  notes: Same sound changes as [足].
+
+- written: 局
+  reading: きょく
+  counts: {en: games of Go/Chess/shogi, ja: 将棋・囲碁・チェスの勝負の回数}
+  juku:
+    いっきょく　にきょく　さんきょく　よんきょく　ごきょく
+    ろっきょく　ななきょく　はっきょく　きゅうきょく　じゅっきょく（じっきょく）
+    じゅういっきょく　じゅうにきょく
+    ひゃっきょく　せんきょく
+  howmany: なんきょく　
+  notes: Can also use [番] or [戦].
+
+- written: 両
+  reading: りょう
+  counts: train cars, vehicles
+  juku:
+    いちりょう　にりょう　さんりょう　よんりょう　ごりょう　ろくりょう　ななりょう　はちりょう
+    きゅうりょう　じゅうりょう
+  howmany: なんりょう
+  source: https://www.mlcjapanese.co.jp/cou_15.html
+
+- written: 食
+  reading: しょく
+  counts: meals (e.g. in a day)
+  juku:
+  　　いっしょく　にしょく　さんしょく　よんしょく　ごしょく
+  　　ろくしょく　ななしょく　はちしょく（はっしょく）　きゅうしょく　じゅっしょく
+  howmany: なんしょく
+  source: https://www.mlcjapanese.co.jp/cou_31.html
+
+- written: 列
+  reading: れつ
+  counts: lines of people, queues
+  juku:
+    いちれつ　にれつ　さんれつ　よんれつ　ごれつ
+    ろくれつ　ななれつ　はちれつ　きゅうれつ　じゅうれつ
+  howmany: なんれつ
+  source: https://www.mlcjapanese.co.jp/cou_27.html
+
+- written: 錠
+  reading: じょう
+  counts: medicine tablets
+  juku:
+    いちじょう　にじょう　さんじょう　よんじょう　ごじょう
+    ろくじょう　ななじょう　はちじょう　きゅうじょう　じゅうじょう
+  howmany: なんじょう
+  source: https://www.mlcjapanese.co.jp/cou_34.html
+
+- written: 銭
+  reading: せん
+  counts: old Japanese currency
+  juku:
+    いっせん　にせん　さんせん　よんせん　ごせん
+    ろくせん　ななせん　はっせん　きゅうせん　じゅっせん（じっせん）
+  source: https://www.nhk.or.jp/bunken/research/kotoba/pdf/20160901_5.pdf

@@ -1,11 +1,21 @@
 ## TODO List
 
+ - organise TODOs (lol)
+
  - don't think romaji name conversion handles stuff like
    Yu -> Yuu, needs a think.
- - researchamp
+ - researchmap
+
+ - mark things where we did a split or romaji conversion (using tags)
+   so we know not to dogfood this data
+
+ - retrain gender detection once we have researchmap + custom stuff
+   imported
 
 - some double dashes still (4 in wikipedia\_en.jsonl)
  - rebuild after testing
+
+- authors: https://toyokeizai.net/list/ranking
 
 Aggregates the generated JSONL data files to make them easier to work with.
 
