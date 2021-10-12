@@ -6,6 +6,18 @@ Edge case here:
  otoh 'Ohashi' DOES need converting to oohashi.
 
 1) Replace romaji_to_hiragana, and indicate romaji with xx-romaji tag
+
+  * scripts/parse_wikidata.py        -> unused!
+  * scripts/parse_wikidata_nokana.py -> added [but need to tag, handle errors, consider macrons]
+  * yomikun/custom_data/importer.py  -> made strict
+  * yomikun/gender/dict.py           -> just for debugging
+  * yomikun/jmnedict/__init__.py     -> made strict [need to test!]
+  * yomikun/researchmap.py           -> uses full name version
+  * yomikun/wikipedia_en/parser.py   -> added [but need to tag, handle errors, consider macrons]
+
+    -> maybe a flag returned by romaji_to_hiragana to indicate it was
+       confident or not confident about the parsing.
+
 2) Build new database from this
 3) Use new database in romaji_to_hiragana: more coverage, frequency
    data so we can prefer one reading over the other.

@@ -6,14 +6,11 @@ for dictionary loading.
 """
 
 from __future__ import annotations
-import logging
-import argparse
 import sys
 import json
 import regex
 
 from yomikun.utils.split import split_kanji_name
-from yomikun.utils.romaji import romaji_to_hiragana
 from yomikun.models import NameData, Lifetime, NameAuthenticity
 
 

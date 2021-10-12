@@ -15,7 +15,7 @@ import json
 import regex
 
 from yomikun.utils.split import split_kanji_name
-from yomikun.utils.romaji import romaji_to_hiragana
+from yomikun.utils.romaji import romaji_to_hiragana_fullname
 from yomikun.models import NameData, Lifetime, NameAuthenticity
 
 
@@ -61,7 +61,10 @@ for line in sys.stdin:
 
     romaji = ' '.join(reversed(romaji.split()))
 
-    kana = romaji_to_hiragana(romaji, kanji)
+    kana = romaji_to_hiragana_fullname(romaji, kanji)
+    if not kana:
+        # Unable to parse
+        raise Exception(f"Unable to parse ({kanji}, {romaji})")
 
     # Force a re-split in case the names are the wrong way around
     old_kanji, old_kana = kanji, kana

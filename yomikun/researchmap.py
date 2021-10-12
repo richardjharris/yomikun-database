@@ -1,5 +1,4 @@
 from typing import cast
-from yomikun.utils.romaji import romaji_to_hiragana
 
 import regex
 import jcconv3

@@ -2,7 +2,7 @@ from __future__ import annotations
 from operator import itemgetter
 import re
 from dataclasses import dataclass, field
-from yomikun.utils.romaji import romaji_to_hiragana
+from yomikun.utils.romaji import romaji_to_hiragana_strict
 
 from yomikun.models import Lifetime
 from yomikun.utils.split import split_kanji_name
@@ -75,7 +75,7 @@ def parse(data: dict, with_orig=True) -> list[dict]:
             for kana in map(itemgetter('text'), data['kana']):
                 if gloss.name:
                     # Convert name to hiragana and use it to split the name
-                    split_kana = romaji_to_hiragana(gloss.name)
+                    split_kana = romaji_to_hiragana_strict(gloss.name)
                     split_kanji = kanji
 
                     if ' の ' in split_kana:

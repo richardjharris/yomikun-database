@@ -18,7 +18,7 @@ from yomikun.loader.aggregator import Aggregator
 from yomikun.loader.models import Gender, NamePosition
 from yomikun.models import NameData
 from yomikun.models.nameauthenticity import NameAuthenticity
-from yomikun.utils.romaji import romaji_to_hiragana
+from yomikun.utils.romaji import romaji_to_hiragana_messy
 
 
 NameLists = dict[str, dict[str, str]]
@@ -40,8 +40,7 @@ def load_name_lists(name_list_data: NameLists) -> dict[str, set[ListTitle]]:
     for list_name, list_data in name_list_data.items():
         list_tag = ListTitle(list_name)
         for _page_id, name in list_data.items():
-            # Force leading o-macron -> oo
-            name = romaji_to_hiragana(name, '大')
+            name = romaji_to_hiragana_messy(name, leading_o='oo')
             tags_for_name[name].add(list_tag)
 
     return tags_for_name

@@ -3,7 +3,7 @@ import regex
 from jcconv3 import kata2hira
 import pytest
 
-from yomikun.utils.romaji import romaji_to_hiragana
+from yomikun.utils.romaji import romaji_to_hiragana_strict
 
 
 def convert_to_hiragana(yomi: str) -> str:
@@ -18,7 +18,7 @@ def convert_to_hiragana(yomi: str) -> str:
     formats = set()
     for part in parts:
         if regex.match(r"^[a-z']+$", part, regex.I):
-            out.append(romaji_to_hiragana(part))
+            out.append(romaji_to_hiragana_strict(part))
             formats.add('romaji')
         elif regex.match(r'^\p{Katakana}+$', part):
             out.append(kata2hira(part))
