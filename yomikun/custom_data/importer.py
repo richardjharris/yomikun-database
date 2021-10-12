@@ -9,25 +9,31 @@ from yomikun.utils.romaji import romaji_to_hiragana
 def convert_to_hiragana(yomi: str) -> str:
     """
     Convert katakana or romaji names to hiragana.
+
+    Romaji must be in proper form (雄三 = Yuuzou, not Yuzo) and in
+    Western order (GIVEN followed by SURNAME). Case is ignored.
     """
     parts = yomi.split()
     out = []
-    romaji = None
+    formats = set()
     for part in parts:
-        if regex.match(r'^[a-z]+$', part, regex.I):
-            if romaji == False:
-                raise ValueError('mix of romaji and non-romaji')
+        if regex.match(r"^[a-z']+$", part, regex.I):
             out.append(romaji_to_hiragana(part))
-            romaji = True
-        elif regex.match(r'^\p{Furigana}+$', part):
+            formats.add('romaji')
+        elif regex.match(r'^\p{Katakana}+$', part):
             out.append(kata2hira(part))
+            formats.add('katakana')
         elif regex.match(r'^\p{Hiragana}+$', part):
             out.append(part)
+            formats.add('hiragana')
         else:
             raise ValueError(f'Unsupported yomi form "{part}"')
 
-    if romaji and len(out) > 1:
-        # Romaji names are assumed to be in reverse order
+    if len(formats) > 1:
+        raise ValueError(f"Inconsistent formats: {', '.join(formats)}")
+
+    if 'romaji' in formats and len(out) > 1:
+        # Swap order of romaji names
         assert len(out) == 2
         out.reverse()
 
@@ -44,3 +50,5 @@ def test_convert_to_hiragana():
     assert convert_to_hiragana('Naoki') == 'なおき'
     with pytest.raises(ValueError):
         convert_to_hiragana('Naoki ふじもと')
+    with pytest.raises(ValueError):
+        convert_to_hiragana('123')

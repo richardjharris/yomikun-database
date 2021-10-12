@@ -1,16 +1,25 @@
 """
-Script to be run against new custom.csv-type data before it is
-appended to custom.csv.
+This script allows you to write custom.csv data in a lazier format,
+for example:
 
- - convert katakana and romaji names to kana
- - split names into surname + given name components, which can
-   then be shuffled to anonymise the data.
+八久保　竜司,ハチクボ　リュウジ
+佐藤 直哉,さとう　なおや,m
+頴川 文彦,Fumihiko Egawa,m+fictional
+
+Katakana and romaji are converted to kana. (Must spell long vowels fully,
+and for romaji, name order is Western by default)
+
+Full names are split into given and surname components. These will be
+tagged with either m, f or given (if no gender specified) or surname.
+The data can then be sorted to anonymise the input.
 """
 import csv
 import sys
 import regex
 
 from yomikun.custom_data.importer import convert_to_hiragana
+from yomikun.models.nameauthenticity import NameAuthenticity
+from yomikun.models.namedata import NameData
 
 fields = ('kaki', 'yomi', 'tags', 'lifetime', 'extra')
 
@@ -23,14 +32,10 @@ for row in reader:
 
     yomi = convert_to_hiragana(row['yomi'])
 
-    assert len(kaki.split()) == len(yomi.split())
+    if len(kaki.split()) != len(yomi.split()):
+        raise ValueError("kaki and yomi have different name counts")
 
-    if len(kaki.split()) == 2:
-        # This is a person record
-        tags = row["tags"]
-        lifetime = row["lifetime"]
-
-        # TBD
+    namedata = NameData(kaki, yomi)
 
     if row['tags']:
         tags = row['tags'].split('+')
@@ -46,9 +51,6 @@ for row in reader:
             else:
                 namedata.add_tag(tag)
 
-    if namedata.is_person():
-        namedata.add_tag('person')
-
     if row['lifetime']:
         birth, death = row['lifetime'].split('-')
         if len(birth):
@@ -58,4 +60,19 @@ for row in reader:
 
     namedata.source = 'custom'
 
-    print(namedata.to_jsonl())
+    # Split person into two parts for anonymity
+    if namedata.is_person():
+        kaki_parts = namedata.kaki.split()
+        yomi_parts = namedata.yomi.split()
+        gender = namedata.gender()
+
+        namedata.kaki, namedata.yomi = kaki_parts[1], yomi_parts[1]
+        if not namedata.gender():
+            namedata.add_tag('given')
+        print(namedata.to_csv())
+
+        namedata.kaki, namedata.yomi = kaki_parts[0], yomi_parts[0]
+        namedata.remove_tag('given').add_tag('surname').set_gender(None)
+        print(namedata.to_csv())
+    else:
+        print(namedata.to_csv())

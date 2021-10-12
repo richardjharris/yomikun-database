@@ -45,3 +45,11 @@ class Lifetime():
             lifetime.death_year = int(death)
 
         return lifetime
+
+    def to_csv(self) -> str:
+        if not self:
+            return ''
+
+        birth = str(self.birth_year) if self.birth_year else ''
+        death = str(self.death_year) if self.death_year else ''
+        return f"{birth}-{death}"

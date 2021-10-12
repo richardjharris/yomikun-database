@@ -60,6 +60,12 @@ class NameData():
     def add_tag(self, tag: str):
         if tag not in self.tags:
             self.tags.append(tag)
+        return self
+
+    def remove_tag(self, tag: str):
+        if tag in self.tags:
+            self.tags.remove(tag)
+        return self
 
     def is_person(self):
         return 'person' in self.tags or (' ' in self.kaki and ' ' in self.yomi)
@@ -78,13 +84,16 @@ class NameData():
         else:
             return None
 
-    def set_gender(self, new_gender: str):
+    def set_gender(self, new_gender: str | None):
         if 'masc' in self.tags:
             self.tags.remove('masc')
         if 'fem' in self.tags:
             self.tags.remove('fem')
 
-        self.tags.append(new_gender)
+        if new_gender:
+            self.tags.append(new_gender)
+
+        return self
 
     def clone(self) -> NameData:
         # Use our existing JSONL serialization rather than coding the logic again.
@@ -158,6 +167,28 @@ class NameData():
     @classmethod
     def from_jsonl(cls, jsonl: str) -> NameData:
         return cls.from_dict(json.loads(jsonl))
+
+    def to_csv(self) -> str:
+        """
+        Returns namedata in custom.csv format
+        """
+        if self.subreadings:
+            raise ValueError('subreadings are not supported with to_csv')
+
+        tags = set(self.tags)
+        if 'masc' in tags:
+            tags.remove('masc')
+            tags.add('m')
+        if 'fem' in tags:
+            tags.remove('fem')
+            tags.add('f')
+
+        fields = [self.kaki, self.yomi, '+'.join(tags)]
+        lifetime = self.lifetime.to_csv()
+        if lifetime:
+            fields.append(lifetime)
+
+        return ','.join(fields)
 
 
 def test_normalise():
