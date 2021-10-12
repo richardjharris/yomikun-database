@@ -24,3 +24,6 @@ data/*.xml.bz2
 data/pdd.json.gz
 data/koujien.json.gz
 data/daijisen.json.gz
+
+# backups
+old/
