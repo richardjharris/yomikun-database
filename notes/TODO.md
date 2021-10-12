@@ -32,9 +32,7 @@ Double check no double dashes ('') in names.
 
 ## Custom data
 
- - custom2.yaml needs cleaning and shuffling into custom.yaml
-   - hackjob will do
- - custom.yaml converter (and sanity checker)
+ - custom.yaml to .jsonl converter (and sanity checker)
    - skip comments, normalise spaces
    - handle tags
    - add person tag if missing

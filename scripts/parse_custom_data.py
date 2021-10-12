@@ -5,19 +5,30 @@ import sys
 
 import csv
 import regex
+import logging
 
 from yomikun.models.nameauthenticity import NameAuthenticity
-
 from yomikun.models.namedata import NameData
-
 
 fields = ('kaki', 'yomi', 'tags', 'lifetime', 'extra')
 
-reader = csv.DictReader(sys.stdin, fields)
-for row in reader:
-    if not regex.match(r'^\p{Han}+(\s+\p{Han}+)?$', row['kaki']):
-        raise ValueError(f'Invalid kaki value {row["kaki"]}')
+# Remember last CSV input line, for error handling
+last_raw_line = ''
 
+
+def skip_lines_and_comments(lines):
+    global last_raw_line
+
+    for line in lines:
+        last_raw_line = line.strip()
+        line = regex.sub(r'#.*$', '', line)
+        if regex.search(r'\S', line):
+            yield line
+
+
+# Skips comments and blank lines
+reader = csv.DictReader(skip_lines_and_comments(sys.stdin), fields)
+for row in reader:
     namedata = NameData(row['kaki'], row['yomi'])
     if row['tags']:
         tags = row['tags'].split('+')
@@ -44,5 +55,18 @@ for row in reader:
             namedata.lifetime.death_year = int(death)
 
     namedata.source = 'custom'
+
+    # Normalise spaces
+    namedata.clean()
+
+    try:
+        namedata.validate()
+    except ValueError as e:
+        logging.exception(
+            f"Error parsing line '{last_raw_line}'\n"
+            f"Generated dict: {row}\n"
+            f"Generated namedata: {namedata}\n"
+            f"Error: {e}")
+        sys.exit(1)
 
     print(namedata.to_jsonl())

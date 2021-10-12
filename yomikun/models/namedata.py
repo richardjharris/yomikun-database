@@ -7,6 +7,7 @@ import regex
 
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.lifetime import Lifetime
+import yomikun.utils.patterns as patterns
 
 
 def normalise(s: str) -> str:
@@ -70,6 +71,13 @@ class NameData():
     def is_person(self):
         return 'person' in self.tags or (' ' in self.kaki and ' ' in self.yomi)
 
+    def is_given_name(self):
+        # Yeah this is a mess
+        return 'masc' in self.tags or 'fem' in self.tags or 'given' in self.tags
+
+    def is_surname(self):
+        return 'surname' in self.tags
+
     def has_name(self) -> bool:
         """
         Returns True if this object has name data fully populated.
@@ -129,6 +137,36 @@ class NameData():
             self.subreadings.remove(sub)
 
         return self
+
+    def validate(self):
+        """
+        Validates the kaki and yomi values are correct based on the tags set.
+        Raises ValueError if not correct.
+        """
+        part = None
+        if self.is_person():
+            kaki_pat = patterns.name_pat
+            yomi_pat = patterns.reading_pat
+            part = 'person'
+        elif self.is_given_name():
+            kaki_pat = patterns.mei_pat
+            yomi_pat = patterns.hiragana_pat
+            part = 'given'
+        elif self.is_surname():
+            kaki_pat = patterns.sei_pat
+            yomi_pat = patterns.hiragana_pat
+            part = 'surname'
+        else:
+            raise ValueError('Data should be tagged to indicate part of name')
+
+        if not regex.match(fr'^{kaki_pat}$', self.kaki):
+            raise ValueError(f"Invalid kaki '{self.kaki}' for part {part}")
+
+        if not regex.match(fr'^{yomi_pat}$', self.yomi):
+            raise ValueError(f"Invalid yomi '{self.yomi}' for part {part}")
+
+        for sub in self.subreadings:
+            sub.validate()
 
     def to_dict(self) -> dict:
         self.clean()
