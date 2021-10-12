@@ -3,6 +3,7 @@ Name dictionary based on JMnedict (may include our own
 data in the future).
 """
 from dataclasses import dataclass
+import logging
 
 import jamdict
 
@@ -12,6 +13,13 @@ jam = jamdict.Jamdict(
     memory_mode=False,
 )
 assert jam.has_jmne()
+
+NOISY_LOGGERS = ('jamdict.jmdict_sqlite',
+                 'jamdict.jmnedict_sqlite',
+                 'puchikarui.puchikarui')
+
+for logger in NOISY_LOGGERS:
+    logging.getLogger(logger).setLevel(logging.ERROR)
 
 
 @dataclass

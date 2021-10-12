@@ -1,20 +1,29 @@
 ## Romaji to kana conversion
 
-Problem 1) researchmap requires romaji to kana conversion
-        2) wikipedia\_en sometimes has incorrect romaji
-           (will need a rebuild)
+1) Replace romaji_to_hiragana, and indicate romaji with xx-romaji tag
+2) Build new database from this
+3) Use new database in romaji_to_hiragana: more coverage, frequency
+   data so we can prefer one reading over the other.
+4) Re-enable researchmap tests
+5) Run researchmap properly.
+ - may need to add more stuff to custom.csv
+   ... hmm but this will combine with research map to make names seem
+       more popular. maybe we can tag stuff in custom.csv so it can be
+       removed at dedupe time. e.g. 'dict' tag. then it will be treated
+       like jamdict.
+ - check other error fields.
 
- - should replace romaji_to_hiragana where relevant
- - pick longest may not be best [pick most frequent / non-JMnedict]
- - add a tag
+6) Can re-run wikipedia-en with better romaji conversion later.
+  - need to keep an eye that we aren't bulldozing well-formed stuff,
+    though.
+  - TODO if we see macrons, should probably ensure the final result
+    matches the macron length (e.g. o-bar is exactly 2)
 
-### Enhancing the data
 
-1. Add a tag anywhere where we performed a romaji conversion and there
-   were no macrons. (to avoid dogfooding)
-2. Build new name database from our data
-3. Tagged items may be used as a last resort, although we should probably
-   just error.
+### xx-split
+
+Do the same with xx-split: mark algorithmically split names so we don't
+use that data to do further splitting.
 
 ## Researchmap
 

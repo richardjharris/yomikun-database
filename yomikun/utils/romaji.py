@@ -88,13 +88,16 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
     Convert a romaji name (sei/mei) to hiragana using the kanji as a
     guide to determine length of vowels.
     """
+    logging.debug(
+        f"[romaji_to_hiragana_part] ({romaji}, {kanji}, {'SEI' if sei else 'MEI'})")
+
     if sei:
         matches = NameDict.find_surname(kanji)
     else:
         matches = NameDict.find_given_name(kanji)
 
-    print(romaji, kanji, sei, matches)
     if not matches:
+        logging.debug('No matches, returning')
         return
 
     key = romaji_key(romaji)
@@ -109,13 +112,24 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
             if matches_target:
                 hits.append(kana)
 
-            logging.info(
+            logging.debug(
                 f"[rom->hira] input({romaji}, {kanji}, {'Sei' if sei else 'Mei'}, {key}) match({kana}, {match_key}) => {matches_target}")
 
-    # Pick the longest one (for now)
+    # Pick the longest one (for now).
+    # However given the choice between おごお and おごう (-oo and -ou), pick -ou, as -oo
+    # seems very rare.
+    # TODO: (HACK!) this can go away once we use frequency information
     if hits:
-        hits.sort(key=len)
-        return hits[-1]
+        hits.sort(key=len, reverse=True)
+        best = hits[0]
+
+        # Prefer おごう over おごお
+        best_roma = romkan.to_roma(best)
+        if len(hits) > 1 and len(hits[0]) == len(hits[1]) and len(hits[0]) > 2 and best_roma[-1] == best_roma[-2]:
+            best = hits[1]
+
+        logging.debug(f"Returning {best} from {hits}")
+        return best
     else:
         return
 
@@ -171,6 +185,9 @@ def romaji_key(romaji: str) -> str:
     # not ma'nyou). We don't care about this because it's unlikely that
     # a name will have two ambiguous kana forms but the same kanji.
     romaji = romaji.replace("'", '')
+
+    # Remove hyphens, sometimes seen in real world data: 'ke-nichiro'
+    romaji = romaji.replace('-', '')
 
     # Collapse vowels into one
     romaji = regex.sub(r'(oh(?![aiueo])|ou|oo)', 'o', romaji)
