@@ -8,6 +8,7 @@ import pytest
 from yomikun.models import NameData
 from yomikun.utils.patterns import name_pat
 from yomikun.utils.split import split_kana_name
+from yomikun.utils.romaji import romaji_to_hiragana_fullname
 
 
 def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
@@ -58,9 +59,8 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
             return NameData(kanji, kana)
     elif regex.match(r'^[a-z]+\s+[a-z]+', kana):
         # Romaji, in correct order (presumably)
-        kana = romaji_to_hiragana_fullname(kana, kanji)
-        if kana:
-            return NameData(kanji, kana)
+        if new_kana := romaji_to_hiragana_fullname(kana, kanji):
+            return NameData(kanji, new_kana)
 
     elif regex.match(r'^\p{Hiragana}\s+\p{Hiragana}+$', kana):
         return NameData(kanji, kana)
@@ -99,6 +99,8 @@ tests = [
     (('Nozaki Yuji', '野﨑 祐史', 'Yuji Nozaki'), '野﨑 祐史', 'のざき ゆうじ'),
     (('FUSE KYOKO', '布施 香子', 'Fuse Kyoko'), '布施 香子', 'ふせ きょうこ'),
     (('AZUMA YUTARO', '東 祐太郎', 'Azuma Yutaro'), '東 祐太郎', 'あずま ゆうたろう'),
+    # Wrong order
+    (('Yuki Ohashi', '大橋 祐紀'), '大橋 祐紀', 'おおはし ゆうき'),
     # Romaji, with -
     (('Murata Ken-ichiro', '村田 憲一郎', 'Ken-ichiro Murata'), '村田 憲一郎', 'むらた けんいちろう'),
     # 小河 can be read as おご or おごう, in this case the 'oh' implies おごう
