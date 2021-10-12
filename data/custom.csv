@@ -1,3 +1,7 @@
+# Custom reading data. Comments are ignored
+# Format: kaki,yomi,tags (separated by +),lifetime (birth-death),notes
+# 'm' and 'f' are supported as shorthand for masc/fem.
+
 齋藤 訓之,さいとう さとし,m,1964-,Food Watch Japan writer and editor
 岩佐 大輝,いわさ ひろき,m,1977-,Businessman and author
 亀浦 芳孝,かめうら　よしたか,m,,Reverend

@@ -4,7 +4,7 @@ Problem 1) researchmap requires romaji to kana conversion
         2) wikipedia\_en sometimes has incorrect romaji
            (will need a rebuild)
 
- - need to replace romaji_to_hiragana where relevant
+ - should replace romaji_to_hiragana where relevant
  - pick longest may not be best [pick most frequent / non-JMnedict]
  - add a tag
 
@@ -30,23 +30,15 @@ kana'.
 
 Double check no double dashes ('') in names.
 
-## Custom data
-
- - custom.yaml to .jsonl converter (and sanity checker)
-   - skip comments, normalise spaces
-   - handle tags
-   - add person tag if missing
-
 ## Final database
 
-Person counting: should be attached to readings, as we won't always
-add a Person entry. Basically anything non-jmnedict should be counted
-as a person.
+Person counting: the 'person' tag / person readings need to be split
+into kaki/yomi. We can assume any tagged (given/masc/fem/surname)
+reading is a real person unless it comes from JMnedict or myoji.
 
 - deduplicates people from people records
 - expands subreadings
 - fixes lifetime, tags in subreading
 - convert yomi to hiragana, rejecting anything non-kana
 - strip tags from jmnedict
-
-Somehow integrate gender data.
+- Somehow integrate gender data.
