@@ -1,3 +1,8 @@
+"""
+Sample gender/kanji data. This has not currently been integrated into
+the ML model, but is useful for sanity checking.
+"""
+
 # First two rows are popular ones, 3 are 個性的, rest are supplementary
 male_tomeji = """
 河（が）　樹（き）　輝（き）　吾（ご）　士（し）　志（し）　介（すけ）
