@@ -1,5 +1,10 @@
 ## Romaji to kana conversion
 
+Edge case here:
+
+`DEBUG:root:[rom->hira] input(Ohishi, 大石, Sei, ohishi) match(おおいし, oishi) => False`
+ otoh 'Ohashi' DOES need converting to oohashi.
+
 1) Replace romaji_to_hiragana, and indicate romaji with xx-romaji tag
 2) Build new database from this
 3) Use new database in romaji_to_hiragana: more coverage, frequency
