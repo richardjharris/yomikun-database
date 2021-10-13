@@ -11,6 +11,8 @@ else
   PARALLEL=parallel --will-cite --gnu -k --pipe -j $(mproc) --tmpdir $(TMPDIR)
 endif
 
+PZCAT = scripts/pzcat
+
 .DELETE_ON_ERROR:
 
 .PHONY: all clean test
@@ -38,25 +40,32 @@ db/people.jsonl: ${JSONLFILES}
 # and also convert the XML to JSON. Takes ~2 hours.
 data/enwiki-nihongo-articles.gz: |data/enwiki.xml.bz2
 	bzcat data/enwiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl |\
-	  fgrep -e '{{Nihongo' -e '{{nihongo' -e 'Japanese' -e 'japanese' | pigz -9f > $@
+	  fgrep -e '{{Nihongo' -e '{{nihongo' -e 'Japanese' -e 'japanese' | gzip -9f > $@
 
 data/jawiki-articles.gz: |data/jawiki.xml.bz2
-	bzcat data/jawiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl | pigz -9f > $@
+	bzcat data/jawiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl | gzip -9f > $@
+
+# Generated from whatever JSON files are available. Should be rebuilt periodically.
+data/romajidb.tsv:
+	cat jsonl/* | python scripts/build_romajidb.py > $@
 
 jsonl/wikipedia_en.jsonl: data/enwiki-nihongo-articles.gz
-	pzcat data/enwiki-nihongo-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
+	${ZCAT} data/enwiki-nihongo-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
 
 jsonl/wikipedia_ja.jsonl: data/jawiki-articles.gz
-	pzcat data/jawiki-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_ja.py > $@
+	${ZCAT} data/jawiki-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_ja.py > $@
 
 jsonl/wikidata.jsonl: data/wikidata.jsonl.gz
-	pzcat $< | ${PARALLEL} python scripts/parse_wikidata.py > $@ 2>/dev/null
+	${ZCAT} $< | ${PARALLEL} python scripts/parse_wikidata.py > $@ 2>/dev/null
 
 jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
-	pzcat $< | ${PARALELL} python scripts/parse_wikidata_nokana.py > $@
+	${ZCAT} $< | ${PARALELL} python scripts/parse_wikidata_nokana.py > $@
 
 jsonl/custom.jsonl: data/custom.csv
 	python scripts/parse_custom_data.py < $< > $@
+
+data/researchmap.jsonl:
+	${ZCAT} data/researchmap.gz | python scripts/import_researchmap.py > $@
 
 jsonl/researchmap.jsonl: data/researchmap.jsonl
 	cp $^ $@
