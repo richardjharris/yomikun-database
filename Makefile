@@ -13,7 +13,7 @@ endif
 
 ZCAT = scripts/pzcat
 
-export ROMAJIDB_TSV_PATH = foo
+export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
@@ -38,13 +38,23 @@ test:
 db/people.jsonl: ${JSONLFILES}
 	cat $^ | python scripts/person_dedupe.py > $@
 
+# Caution: LARGE! 36GB as of Oct 2021
+# Can be replaced with an empty file once data/enwiki-nihongo-articles.gz is built, as you are
+# unlikely to need any other articles.
+data/enwiki.xml.bz2:
+	curl https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-meta-current.xml.bz2 -o $@
+
+# 4.1GB as of Oct 2021
+data/jawiki.xml.bz2:
+	curl https://dumps.wikimedia.org/jawiki/latest/jawiki-latest-pages-meta-current.xml.bz2 -o $@
+
 # We pre-filter the wikipedia XML dump for articles likely to be Japanese names
 # and also convert the XML to JSON. Takes ~2 hours.
-data/enwiki-nihongo-articles.gz: |data/enwiki.xml.bz2
+data/enwiki-nihongo-articles.gz: data/enwiki.xml.bz2
 	bzcat data/enwiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl |\
 	  fgrep -e '{{Nihongo' -e '{{nihongo' -e 'Japanese' -e 'japanese' | gzip -9f > $@
 
-data/jawiki-articles.gz: |data/jawiki.xml.bz2
+data/jawiki-articles.gz: data/jawiki.xml.bz2
 	bzcat data/jawiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl | gzip -9f > $@
 
 # Generated from whatever JSON files are available. Should be rebuilt periodically.
@@ -67,7 +77,7 @@ jsonl/custom.jsonl: data/custom.csv
 	python scripts/parse_custom_data.py < $< > $@
 
 data/researchmap.jsonl:
-	${ZCAT} data/researchmap.gz | python scripts/import_researchmap.py > $@
+	${ZCAT} data/researchmap.gz | ${PARALLEL} python scripts/import_researchmap.py > $@
 
 jsonl/researchmap.jsonl: data/researchmap.jsonl
 	cp $^ $@
