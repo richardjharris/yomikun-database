@@ -16,9 +16,8 @@ start_time = time.monotonic()
 
 for line in sys.stdin:
     line = line.strip()
+    parts = line.split('\t')
     try:
-        parts = line.split('\t')
-
         if len(parts) < 2:
             # There are a few dozen records with 0/1 name parts. They're not
             # useful to us as there is no reading.
@@ -35,11 +34,11 @@ for line in sys.stdin:
             print(data.to_jsonl())
             parsed += 1
     except NotImplementedError:
-        logging.debug(f'Failed to parse [{line}]', exc_info=True)
+        logging.debug(f"Failed to parse {parts}", exc_info=True)
         logging.debug('-----')
         errors += 1
     except Exception:
-        logging.exception(f'Error when parsing [{line}]')
+        logging.exception(f'Error when parsing {parts}')
         sys.exit(1)
     total += 1
 
