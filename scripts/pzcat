@@ -1,0 +1,9 @@
+#!/bin/sh
+# Allows the user to replace 'zcat' with 'pzcat' and get a progress bar.
+
+decompressor=`which pigz 2>/dev/null`
+if [ ! $decompressor ]; then
+    decompressor=gzip
+fi
+
+pv $@ | $decompressor -dc
