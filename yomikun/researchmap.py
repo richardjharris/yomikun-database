@@ -9,7 +9,7 @@ import logging
 from yomikun.models import NameData
 from yomikun.utils.patterns import name_pat
 from yomikun.utils.split import split_kana_name
-from yomikun.utils.romaji import romaji_to_hiragana_fullname
+from yomikun.utils.romaji import romaji_to_hiragana_fullname, romaji_to_hiragana_messy
 
 
 def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
@@ -67,11 +67,12 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
 
     if regex.match(r'^\p{Katakana}+$', kana):
         # Katakana name with no space, try to split
-        kana = cast(str, jcconv3.kata2hira(kana))
-        kana = split_kana_name(kanji, kana)
-        if len(kana.split()) == 2:
-            # Successful
-            return NameData(kanji, kana).add_tag('xx-split')
+        if len(kanji.split()) == 2:
+            kana = cast(str, jcconv3.kata2hira(kana))
+            kana = split_kana_name(kanji, kana)
+            if len(kana.split()) == 2:
+                # Successful
+                return NameData(kanji, kana).add_tag('xx-split')
 
     # If both fields are romaji then the 'kana' entry tends to be
     # in Japanese name order while the 'english' entry tends to be
@@ -93,9 +94,13 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
             # (allow h as in 'oh' - will be dealt with later)
             return NameData()
 
-        if new_kana := romaji_to_hiragana_fullname(romaji, kanji):
-            logging.info(f"Got result '{kanji}' ('{new_kana}')")
-            return NameData(kanji, new_kana)
+        # TODO perform messy conversion for now. Will change later.
+        new_kana = romaji_to_hiragana_messy(romaji, kanji)
+        return NameData(kanji, new_kana, tags=['xx-romaji'])
+
+        # if new_kana := romaji_to_hiragana_fullname(romaji, kanji):
+        #    logging.info(f"Got result '{kanji}' ('{new_kana}')")
+        #    return NameData(kanji, new_kana, tags=['xx-romaji'])
 
     raise NotImplementedError("don't know how to handle this")
 
@@ -150,6 +155,8 @@ tests = [
     (('イー ゴアンホ', '李 光鎬', 'Lee Kwangho'), '李 光鎬', 'いー ごあんほ'),
     (('Cao Wenjing', '曹 文静', 'CAO WENJING'), '', ''),
     (('Liang Naishen', '梁 乃申', 'Naishen Liang'), '', ''),
+
+
 ]
 
 

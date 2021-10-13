@@ -4,8 +4,6 @@ the data/name_lists.json data from wikipedia.
 """
 
 from __future__ import annotations
-import math
-import sys
 import json
 from typing import Iterable, TextIO
 import enum
@@ -17,7 +15,6 @@ from yomikun.gender.ml import GenderML
 from yomikun.loader.aggregator import Aggregator
 from yomikun.loader.models import Gender, NamePosition
 from yomikun.models import NameData
-from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.utils.romaji import romaji_to_hiragana_messy
 
 
@@ -149,6 +146,7 @@ def make_gender_dict(
     # Count the occurences, per-gender, for each input name.
     # Train the ML model
     for name in names:
+        # XXX this is wrong, we should also consider given names
         assert 'person' in name.tags
 
         source = name.source.split(':')[0]

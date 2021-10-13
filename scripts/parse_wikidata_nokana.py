@@ -7,16 +7,13 @@ import format because I downloaded it directly from the web UI.
 """
 
 from __future__ import annotations
-import logging
-import argparse
-from posixpath import split
 import sys
 import json
 import regex
 
 from yomikun.utils.split import split_kanji_name
-from yomikun.utils.romaji import romaji_to_hiragana_fullname
-from yomikun.models import NameData, Lifetime, NameAuthenticity
+from yomikun.utils.romaji import romaji_to_hiragana_messy
+from yomikun.models import NameData, Lifetime
 
 
 def year(date: str | None):
@@ -61,12 +58,11 @@ for line in sys.stdin:
 
     romaji = ' '.join(reversed(romaji.split()))
 
-    kana = romaji_to_hiragana_fullname(romaji, kanji)
-    if not kana:
-        # Unable to parse
-        raise Exception(f"Unable to parse ({kanji}, {romaji})")
+    # TODO use messy parsing for now. Will re-run with improved dictionary later
+    kana = romaji_to_hiragana_messy(romaji, kanji)
 
     # Force a re-split in case the names are the wrong way around
+    # TODO: could use romaji code to handle this
     old_kanji, old_kana = kanji, kana
     kanji = kanji.replace(' ', '')
 
@@ -87,8 +83,9 @@ for line in sys.stdin:
     lifetime = Lifetime(year(data.get('dob', None)),
                         year(data.get('dod', None)))
 
+    # Include xx-romaji tag, as we only have romaji data
     namedata = NameData(kanji, kana, lifetime=lifetime,
-                        source=f'wikidata:{item}')
+                        source=f'wikidata:{item}', tags=['xx-romaji'])
     tags = []
     if tag := gender(data.get('genderLabel', None)):
         namedata.add_tag(tag)

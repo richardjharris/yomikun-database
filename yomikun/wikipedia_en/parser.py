@@ -31,7 +31,7 @@ from mediawiki_dump.tokenizer import clean
 from yomikun.models import NameData, NameAuthenticity, Lifetime
 from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
 from yomikun.utils.split import split_kanji_name
-from yomikun.utils.romaji import romaji_to_hiragana_fullname
+from yomikun.utils.romaji import romaji_to_hiragana_messy
 
 
 class Gender(enum.Enum):
@@ -68,16 +68,11 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
         # Clean doesn't remove '' ... '' (??)
         romaji = regex.sub(r"^''(.*?)''$", r"\1", romaji)
 
-        kana = romaji_to_hiragana_fullname(clean(romaji), kanji)
-        if not kana:
-            # We were unable to recognise the romaji name. Either add more entries to
-            # the dictionary, or use `romaji_to_hiragana_messy` to parse verbatim.
-            print(f"Unable to parse {romaji} [{kanji}]", file=sys.stderr)
-            return NameData()
+        kana = romaji_to_hiragana_messy(clean(romaji), kanji)
 
         kanji = split_kanji_name(kanji, kana)
 
-        namedata = NameData(kaki=kanji, yomi=kana)
+        namedata = NameData(kaki=kanji, yomi=kana, tags=['xx-romaji'])
         gender = Gender.unknown
 
         if regex.search(r'\bfictional\b', rest_of_line):

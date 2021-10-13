@@ -15,7 +15,7 @@ def romaji_to_hiragana_strict(romaji: str) -> str:
     vowels, apostrophe where needed, etc, no macrons.
     """
     romaji = romaji.lower()
-    if not regex.match(r"^[a-z']*$", romaji):
+    if not regex.match(r"^[a-z' ]*$", romaji):
         raise ValueError(f"Input '{romaji}' has weird characters in it. Yuk!")
 
     return romkan.to_hiragana(romaji)

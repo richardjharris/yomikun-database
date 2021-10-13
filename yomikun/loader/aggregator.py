@@ -92,7 +92,7 @@ class Aggregator():
     @staticmethod
     def extract_name_parts(data: NameData) -> list[tuple[NamePart, Gender | None]]:
         parts = []
-        if 'person' in data.tags:
+        if data.is_person():
             # Rarely, is tagged [person, fem] to indicate the person's gender.
             gender = Aggregator.gender_from_tags(data.tags)
             kakis = data.kaki.split()

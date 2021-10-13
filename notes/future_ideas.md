@@ -12,6 +12,7 @@ Could develop a crawler + extractor for these.
 * https://en.wikipedia.org/wiki/Toma_Kuroda
 * https://toyokeizai.net/list/ranking
 * https://48pedia.org/%E5%85%A8%E3%83%A1%E3%83%B3%E3%83%90%E3%83%BC%E3%81%AE%E4%B8%80%E8%A6%A7#AKB48
+* http://keirin.jp/pc/racerprofile?snum=015518
 
 ## Other name data
 
