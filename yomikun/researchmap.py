@@ -94,13 +94,15 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
             # (allow h as in 'oh' - will be dealt with later)
             return NameData()
 
-        # TODO perform messy conversion for now. Will change later.
-        new_kana = romaji_to_hiragana_messy(romaji, kanji)
-        return NameData(kanji, new_kana, tags=['xx-romaji'])
-
-        # if new_kana := romaji_to_hiragana_fullname(romaji, kanji):
-        #    logging.info(f"Got result '{kanji}' ('{new_kana}')")
-        #    return NameData(kanji, new_kana, tags=['xx-romaji'])
+        if new_kana := romaji_to_hiragana_fullname(romaji, kanji):
+            return NameData(kanji, new_kana)
+        else:
+            # Fall back to lossy conversion, hoping the romaji is properly formed.
+            # This may produce incorrect results.
+            logging.warning(
+                f"Entry ({romaji}, {kanji}) was not in romajidb, doing messy conversion")
+            new_kana = romaji_to_hiragana_messy(romaji, kanji)
+            return NameData(kanji, new_kana, tags=['xx-romaji'])
 
     raise NotImplementedError("don't know how to handle this")
 

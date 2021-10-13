@@ -1,5 +1,7 @@
 ## Romaji to kana conversion
 
+ ADD RomajiDB to romaji_fullname converter.
+
 Edge case here:
 
 `DEBUG:root:[rom->hira] input(Ohishi, 大石, Sei, ohishi) match(おおいし, oishi) => False`

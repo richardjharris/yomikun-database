@@ -7,6 +7,7 @@ import romkan
 from yomikun.utils.name_dict import NameDict
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.romaji.helpers import romaji_key
+from yomikun.romajidb.db import romajidb
 
 
 def romaji_to_hiragana_strict(romaji: str) -> str:
@@ -51,6 +52,18 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
     """
     logging.debug(
         f"[romaji_to_hiragana_part] ({romaji}, {kanji}, {'SEI' if sei else 'MEI'})")
+
+    # First, check RomajiDB as this has more coverage.
+    key = romaji_key(romaji)
+    kana = romajidb().get(kanji, key, 'sei' if sei else 'mei')
+    if kana:
+        # We are done
+        return kana
+    else:
+        # If no result, that means there are multiple similar readings for this kanji
+        # so we have no way of inferring the correct one just from the romaji.
+        # The RomajiDB already covers 'most common reading even if not 100%' e.g. 有希=ゆうき
+        return
 
     if sei:
         matches = NameDict.find_surname(kanji)
