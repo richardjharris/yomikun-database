@@ -1,2 +1,8 @@
 # Stop mangling my Japanese
-*.md
+**/*.md
+notes
+data
+db
+jsonl
+old
+tmp
