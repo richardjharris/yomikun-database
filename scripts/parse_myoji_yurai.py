@@ -18,7 +18,7 @@ def parse_myoji_yurai(lines: Iterable[str]):
         kanji, readings_joined, _population, _difficulty = line.split(',')
         readings = readings_joined.split('|')
 
-        for reading in readings:
+        for reading in filter(len, readings):
             data = NameData(kanji, reading)
             data.add_tag('surname')
             data.source = "myoji-yurai-5000"
