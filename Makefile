@@ -11,7 +11,7 @@ else
   PARALLEL=parallel --will-cite --gnu -k --pipe -j $(mproc) --tmpdir $(TMPDIR)
 endif
 
-PZCAT = scripts/pzcat
+ZCAT = scripts/pzcat
 
 .DELETE_ON_ERROR:
 
