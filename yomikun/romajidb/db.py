@@ -6,6 +6,7 @@ from typing import cast
 import regex
 import romkan
 import jcconv3
+import gzip
 
 from yomikun.utils.romaji import romaji_key
 
@@ -17,25 +18,26 @@ def romajidb():
     """
     Returns a global RomajiDB object, instantiated only once per program.
 
-    Loads 'data/romajidb.tsv' from the current directory. Override with
+    Loads 'data/romajidb.tsv.gz' from the current directory. Override with
     ROMAJIDB_TSV_PATH
     """
     global instance
     if not instance:
-        path = os.environ.get('ROMAJIDB_TSV_PATH', 'data/romajidb.tsv')
+        path = os.environ.get('ROMAJIDB_TSV_PATH', 'data/romajidb.tsv.gz')
         instance = RomajiDB.load(path)
     return instance
 
 
 @dataclass
 class RomajiDB():
-    data: dict[tuple[str, str, str], str] = field(default_factory=dict)
+    data: dict[tuple[str, str, str], str] = field(
+        default_factory=dict, repr=False, compare=False)
 
     @staticmethod
     def load(file: str):
         db = RomajiDB()
 
-        with open(file) as fh:
+        with gzip.open(file, mode='rt') as fh:
             for line in fh:
                 values = line.strip().split('\t')
                 db.insert(*values)

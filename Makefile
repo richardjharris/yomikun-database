@@ -48,8 +48,8 @@ data/jawiki-articles.gz: |data/jawiki.xml.bz2
 	bzcat data/jawiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl | gzip -9f > $@
 
 # Generated from whatever JSON files are available. Should be rebuilt periodically.
-data/romajidb.tsv:
-	cat jsonl/* | python scripts/build_romajidb.py > $@
+data/romajidb.tsv.gz:
+	cat jsonl/* | python scripts/build_romajidb.py | gzip -9f > $@
 
 jsonl/wikipedia_en.jsonl: data/enwiki-nihongo-articles.gz
 	${ZCAT} data/enwiki-nihongo-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
