@@ -94,9 +94,10 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
             # (allow h as in 'oh' - will be dealt with later)
             return NameData()
 
-        if new_kana := romaji_to_hiragana_fullname(romaji, kanji):
-            return NameData(kanji, new_kana)
-        else:
+        # if new_kana := romaji_to_hiragana_fullname(romaji, kanji):
+        #    return NameData(kanji, new_kana)
+        # else:
+        if True:
             # Fall back to lossy conversion, hoping the romaji is properly formed.
             # This may produce incorrect results.
             logging.warning(

@@ -16,7 +16,6 @@ db/
 data/enwiki-nihongo-articles.gz
 data/jawiki-articles.gz
 *.cache
-data/romajidb.tsv
 
 # wikidumps
 data/*.xml.bz2

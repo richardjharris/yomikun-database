@@ -13,6 +13,8 @@ endif
 
 ZCAT = scripts/pzcat
 
+export ROMAJIDB_TSV_PATH = foo
+
 .DELETE_ON_ERROR:
 
 .PHONY: all clean test

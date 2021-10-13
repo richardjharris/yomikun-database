@@ -1,5 +1,14 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
+import os
+from typing import cast
+
+import regex
+import romkan
+import jcconv3
+
+from yomikun.utils.romaji import romaji_key
+
 
 instance = None
 
@@ -8,11 +17,13 @@ def romajidb():
     """
     Returns a global RomajiDB object, instantiated only once per program.
 
-    Loads 'romajidb.tsv' from the current directory.
+    Loads 'data/romajidb.tsv' from the current directory. Override with
+    ROMAJIDB_TSV_PATH
     """
     global instance
     if not instance:
-        instance = RomajiDB.load('data/romajidb.tsv')
+        path = os.environ.get('ROMAJIDB_TSV_PATH', 'data/romajidb.tsv')
+        instance = RomajiDB.load(path)
     return instance
 
 
@@ -30,11 +41,17 @@ class RomajiDB():
                 db.insert(*values)
         return db
 
-    def insert(self, kanji: str, romaji_key: str, part: str, kana: str):
-        self.data[(kanji, romaji_key, part)] = kana
+    def insert(self, kanji: str, romkey: str, part: str, kana: str):
+        self.data[(kanji, romkey, part)] = kana
 
-    def get(self, kanji: str, romaji_key: str, part: str) -> str | None:
-        return self.data.get((kanji, romaji_key, part), None)
+    def get(self, kanji: str, romkey: str, part: str) -> str | None:
+        # Check if the kanji is actually just the romaji in kana
+        # or katakana form, if so, return it.
+        if not regex.match(r'\p{Han}', kanji):
+            if romaji_key(romkan.to_roma(kanji)) == romkey:
+                return cast(str, jcconv3.kata2hira(kanji))
+
+        return self.data.get((kanji, romkey, part), None)
 
 
 def test_basic():
@@ -47,3 +64,9 @@ def test_basic():
 
     db.insert('諭助', 'yusuke', 'mei', 'ゆすけ')
     assert db.get('諭助', 'yusuke', 'mei') == 'ゆすけ'
+
+
+def test_kana():
+    db = RomajiDB()  # empty
+    assert db.get('あきら', 'akira', 'mei') == 'あきら'
+    assert db.get('ココロ', 'kokoro', 'mei') == 'こころ'

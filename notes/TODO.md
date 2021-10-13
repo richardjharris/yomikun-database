@@ -1,5 +1,12 @@
 ## Romaji to kana conversion
 
+### Kana in kanji
+
+WARNING:root:Skipping ('アリカ', 'arika', 'mei') - too many values (Counter({'ありか': 3, 'アリカ': 1}))
+
+ -> seems sensible to normalise katakana to hiragana at each point, or just
+    skip the dictionary?
+
  ADD RomajiDB to romaji_fullname converter.
 
 Edge case here:

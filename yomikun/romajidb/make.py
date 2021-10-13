@@ -46,7 +46,7 @@ def make_romajidb(names: Iterable[NameData], db_out: TextIO):
             top, = uniq.most_common(1)
             if (top[1] / len(values)) >= 0.8:
                 # Clear majority
-                print(*key[0:2], top[0], sep='\t')
+                print(*key[0:3], top[0], sep='\t')
             else:
                 # Not sure what to do
                 logging.warning(

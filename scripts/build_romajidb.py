@@ -12,11 +12,13 @@ multiple viable choices, in which case we do not create an entry at all.
 import sys
 import json
 import logging
+import os
 
 from yomikun.models import NameData
 from yomikun.romajidb import make_romajidb
 
-logging.basicConfig(level=logging.DEBUG)
+LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
+logging.basicConfig(level=LOGLEVEL)
 
 names = (NameData.from_dict(json.loads(line)) for line in sys.stdin)
 try:
