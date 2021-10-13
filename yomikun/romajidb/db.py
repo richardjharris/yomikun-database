@@ -39,7 +39,7 @@ class RomajiDB():
 
         with gzip.open(file, mode='rt') as fh:
             for line in fh:
-                values = line.strip().split('\t')
+                values = line.rstrip().split('\t')
                 db.insert(*values)
         return db
 

@@ -20,12 +20,12 @@ import sys
 import json
 
 import yomikun.jmnedict
-from yomikun.utils.name_dict import NameDict
+import yomikun.utils.name_dict
 
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
 
-for data in NameDict.all_data():
+for data in yomikun.utils.name_dict.all_jmnedict_data():
     try:
         for output in yomikun.jmnedict.parse(data):
             print(json.dumps(output, ensure_ascii=False))

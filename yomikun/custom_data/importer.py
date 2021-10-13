@@ -1,4 +1,3 @@
-from audioop import reverse
 import regex
 from jcconv3 import kata2hira
 import pytest

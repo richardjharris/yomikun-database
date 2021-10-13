@@ -15,7 +15,7 @@ parsed, errors, total = 0, 0, 0
 start_time = time.monotonic()
 
 for line in sys.stdin:
-    line = line.strip()
+    line = line.rstrip()
     parts = line.split('\t')
     try:
         if len(parts) < 2:
@@ -34,8 +34,8 @@ for line in sys.stdin:
             print(data.to_jsonl())
             parsed += 1
     except NotImplementedError:
-        logging.debug(f"Failed to parse {parts}", exc_info=True)
-        logging.debug('-----')
+        logging.error(f"Failed to parse {parts}", exc_info=True)
+        logging.error('-----')
         errors += 1
     except Exception:
         logging.exception(f'Error when parsing {parts}')

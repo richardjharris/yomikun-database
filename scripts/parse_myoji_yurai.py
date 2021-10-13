@@ -11,7 +11,7 @@ from yomikun.models import NameData
 
 def parse_myoji_yurai(lines: Iterable[str]):
     for line in lines:
-        line.strip()
+        line.rstrip()
         # population = e.g. 1894000 for 佐藤
         # difficulty = ranging from 0.5ish (easy) to 1000+, although it is
         #              pretty unreliable for long names

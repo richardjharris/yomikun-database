@@ -20,8 +20,32 @@ In reality if we can match both sides we should prefer that?
 from __future__ import annotations
 
 import pytest
+import romkan
 
-from yomikun.utils.name_dict import NameDict
+import yomikun.utils.name_dict as name_dict
+
+
+def split_kanji_name_romaji(kanji: str, romaji: str) -> str:
+    """
+    Splits a kanji name using romaji (which could be ambiguous)
+    Uses RomajiDB to find a split point, tolerating the ambiguity.
+
+    Returns kanji as-is if unable to split.
+    """
+    if len(romaji.split()) != 2:
+        # romaji not in two parts - can't split
+        return kanji
+
+    if len(kanji.split()) >= 2:
+        # already split
+        return kanji
+
+    sei, mei = romaji.split()
+    split_point = find_split_point(sei, mei, kanji, romaji=True)
+    if split_point is None:
+        return kanji
+    else:
+        return f"{kanji[0:split_point]} {kanji[split_point:]}"
 
 
 def split_kanji_name(kaki: str, yomi: str) -> str:
@@ -56,8 +80,10 @@ def split_kana_name(kaki: str, yomi: str) -> str:
 
     Returns yomi as-is if unable to split.
     """
-    assert len(kaki.split()) == 2
-    assert len(yomi.split()) == 1
+    if len(kaki.split()) != 2:
+        raise ValueError('kaki must contain two names')
+    if len(yomi.split()) != 1:
+        raise ValueError('yomi must contain no spaces')
 
     sei, mei = kaki.split()
     split_point = find_kana_split_point(sei, mei, yomi)
@@ -67,32 +93,42 @@ def split_kana_name(kaki: str, yomi: str) -> str:
         return f"{yomi[0:split_point]} {yomi[split_point:]}"
 
 
-def find_split_point(sei: str, mei: str, kanji: str) -> int | None:
+def find_split_point(
+    sei: str,
+    mei: str,
+    kanji: str,
+    romaji: bool = False,
+    reverse: bool = True,
+) -> int | None:
     """
     Given the surname and first name (in kana), and the combined kanji,
     split the kanji to separate the two name portions. Return the number
     of chars in `kanji` that corresponds to the surname.
 
+    If `romaji` is passed, assumes sei/mei are romaji and performs
+    fuzzy kana conversion internally. With `reverse ` (default True), is also
+    able to reverse romaji that is the wrong way around.
+
     If we can't do it for some reason, returns None.
     """
-
+    # TODO RomajiDB should have multiple readings, else we might fail to
+    #      split for some names.
+    # TODO when romaji=False we could still use our own data, it's better.
     # Try to match the largest string first.
     for chars in reversed(range(1, len(kanji))):
         kanji_prefix = kanji[0:chars]
-        results = NameDict.find_surname(kanji_prefix)
-
-        for result in results:
-            if sei in result.kana:
-                return chars
+        if name_dict.match_name(kanji_prefix, sei, sei=True, romaji=romaji):
+            return chars
 
     # Try to match forenames instead
     for chars in range(1, len(kanji)):
         kanji_suffix = kanji[chars:]
-        results = NameDict.find_given_name(kanji_suffix)
+        if name_dict.match_name(kanji_suffix, mei, sei=False, romaji=romaji):
+            return chars
 
-        for result in results:
-            if mei in result.kana:
-                return chars
+    if romaji and reverse:
+        # Try swapping mei/sei
+        return find_split_point(mei, sei, kanji, romaji=True, reverse=False)
 
     return None
 
@@ -111,7 +147,7 @@ def find_kana_split_point(sei: str, mei: str, kana: str) -> int | None:
     # Try to match the largest string first.
     for chars in reversed(range(1, len(kana))):
         kana_prefix = kana[0:chars]
-        results = NameDict.find_surname(kana_prefix)
+        results = name_dict.find_surname(kana_prefix)
 
         for result in results:
             if sei in result.kanji:
@@ -120,13 +156,38 @@ def find_kana_split_point(sei: str, mei: str, kana: str) -> int | None:
     # Try to match forenames instead
     for chars in range(1, len(kana)):
         kana_suffix = kana[chars:]
-        results = NameDict.find_given_name(kana_suffix)
+        results = name_dict.find_given_name(kana_suffix)
 
         for result in results:
             if mei in result.kanji:
                 return chars
 
     return None
+
+
+def try_to_swap_names(kanji: str, kana: str) -> tuple[str, str]:
+    """
+    Given split kanji/kana, check them against the JMnedict data and try
+    to swap them if it makes more sense.
+    """
+    # The current method joins the kanji together then tries to split it.
+    # This requires there to be JMnedict data.
+    # TODO: A better method would just check our existing surname/mei/sei data.
+    old_kanji, old_kana = kanji, kana
+    kanji = kanji.replace(' ', '')
+
+    kanji = split_kanji_name(kanji, kana)
+
+    if len(kanji.split()) == 1:
+        # Try the other way around
+        kana = ' '.join(reversed(kana.split()))
+        kanji = split_kanji_name(kanji, kana)
+
+        if len(kanji.split()) == 1:
+            # Revert back to the original
+            kanji, kana = old_kanji, old_kana
+
+    return kanji, kana
 
 
 # Format: surname (kana), given name (kana), surname (kanji), given name (kana)
@@ -170,7 +231,7 @@ tests = [
 
 
 @pytest.mark.parametrize('test', tests)
-def test_split_kanji(test):
+def test_split_point_kanji(test):
     sei_yomi, mei_yomi, sei_kaki, mei_kaki = test.split(' ')
 
     result = find_split_point(sei_yomi, mei_yomi, f"{sei_kaki}{mei_kaki}")
@@ -178,8 +239,48 @@ def test_split_kanji(test):
 
 
 @pytest.mark.parametrize('test', tests)
-def test_split_kana(test):
+def test_split_point_kana(test):
     sei_yomi, mei_yomi, sei_kaki, mei_kaki = test.split(' ')
 
     result = find_kana_split_point(sei_kaki, mei_kaki, f"{sei_yomi}{mei_yomi}")
     assert result == len(sei_yomi)
+
+
+@pytest.mark.parametrize('test', tests)
+def test_split_point_romaji(test):
+    sei_yomi, mei_yomi, sei_kaki, mei_kaki = test.split(' ')
+
+    sei = romkan.to_roma(sei_yomi)
+    mei = romkan.to_roma(mei_yomi)
+    kanji = sei_kaki + mei_kaki
+
+    result = find_split_point(sei, mei, kanji, romaji=True)
+    assert result == len(sei_kaki)
+
+    result_reversed = find_split_point(mei, sei, kanji, romaji=True)
+    assert result == result_reversed
+
+
+def test_split_romaji_ambiguous():
+    assert split_kanji_name_romaji("北条大峯", "hojo omine") \
+        == "北条 大峯"
+    assert split_kanji_name_romaji("北条 大峯", "hojo omine") \
+        == "北条 大峯", 'already split'
+    assert split_kanji_name_romaji("北条大峯", "hojoomine") \
+        == "北条大峯", 'romaji not split'
+
+
+def test_split_kanji_name():
+    assert split_kanji_name("田辺元", "たなべ はじめ") == "田辺 元"
+    assert split_kanji_name("田辺元", "わか わか") == "田辺元", 'weird yomi'
+    assert split_kanji_name("田辺 元", "たなべ はじめ") == "田辺 元", 'aleady split'
+    assert split_kanji_name("田辺元", "たなべはじめ") == "田辺元", 'kanji not split'
+
+
+def test_split_kana_name():
+    assert split_kana_name("田辺 元", "たなべはじめ") == "たなべ はじめ"
+    assert split_kana_name("田辺 元", "たなかしゅん") == "たなかしゅん", 'weird yomi'
+    with pytest.raises(ValueError):
+        assert split_kana_name("田辺 元", "たなべ はじめ") == "たなべ はじめ", 'already split'
+    with pytest.raises(ValueError):
+        assert split_kana_name("田辺元", "たなかはじめ") == "たなかはじめ", 'kana not split'

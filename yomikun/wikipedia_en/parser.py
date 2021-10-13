@@ -145,7 +145,7 @@ def test_basic():
         kaki='遠藤 章史',
         yomi='えんどう あきふみ',
         lifetime=Lifetime(1964),
-        tags=['masc'],
+        tags=['xx-romaji', 'masc'],
         source='wikipedia_en:Akifumi Endo',
     ), 'extracts gender from category'
 
@@ -164,7 +164,7 @@ Murata was born on July 14, 1986, in [[Uozu, Toyama]].<ref>{{cite web|url=https:
         kaki='村田 顕弘',
         yomi='むらた あきひろ',
         lifetime=Lifetime(1986),
-        tags=['masc'],
+        tags=['xx-romaji', 'masc'],
         source='wikipedia_en:Akihiro Murata',
     ), 'extracts gender from text'
 
@@ -179,7 +179,7 @@ def test_nya_romaji():
         kaki='加藤 潤也',
         yomi='かとう じゅんや',
         lifetime=Lifetime(1994),
-        tags=['masc'],
+        tags=['xx-romaji', 'masc'],
         source='wikipedia_en:Junya Kato',
     ), 'should not convert to じゅにゃ'
 
@@ -203,6 +203,6 @@ In 2000, a 21-year-old campaign volunteer accused Yokoyama of [[sexual harassmen
         yomi='よこやま のっく',
         lifetime=Lifetime(1932, 2007),
         authenticity=NameAuthenticity.PSEUDO,
-        tags=['masc'],
+        tags=['xx-romaji', 'masc'],
         source='wikipedia_en:Knock Yokoyama',
     )

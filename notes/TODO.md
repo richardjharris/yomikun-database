@@ -1,29 +1,51 @@
 ## Romaji to kana conversion
 
-### Kana in kanji
+Current task: finish researchmap import [DONE]
+ - maybe look at the 'messy conversions' and add custom.csv entries.
 
-WARNING:root:Skipping ('アリカ', 'arika', 'mei') - too many values (Counter({'ありか': 3, 'アリカ': 1}))
+Edge cases involving h:
+ yuhya (裕也) didn't pass. (hirahara yuhya, 平原 裕也)
 
- -> seems sensible to normalise katakana to hiragana at each point, or just
-    skip the dictionary?
+(maki nahomi, 牧 奈歩美) - this is nahomi
 
- ADD RomajiDB to romaji_fullname converter.
-
-Edge case here:
-
-`DEBUG:root:[rom->hira] input(Ohishi, 大石, Sei, ohishi) match(おおいし, oishi) => False`
+DEBUG:root:[rom->hira] input(Ohishi, 大石, Sei, ohishi) match(おおいし, oishi) => False`
 otoh 'Ohashi' DOES need converting to oohashi.
+and 'Ohira' is oohira.
+and 'tomohiro' is never 'tomouiro'
+but オオイ ヒロシ   大井 洋 Hiroshi Ohi
 
-- Masahiro Ohashi (大橋 正博
-- OTOH very minor. 32k entries have xx-romaji, most of which are correct.
+ - could special case ohi, ohishi, ohiwa, ohike, ohizumi
+   ohe... ohuchi, ohue, ohura
 
-{"kaki": "大橋 滉太", "yomi": "おはし こた", "authenticity": "real", "lifetime": {"birth_year": 2002, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Kota Ohashi", "tags": ["xx-romaji"]}
+## wikidata: ・
 
-- double mistake here, should be おおはし　こうた
+There are quite a few names with ・ instead of a space.
+ "小原宏裕", "yomi": "おはら・こうゆう"
 
-吉田 有希 could be read yuki (fem) or yuuki (masc or fem?)
+### Unambiguous romaji
 
-1. Replace romaji_to_hiragana, and indicate romaji with xx-romaji tag
+Technically 'masaya' is unambiguous. 'shinya' etc. are generally
+fine, it's mostly u, o and e. Then again, the fallback handles
+this, but currently our conversion is 'all or nothing', it does not
+treat mei/sei seperately.
+
+### All or nothing
+
+ - DEBUG:root:Parsing ('', '常喜儒彦', 'Michihiko Jogi')
+ - here if michihiko fails but jogi matches, that should be enough to
+   carry out partial conversion, so we at least get 'jougi' right
+   and michihiko is probably fine too.
+
+## Make romaji_to_hiragana_fullname swap names for you
+
+This would simplify logic in both researchmap and wikidata_nokana.
+
+### dict tag
+
+Indicates the item should not be counted as a person, it's only for dictionary
+completeness. To be implemented in the final database code.
+`
+1. Replace romaji_to_hiragana, and indicate romaji with xx-romaji tag [DONE]
 
 - scripts/parse_wikidata_nokana.py   -> made messy [change later]
 - yomikun/custom_data/importer.py -> made strict
@@ -32,11 +54,10 @@ otoh 'Ohashi' DOES need converting to oohashi.
 - yomikun/researchmap.py -> uses messy [change later]
 - yomikun/wikipedia_en/parser.py -> added [change later]
 
-2. Build new database from this
-3. Use new database in romaji_to_hiragana: more coverage, frequency
-   data so we can prefer one reading over the other.
-4. Re-enable researchmap tests
-5. Run researchmap properly.
+2. Build new database from this  [DONE]
+3. Use new database in romaji_to_hiragana  [DONE]
+4. Re-enable researchmap tests  [DONE]
+5. Run researchmap properly ... doing
 
 - may need to add more stuff to custom.csv
   ... hmm but this will combine with research map to make names seem
@@ -45,12 +66,17 @@ otoh 'Ohashi' DOES need converting to oohashi.
   like jamdict.
 - check other error fields.
 
+- check イ トモヒロ     井 智弘 Tomohiro I
+
 6. Can re-run wikipedia-en with better romaji conversion later.
 
+- requires splitting support
 - need to keep an eye that we aren't bulldozing well-formed stuff,
   though.
 - TODO if we see macrons, should probably ensure the final result
   matches the macron length (e.g. o-bar is exactly 2)
+- specifically test 'Kota Ohashi' which used to be おはし　こた. Should be
+  おおはし　こうた.
 
 ## 'People' counting
 

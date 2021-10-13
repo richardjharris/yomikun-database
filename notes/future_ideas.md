@@ -14,7 +14,19 @@ Could develop a crawler + extractor for these.
 * https://48pedia.org/%E5%85%A8%E3%83%A1%E3%83%B3%E3%83%90%E3%83%BC%E3%81%AE%E4%B8%80%E8%A6%A7#AKB48
 * http://keirin.jp/pc/racerprofile?snum=015518
 
-## Other name data
+* http://sakurashigikai.gijiroku.com/g07_giinlistP.asp - lots of these, doing some
+* https://oneosaka.jp/member/
+* https://seijiyama.jp/area/table/3811/B0qbJG/M?S=rcla2ldnbk - 1.3M records (or 1368 fetches)
+
+ Just do https://seijiyama.jp/area/table/3811/B0qbJG/M?detect=%94%BB%92%E8&_limit_13878=100&S=rcla2ldnbk&_page_13878=1
+   with each page
+   Then parse out
+   Sub-pages have age, gender.
+   Some are dupes (しまじり　あいこ has 3 entries). Some have no furigana.
+
+ * https://www.wasedarugby.com/member_list/
+
+## Other name data (?)
 
 * https://pon-navi.net/nazuke/name/ranking
 
@@ -23,6 +35,10 @@ Could develop a crawler + extractor for these.
 It's useful to tag anywhere we performed a manual data split, and
 avoid using that data (at least in preference) when splitting again.
 Frequency data is not considered when splitting.
+
+ ... for example such entries can be ignored when building RomajiDB,
+     which could be used as a hint for splitting kanji (rather than JMnedict)
+     However RomajiDB would need to support >1 reading first.
 
 ## Gender data
 

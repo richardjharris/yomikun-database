@@ -4,7 +4,7 @@ import logging
 import regex
 import romkan
 
-from yomikun.utils.name_dict import NameDict
+#from yomikun.utils.name_dict import NameDict
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.romaji.helpers import romaji_key
 from yomikun.romajidb.db import romajidb
@@ -34,10 +34,7 @@ def romaji_to_hiragana_fullname(romaji: str, kanji: str) -> str | None:
     if len(romaji.split()) != 2 or len(kanji.split()) != 2:
         return None
 
-    new_sei = romaji_to_hiragana_part(
-        romaji.split()[0], kanji.split()[0], sei=True)
-    new_mei = romaji_to_hiragana_part(
-        romaji.split()[1], kanji.split()[1], sei=False)
+    new_sei, new_mei = romaji_to_hiragana_fullname_parts(romaji, kanji)
 
     if new_sei is None or new_mei is None:
         return None
@@ -45,17 +42,26 @@ def romaji_to_hiragana_fullname(romaji: str, kanji: str) -> str | None:
     return f"{new_sei} {new_mei}"
 
 
+def romaji_to_hiragana_fullname_parts(romaji: str, kanji: str) -> tuple[str | None, str | None]:
+    new_sei = romaji_to_hiragana_part(
+        romaji.split()[0], kanji.split()[0], sei=True)
+    new_mei = romaji_to_hiragana_part(
+        romaji.split()[1], kanji.split()[1], sei=False)
+
+    return new_sei, new_mei
+
+
 def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
     """
     Convert ambiguous romaji name (sei/mei) to hiragana using the kanji as a
     guide to determine length of vowels.
     """
-    logging.debug(
-        f"[romaji_to_hiragana_part] ({romaji}, {kanji}, {'SEI' if sei else 'MEI'})")
-
-    # First, check RomajiDB as this has more coverage.
     key = romaji_key(romaji)
     kana = romajidb().get(kanji, key, 'sei' if sei else 'mei')
+
+    logging.debug(
+        f"[r2h:part] ({romaji}[{key}], {kanji}, {'SEI' if sei else 'MEI'}) => {kana}")
+
     if kana:
         # We are done
         return kana
@@ -65,6 +71,7 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
         # The RomajiDB already covers 'most common reading even if not 100%' e.g. 有希=ゆうき
         return
 
+    """
     if sei:
         matches = NameDict.find_surname(kanji)
     else:
@@ -106,6 +113,7 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
         return best
     else:
         return
+    """
 
 
 def test_hiragana_part():

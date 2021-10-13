@@ -20,7 +20,7 @@ def skip_lines_and_comments(lines):
     global last_raw_line
 
     for line in lines:
-        last_raw_line = line.strip()
+        last_raw_line = line.rstrip()
         line = regex.sub(r'#.*$', '', line)
         if regex.search(r'\S', line):
             yield line

@@ -11,7 +11,7 @@ import sys
 import json
 import regex
 
-from yomikun.utils.split import split_kanji_name
+from yomikun.utils.split import split_kanji_name, try_to_swap_names
 from yomikun.utils.romaji import romaji_to_hiragana_messy
 from yomikun.models import NameData, Lifetime
 
@@ -61,21 +61,9 @@ for line in sys.stdin:
     # TODO use messy parsing for now. Will re-run with improved dictionary later
     kana = romaji_to_hiragana_messy(romaji, kanji)
 
-    # Force a re-split in case the names are the wrong way around
-    # TODO: could use romaji code to handle this
-    old_kanji, old_kana = kanji, kana
-    kanji = kanji.replace(' ', '')
-
-    kanji = split_kanji_name(kanji, kana)
-
-    if len(kanji.split()) == 1:
-        # Try the other way around
-        kana = ' '.join(reversed(kana.split()))
-        kanji = split_kanji_name(kanji, kana)
-
-        if len(kanji.split()) == 1:
-            # Revert back to the original
-            kanji, kana = old_kanji, old_kana
+    # Since we used the 'messy' method, no dictionary was consulted so the names
+    # may be in the wrong order. Try to swap if sensible.
+    kanji, kana = try_to_swap_names(kanji, kana)
 
     if regex.search('[a-z]', kana, regex.I):
         continue

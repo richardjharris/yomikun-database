@@ -13,12 +13,15 @@ import sys
 import json
 import logging
 import os
+import time
 
 from yomikun.models import NameData
 from yomikun.romajidb import make_romajidb
 
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
+
+start_time = time.monotonic()
 
 names = (NameData.from_dict(json.loads(line)) for line in sys.stdin)
 try:
@@ -28,3 +31,7 @@ except KeyboardInterrupt:
     pass
 except:
     logging.exception('Error generating romaji DB')
+    sys.exit(1)
+
+elapsed = time.monotonic() - start_time
+print(f'Generated RomajiDB in {elapsed:.0f}s', file=sys.stderr)

@@ -13,3 +13,7 @@
 ### 裕子（ひろこ・ゆうこ）
 
 ...
+
+### 有希
+
+Could be read yuki (fem) or yuuki (masc or fem?)
