@@ -5,6 +5,7 @@ __pycache__
 /dist/
 *.pyc
 /*.egg-info
+.env
 
 # Build products
 *.jsonl
