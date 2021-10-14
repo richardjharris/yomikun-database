@@ -76,8 +76,15 @@ for line in sys.stdin:
             # at least reject anything with all-romaji/katakana
             continue
 
+    # Remove （モデル） etc.
+    kanji = regex.sub(r'（.*?）$', '', kanji)
+    kanji = kanji.replace(r'・', ' ')
+    kanji = regex.sub(r' [一ニ三四五]代$', '', kanji)
+
     kana = extract(data, 'kana.value')
     assert kana is not None
+
+    kana = kana.replace('・', ' ')
 
     kanji = split_kanji_name(kanji, kana)
 
@@ -85,7 +92,7 @@ for line in sys.stdin:
                         year(extract(data, 'dod.value')))
 
     namedata = NameData(kanji, kana, lifetime=lifetime,
-                        source=f'wikidata:{item}')
+                        source=f'wikidata:{item}', tags=['person'])
     tags = []
     if tag := gender(extract(data, 'genderLabel.value')):
         namedata.add_tag(tag)

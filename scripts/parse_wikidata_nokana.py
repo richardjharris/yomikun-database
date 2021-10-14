@@ -50,6 +50,8 @@ for line in sys.stdin:
     if not regex.search(r'^\p{Han}', kanji):
         continue
 
+    kanji = kanji.replace('・', ' ')  # happens 3 times
+
     romaji = data['itemLabel']
 
     # Swap the names around
