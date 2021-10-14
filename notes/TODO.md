@@ -4,26 +4,6 @@ Current task: finish researchmap import [DONE]
  - maybe look at the 'messy conversions' and add custom.csv entries.
  - there are 3,293 xx-romaji entries.
 
-Edge cases involving h:
- yuhya (裕也) didn't pass. (hirahara yuhya, 平原 裕也)
- {"kaki": "平原 裕也", "yomi": "ひらはら ゆひゃ", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "researchmap", "tags": ["xx-romaji", "person"]}
-
-(maki nahomi, 牧 奈歩美) - this is nahomi
-
-DEBUG:root:[rom->hira] input(Ohishi, 大石, Sei, ohishi) match(おおいし, oishi) => False`
-otoh 'Ohashi' DOES need converting to oohashi.
-and 'Ohira' is oohira.
-and 'tomohiro' is never 'tomouiro'
-but オオイ ヒロシ   大井 洋 Hiroshi Ohi
-
- - could special case ohi, ohishi, ohiwa, ohike, ohizumi
-   ohe... ohuchi, ohue, ohura, (yuhya...)
-
- - Or we could create a romaji key that combines the two somehow.
-   like always remove h before vowel? 
- - or fix them directly.
- - or have a special case list.
-
 ## wikidata: de-dupe variant records
 
 Somehow when removing nakaguro I stripped 300 records from wikidata.jsonl?
@@ -89,6 +69,10 @@ completeness. To be implemented in the final database code.
 - check イ トモヒロ     井 智弘 Tomohiro I
 
 6. Can re-run wikipedia-en with better romaji conversion later.
+
+e.g. this one is wrong:
+
+ {{nihongo|'''Kentaro Shiga'''|志賀 賢太郎|Shiga Kentaro}}
 
 - requires splitting support
 - need to keep an eye that we aren't bulldozing well-formed stuff,

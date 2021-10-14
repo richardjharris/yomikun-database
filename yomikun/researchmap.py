@@ -182,6 +182,7 @@ tests = [
     (('Nohara Takahiro', '野原 隆弘', 'Takahiro Nohara'), '野原 隆弘', 'のはら たかひろ'),
     (('', '一之瀬 敦幾', 'Atsuki ICHINOSE'), '一之瀬 敦幾', 'いちのせ あつき'),
     (('', '坪山 直生', 'Tadao Tsuboyama'), '坪山 直生', 'つぼやま ただお'),
+    (('', '田中 奈歩美', 'Nahomi Tanaka'), '田中 奈歩美', 'たなか なほみ'),
     # Romaji, but some vowels need lengthening
     (('Nozaki Yuji', '野﨑 祐史', 'Yuji Nozaki'), '野﨑 祐史', 'のざき ゆうじ'),
     (('FUSE KYOKO', '布施 香子', 'Fuse Kyoko'), '布施 香子', 'ふせ きょうこ'),
@@ -205,6 +206,13 @@ tests = [
     # SurnameFirstname style
     (('', '真島 綾子', 'MashimaAyako'), '真島 綾子', 'ましま あやこ'),
     (('', '清水 典孝', 'noritakaSHIMIZU'), '清水 典孝', 'しみず のりたか'),
+    # handle 'oh' as long o
+    (('', '大石 侑香', 'Yuka OISHI'), '大石 侑香', 'おおいし ゆうか'),
+    (('', '大石 勝', 'Masaru Ohishi'), '大石 勝', 'おおいし まさる'),
+    (('', '大井 駿', 'Shun Ohi'), '大井 駿', 'おおい しゅん'),
+    (('', '大橋 千恵', 'Chie Ohashi'), '大橋 千恵', 'おおはし ちえ'),
+    # handle 'uh' as long u
+    (('', '清水 裕也', 'Yuhya Shimizu'), '清水 裕也', 'しみず ゆうや'),
 ]
 
 

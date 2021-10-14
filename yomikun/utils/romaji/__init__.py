@@ -51,7 +51,7 @@ def romaji_to_hiragana_fullname_parts(romaji: str, kanji: str) -> tuple[str | No
     return new_sei, new_mei
 
 
-def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
+def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool, try_h_removal: bool = True) -> str | None:
     """
     Convert ambiguous romaji name (sei/mei) to hiragana using the kanji as a
     guide to determine length of vowels.
@@ -66,10 +66,18 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
         # We are done
         return kana
     else:
-        # If no result, that means there are multiple similar readings for this kanji
-        # so we have no way of inferring the correct one just from the romaji.
-        # The RomajiDB already covers 'most common reading even if not 100%' e.g. 有希=ゆうき
-        return
+        # Vowel + h is ambigous: may be part of a vowel (ohishi = おおいし)
+        # or not (ohashi = おはし). Try removing it. We only try this once.
+        # TODO this should only be done when the result is MISSING, not
+        # AMBIGUOUS. RomajiDB should hold all the readings...
+        # XXX this is skipped atm, as romaji_key() does the removal for us
+        #romaji2 = regex.sub(r'[aieou]h(?=[aieouy])', '', romaji)
+        # if romaji2 != romaji:
+        #    return romaji_to_hiragana_part(romaji2, kanji, sei, False)
+        pass
+
+    # Otherwise give up, as the reading is ambiguous.
+    return
 
     """
     if sei:

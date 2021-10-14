@@ -1,6 +1,10 @@
 This lists stuff I don't have time to do now, but could look at in
 the future.
 
+## More robust handling of 'yuhya'-type names
+
+Currently we use a manual dictionary to correct these.
+
 ## Name lists online
 
 Could develop a crawler + extractor for these.

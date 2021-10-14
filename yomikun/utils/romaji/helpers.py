@@ -4,6 +4,25 @@ import unicodedata
 import romkan
 import regex
 
+# Romaji keys where the 'h' is part of the vowel and should
+# be removed, e.g. 'ohishi' (おおいし) vs. 'ohashi' (おおはし)
+remove_vowel_h = {
+    'ohae': 'oae',
+    'ohe': 'oe',
+    'ohi': 'oi',
+    'ohike': 'oike',
+    'ohishi': 'oishi',
+    'ohiwa': 'oiwa',
+    'ohizumi': 'oizumi',
+    'ohoka': 'oka',
+    'ohori': 'ori',
+    'ohuchi': 'ouchi',
+    'ohue': 'ooue',
+    'ohura': 'oura',
+    'yuhya': 'yuya',
+    'yohichi': 'yoichi',
+}
+
 accents = {
     'a': {'ā', 'â'},
     'i': {'ī', 'î'},
@@ -64,10 +83,13 @@ def romaji_key(romaji: str) -> str:
     # Collapse vowels into one, including 'h' if not followed by a vowel
     # TODO: we could ignore 'y', 'hya' is very rare in names and always
     #       always 'hyak-' if present
-    romaji = regex.sub(r'(oh(?![aiueoy])|ou|oo)', 'o', romaji)
-    romaji = regex.sub(r'(eh(?![aiueoy])|ei|ee)', 'e', romaji)
+    romaji = regex.sub(r'(oh(?![aiueoy])|ou|o+)', 'o', romaji)
+    romaji = regex.sub(r'(eh(?![aiueoy])|ei|e+)', 'e', romaji)
     romaji = regex.sub(r'(uh(?![aiueoy])|uu)', 'u', romaji)
     romaji = regex.sub(r'([aiu])\1+', '\\1', romaji)
+
+    # Remove 'h's that are most likely vowels
+    romaji = remove_vowel_h.get(romaji, romaji)
 
     return romaji
 
@@ -89,6 +111,14 @@ def test_romaji_key():
 
 
 def test_romaji_key_h():
-    assert romaji_key('kumanogoh') == romaji_key('kumamogou')
-    assert romaji_key('kumamogou') == romaji_key('kumamogo')
+    assert romaji_key('kumanogoh') == romaji_key('kumanogou')
+    assert romaji_key('kumanogou') == romaji_key('kumanogo')
     assert romaji_key('yuhsuke') == romaji_key('yuusuke')
+
+
+def test_romaji_key_h_vowel():
+    assert romaji_key('ohishi') == romaji_key('oishi')
+    assert romaji_key('ohiwa') == romaji_key('oiwa')
+    assert romaji_key('ohoka') == romaji_key('oooka')
+    assert romaji_key('ohoka') == romaji_key('ōoka')
+    assert romaji_key('ohori') == romaji_key('oori')
