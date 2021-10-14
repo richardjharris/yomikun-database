@@ -1,3 +1,4 @@
+from operator import itemgetter
 from typing import cast
 
 import regex
@@ -125,9 +126,13 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
         if new_kana := romaji_to_hiragana_fullname(romaji, new_kanji):
             return NameData(new_kanji, new_kana)
 
-    if romajis:
-        # Try again with dumb conversion. This may produce incorrect results.
-        romaji = romajis[0]
+    # Try again with dumb conversion. This may produce incorrect results.
+    # Keep track of each attempt and a 'score' representing how good we think
+    # the attempt is; pick the best.
+    attempts = []
+    for romaji in romajis:
+        warnings = []
+        score = 0
         logging.info(f"Trying dumb '{romaji}' for {kanji}")
 
         # May need to split the kanji (rare)
@@ -135,20 +140,38 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
         logging.debug(f"Kanji is '{kanji}' After split")
 
         if len(kanji.split()) == 2:
-            sei, mei = romaji_to_hiragana_fullname_parts(romaji, kanji)
-            missing = (sei is None, mei is None)
-            logging.warning(
-                f"[{raw_data}] Entry ({romaji}, {kanji}) was not in romajidb {missing=}, doing messy conversion")
+            assert len(romaji.split()) == 2
+            sei_kaki, mei_kaki = kanji.split()
+            sei_roma, mei_roma = romaji.split()
+
+            sei_kana, mei_kana = romaji_to_hiragana_fullname_parts(
+                romaji, kanji)
+            if sei_kana is None:
+                warnings.append(
+                    f"[{raw_data}] SEI ({sei_roma}, {sei_kaki}) was not in romajidb, doing messy conversion")
+                sei_kana = romaji_to_hiragana_messy(sei_roma, sei_kaki)
+                score -= 1
+            if mei_kana is None:
+                warnings.append(
+                    f"[{raw_data}] MEI ({mei_roma}, {mei_kaki}) was not in romajidb, doing messy conversion")
+                mei_kana = romaji_to_hiragana_messy(mei_roma, mei_kaki)
+                score -= 1
+
+            kana = f"{sei_kana} {mei_kana}"
+            attempts.append((kana, score, warnings))
         else:
-            logging.warning(
+            warnings.append(
                 f"[{raw_data}] Entry ({romaji}, {kanji}) was not in romajidb (and unable to split), doing messy conversion")
+            kana = romaji_to_hiragana_messy(romaji, kanji)
+            attempts.append((kana, -10, warnings))
 
-        kana = romaji_to_hiragana_messy(romaji, kanji)
-
-        # Since the messy method does not consult a dictionary, names may be
-        # in the wrong order - try to swap if sensible.
-        kanji, kana = try_to_swap_names(kanji, kana)
-
+    attempts.sort(key=itemgetter(1), reverse=True)
+    if attempts:
+        kana, _, warnings = attempts[0]
+        for warning in warnings:
+            logging.warning(warning)
+        # TODO We tag xx-romaji even if only one part of the name was guessed; this
+        #      can be fixed if we return 2 parts.
         return NameData(kanji, kana, tags=['xx-romaji'])
 
     raise NotImplementedError("don't know how to handle this")
@@ -220,12 +243,17 @@ tests = [
     (('', '清水 裕也', 'Yuhya Shimizu'), '清水 裕也', 'しみず ゆうや'),
     # Kana べ - should still use kana, not romaji
     (('クサカべ スメジ', '日下部 寿女士', 'Sumeji Kusakabei'), '日下部 寿女士', 'くさかべ すめじ'),
+    # Even if we don't know one name part, we should properly romanize the other.
+    # e.g. this should be ごとう not ごと.
+    (('', '後藤 云々真間', 'Shikajikamama Goto'), '後藤 云々真間', 'ごとう しかじかまま'),
+    (('', '後藤 云々真間', 'Goto Shikajikamama'), '後藤 云々真間', 'ごとう しかじかまま'),
+    (('', '云々真間 侑香', 'Yuka Shikajikamama'), '云々真間 侑香', 'しかじかまま ゆうか'),
+    (('', '云々真間 侑香', 'Shikajikamama Yuka'), '云々真間 侑香', 'しかじかまま ゆうか'),
 ]
 
 
 @ pytest.mark.parametrize('test', tests, ids=lambda x: x[0][1])
 def test_parse_researchmap(test):
     test_args, expected_kaki, expected_yomi = test
-    result = parse_researchmap(*test_args)
-    result.remove_tag('xx-split')
+    result = parse_researchmap(*test_args).remove_xx_tags()
     assert result == NameData(expected_kaki, expected_yomi)
