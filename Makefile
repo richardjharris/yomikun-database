@@ -12,21 +12,22 @@ else
 endif
 
 ZCAT = scripts/pzcat
+CAT = pv
 
 export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test
+.PHONY: all clean test prep
 
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
 db/gender.jsonl db/gender.weights &: db/people.jsonl data/name_lists.json
-	cat db/people.jsonl | python scripts/build_gender_db.py > db/gender.jsonl
+	${CAT} db/people.jsonl | python scripts/build_gender_db.py > db/gender.jsonl
 
 db/names.sqlite: ${JSONLFILES} db/people.jsonl
-	cat $^ | python scripts/load_data.py $@
+	${CAT} $^ | python scripts/load_data.py $@
 
 clean:
 	rm -f ${JSONLFILES}
@@ -35,8 +36,13 @@ clean:
 test:
 	pytest
 
+prep:
+	# Wheel is required for jamdict-data
+	pip install wheel
+	pip install -r requirements.txt
+
 db/people.jsonl: ${JSONLFILES}
-	cat $^ | python scripts/person_dedupe.py > $@
+	${CAT} $^ | python scripts/person_dedupe.py > $@
 
 # Caution: LARGE! 36GB as of Oct 2021
 # Can be replaced with an empty file once data/enwiki-nihongo-articles.gz is built, as you are
@@ -59,7 +65,7 @@ data/jawiki-articles.gz: data/jawiki.xml.bz2
 
 # Generated from whatever JSON files are available. Should be rebuilt periodically.
 data/romajidb.tsv.gz:
-	cat jsonl/* | python scripts/build_romajidb.py | gzip -9f > $@
+	${CAT} jsonl/* | python scripts/build_romajidb.py | gzip -9f > $@
 
 jsonl/wikipedia_en.jsonl: data/enwiki-nihongo-articles.gz
 	${ZCAT} data/enwiki-nihongo-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
@@ -89,10 +95,10 @@ jsonl/myoji-yurai.jsonl: data/myoji-yurai-readings.csv
 	python scripts/parse_myoji_yurai.py < $^ > $@
 
 jsonl/koujien.jsonl: data/koujien.json.gz
-	zcat $< | python scripts/parse_koujien.py > $@
+	${ZCAT} $< | python scripts/parse_koujien.py > $@
 
 jsonl/daijisen.jsonl: data/daijisen.json.gz
-	zcat $< | python scripts/parse_daijisen.py > $@
+	${ZCAT} $< | python scripts/parse_daijisen.py > $@
 
 jsonl/pdd.jsonl: data/pdd.json.gz
-	zcat $< | python scripts/parse_pdd.py > $@
+	${ZCAT} $< | python scripts/parse_pdd.py > $@
