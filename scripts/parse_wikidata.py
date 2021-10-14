@@ -8,6 +8,8 @@ for dictionary loading.
 from __future__ import annotations
 import sys
 import json
+from typing import cast
+import jcconv3
 import regex
 
 from yomikun.utils.split import split_kanji_name
@@ -85,6 +87,7 @@ for line in sys.stdin:
     assert kana is not None
 
     kana = kana.replace('・', ' ')
+    kana = cast(str, jcconv3.kata2hira(kana))
 
     kanji = split_kanji_name(kanji, kana)
 
