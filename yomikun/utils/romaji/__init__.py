@@ -51,7 +51,7 @@ def romaji_to_hiragana_fullname_parts(romaji: str, kanji: str) -> tuple[str | No
     return new_sei, new_mei
 
 
-def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool, try_h_removal: bool = True) -> str | None:
+def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
     """
     Convert ambiguous romaji name (sei/mei) to hiragana using the kanji as a
     guide to determine length of vowels.

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 import os
-from typing import cast
+from typing import cast, Optional
 
 import regex
 import romkan
@@ -28,9 +28,13 @@ def romajidb():
     return instance
 
 
+RomajiDbKey = tuple[str, str, str]
+RomajiDbResult = tuple[Optional[str], Optional[set[str]]]
+
+
 @dataclass
 class RomajiDB():
-    data: dict[tuple[str, str, str], str] = field(
+    data: dict[RomajiDbKey, RomajiDbResult] = field(
         default_factory=dict, repr=False, compare=False)
 
     @staticmethod
@@ -40,20 +44,39 @@ class RomajiDB():
         with gzip.open(file, mode='rt') as fh:
             for line in fh:
                 values = line.rstrip().split('\t')
-                db.insert(*values)
+                kanji, romkey, part, main_kana, all_kana = values
+
+                # Convert all_kana from csv to set
+                all_kana = set(','.split(all_kana))
+
+                db.insert(kanji, romkey, part, main_kana, all_kana)
         return db
 
-    def insert(self, kanji: str, romkey: str, part: str, kana: str):
-        self.data[(kanji, romkey, part)] = kana
+    def insert(
+        self,
+        kanji: str,
+        romkey: str,
+        part: str,
+        main_kana: str,
+        all_kana: set[str] | None = None,
+    ):
+        if all_kana is None:
+            all_kana = set(main_kana)
 
-    def get(self, kanji: str, romkey: str, part: str) -> str | None:
+        self.data[(kanji, romkey, part)] = (main_kana, all_kana)
+
+    def get_all(self, kanji: str, romkey: str, part: str) -> RomajiDbResult:
         # Check if the kanji is actually just the romaji in kana
         # or katakana form, if so, return it.
         if not regex.match(r'\p{Han}', kanji):
             if romaji_key(romkan.to_roma(kanji)) == romkey:
-                return cast(str, jcconv3.kata2hira(kanji))
+                kana = cast(str, jcconv3.kata2hira(kanji))
+                return (kana, set([kana]))
 
-        return self.data.get((kanji, romkey, part), None)
+        return self.data.get((kanji, romkey, part), (None, None))
+
+    def get(self, kanji: str, romkey: str, part: str) -> str | None:
+        return self.get_all(kanji, romkey, part)[0]
 
 
 def test_basic():
@@ -72,3 +95,16 @@ def test_kana():
     db = RomajiDB()  # empty
     assert db.get('あきら', 'akira', 'mei') == 'あきら'
     assert db.get('ココロ', 'kokoro', 'mei') == 'こころ'
+
+
+def test_all_kana():
+    db = RomajiDB()
+    db.insert('佑祐', 'yusuke', 'mei', 'ゆうすけ')
+    assert db.get('佑祐', 'yusuke', 'mei') == 'ゆうすけ'
+    db.insert('齋藤', 'saito', 'sei', 'さいとう', {'さいと', 'さいとう'})
+    assert db.get_all('齋藤', 'saito', 'sei') == (
+        'さいとう', {'さいと', 'さいとう'},
+    )
+    assert db.get_all('齋藤', 'saito', 'mei') == (None, None)
+    assert db.get_all('さいとう', 'saito', 'sei') == ('さいとう', {'さいとう'})
+    assert db.get_all('マリン', 'marin', 'mei') == ('まりん', {'まりん'})

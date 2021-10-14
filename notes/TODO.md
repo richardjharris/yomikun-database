@@ -2,7 +2,19 @@
 
 Current task: finish researchmap import [DONE]
  - maybe look at the 'messy conversions' and add custom.csv entries.
- - there are 3,293 xx-romaji entries.
+ - there are 3,293 xx-romaji entries. [3,255 errors]
+
+長谷部 寿女士 - says 'doing messy conversion' but there is a kanji
+entry??
+
+### RomajiDB improvement
+
+ - adding all readings (not just 'best') for split purposes [DONE]
+   - maybe mark frequencies? so we can pick the most likely split
+ - handle kana
+   - kata -> kana
+   - whole kana can be skipped since the romaji library handles it, but
+     harmless to leave in
 
 ## wikidata: de-dupe variant records
 
@@ -22,6 +34,8 @@ Change unique key to (Q, birth_date % 2, kanji) ?
         # Dump has 143,141 unique names and 147,676 records - so not a major problem,
         # but could return incorrect readings.
 
+[**] Also need a re-run for katakana handling update.
+
 ### Unambiguous romaji
 
 Technically 'masaya' is unambiguous. 'shinya' etc. are generally
@@ -30,6 +44,8 @@ this, but currently our conversion is 'all or nothing', it does not
 treat mei/sei seperately.
 
 ### All or nothing
+
+ e.g. 後藤 幸織
 
  - DEBUG:root:Parsing ('', '常喜儒彦', 'Michihiko Jogi')
  - here if michihiko fails but jogi matches, that should be enough to

@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Iterable, TextIO
 import collections
 import logging
+import jcconv3
 
 import romkan
 
@@ -30,25 +31,35 @@ def make_romajidb(names: Iterable[NameData], db_out: TextIO):
 
             # Generate romaji key
             kana = part.yomi
+
+            # XXX for some reason this contains katakana
+            kana = jcconv3.kata2hira(kana)
+
             romkey = romaji_key(romkan.to_roma(kana))
             kaki = part.kaki
             pos = part.position.name
 
             data[(kaki, romkey, pos)].append(kana)
 
-    # Ensure there is only one sensible reading for a given kaki/romkey.
+    # Try to pick one unique reading for the given kanji/romaji_key/part
+    # This will be used for romaji conversion.
     for key in data.keys():
         values = data[key]
-        uniq = collections.Counter(values)
-        if len(uniq) == 1:
-            print(*key, values[0], sep='\t')
+        counts = collections.Counter(values)
+        unique = _find_unique_reading(key, counts, values)
+        print(*key, unique or '', ','.join(sorted(counts.keys())), sep='\t')
+
+
+def _find_unique_reading(key, counts, values):
+    if len(counts) == 1:
+        return values[0]
+    else:
+        top, = counts.most_common(1)
+        if (top[1] / len(values)) >= 0.8:
+            # Clear majority
+            return top[0]
         else:
-            top, = uniq.most_common(1)
-            if (top[1] / len(values)) >= 0.8:
-                # Clear majority
-                print(*key[0:3], top[0], sep='\t')
-            else:
-                # Not sure what to do
-                logging.warning(
-                    f"Skipping {key} - too many values ({uniq})")
-                pass
+            # Not sure what to do
+            logging.warning(
+                f"No unique reading for {key} - too many values ({counts})")
+            return

@@ -38,7 +38,10 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
        also used as a '
        タダキ シンイチ 只木 進一       Shin-ichi TADAKI
     """
-    logging.debug(f"Parsing {(kana, kanji, english)}")
+    raw_data = (kana, kanji, english)
+    logging.debug(f"Parsing {raw_data}")
+
+    kana, kanji, english = (col.strip() for col in raw_data)
 
     kana = kana.lower()
 
@@ -73,8 +76,10 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
         kanji = split_kanji_name(kanji, kana)
         return NameData(kanji, kana)
 
-    elif regex.match(r'^[\p{Katakana}ー]+\s+[\p{Katakana}ー]+$', kana):
+    elif regex.match(r'^[\p{Katakana}\p{Hiragana}ー]+\s+[\p{Katakana}\p{Hiragana}ー]+$', kana):
         # Convert katakana to hiragana
+        # Allow a mixture. In particular hiragana へ・べ can appear in katakana text
+        # because they look the same.
         kana = cast(str, jcconv3.kata2hira(kana))
         kanji = split_kanji_name(kanji, kana)
         return NameData(kanji, kana)
@@ -133,10 +138,10 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
             sei, mei = romaji_to_hiragana_fullname_parts(romaji, kanji)
             missing = (sei is None, mei is None)
             logging.warning(
-                f"Entry ({romaji}, {kanji}) was not in romajidb {missing=}, doing messy conversion")
+                f"[{raw_data}] Entry ({romaji}, {kanji}) was not in romajidb {missing=}, doing messy conversion")
         else:
             logging.warning(
-                f"Entry ({romaji}, {kanji}) was not in romajidb (and unable to split), doing messy conversion")
+                f"[{raw_data}] Entry ({romaji}, {kanji}) was not in romajidb (and unable to split), doing messy conversion")
 
         kana = romaji_to_hiragana_messy(romaji, kanji)
 
@@ -213,6 +218,8 @@ tests = [
     (('', '大橋 千恵', 'Chie Ohashi'), '大橋 千恵', 'おおはし ちえ'),
     # handle 'uh' as long u
     (('', '清水 裕也', 'Yuhya Shimizu'), '清水 裕也', 'しみず ゆうや'),
+    # Kana べ - should still use kana, not romaji
+    (('クサカべ スメジ', '日下部 寿女士', 'Sumeji Kusakabei'), '日下部 寿女士', 'くさかべ すめじ'),
 ]
 
 
