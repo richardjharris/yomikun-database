@@ -61,9 +61,12 @@ def romaji_key(romaji: str) -> str:
     # Remove hyphens, sometimes seen in real world data: 'ke-nichiro'
     romaji = romaji.replace('-', '')
 
-    # Collapse vowels into one
-    romaji = regex.sub(r'(oh(?![aiueo])|ou|oo)', 'o', romaji)
-    romaji = regex.sub(r'(eh(?![aiueo])|ei|ee)', 'e', romaji)
+    # Collapse vowels into one, including 'h' if not followed by a vowel
+    # TODO: we could ignore 'y', 'hya' is very rare in names and always
+    #       always 'hyak-' if present
+    romaji = regex.sub(r'(oh(?![aiueoy])|ou|oo)', 'o', romaji)
+    romaji = regex.sub(r'(eh(?![aiueoy])|ei|ee)', 'e', romaji)
+    romaji = regex.sub(r'(uh(?![aiueoy])|uu)', 'u', romaji)
     romaji = regex.sub(r'([aiu])\1+', '\\1', romaji)
 
     return romaji
@@ -83,3 +86,9 @@ def test_romaji_key():
     assert romaji_key("shiina") == romaji_key("shina")
     assert romaji_key('saitou') != romaji_key('satoiu')
     assert romaji_key('sito') != romaji_key('saito')
+
+
+def test_romaji_key_h():
+    assert romaji_key('kumanogoh') == romaji_key('kumamogou')
+    assert romaji_key('kumamogou') == romaji_key('kumamogo')
+    assert romaji_key('yuhsuke') == romaji_key('yuusuke')

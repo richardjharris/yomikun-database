@@ -2,9 +2,11 @@
 
 Current task: finish researchmap import [DONE]
  - maybe look at the 'messy conversions' and add custom.csv entries.
+ - there are 3,293 xx-romaji entries.
 
 Edge cases involving h:
  yuhya (裕也) didn't pass. (hirahara yuhya, 平原 裕也)
+ {"kaki": "平原 裕也", "yomi": "ひらはら ゆひゃ", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "researchmap", "tags": ["xx-romaji", "person"]}
 
 (maki nahomi, 牧 奈歩美) - this is nahomi
 
@@ -15,12 +17,30 @@ and 'tomohiro' is never 'tomouiro'
 but オオイ ヒロシ   大井 洋 Hiroshi Ohi
 
  - could special case ohi, ohishi, ohiwa, ohike, ohizumi
-   ohe... ohuchi, ohue, ohura
+   ohe... ohuchi, ohue, ohura, (yuhya...)
 
-## wikidata: ・
+ - Or we could create a romaji key that combines the two somehow.
+   like always remove h before vowel? 
+ - or fix them directly.
+ - or have a special case list.
 
-There are quite a few names with ・ instead of a space.
- "小原宏裕", "yomi": "おはら・こうゆう"
+## wikidata: de-dupe variant records
+
+Somehow when removing nakaguro I stripped 300 records from wikidata.jsonl?
+I think due to the seen() stuff? None of my code would have changed it, yet
+the .old version has 2 copies of Q55526706
+
+Change unique key to (Q, birth_date % 2, kanji) ?
+ if kanji is not split, don't store it? or warn
+ Check for unsplit people
+
+        # TODO we also get dupe records with different kanji/kana combinations,
+        #      only some make sense. Whoops. e.g. https://www.wikidata.org/wiki/Q6753582
+        #      has two 'name in kana', only one makes sense.
+        # TODO we could improve this by doing all of them then outputting the 'best'
+        #      e.g. the one we were able to split.
+        # Dump has 143,141 unique names and 147,676 records - so not a major problem,
+        # but could return incorrect readings.
 
 ### Unambiguous romaji
 

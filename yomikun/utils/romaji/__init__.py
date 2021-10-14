@@ -27,7 +27,7 @@ def romaji_to_hiragana_fullname(romaji: str, kanji: str) -> str | None:
     Convert ambiguous romaji string to hiragana, using kanji as a guide to
     determine length of vowels (Yusuke -> Yuusuke and so on).
 
-    This is done by looking up the kanji word in the JMnedict dictionary
+    This is done by looking up the kanji word in the RomajiDB dictionary
     e.g. 進次郎 -> しんじろう, if romaji is 'shinjiro' we know to add a -u.
     """
     # Only works if we have two parts (surname + given name)
