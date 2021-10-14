@@ -40,10 +40,13 @@ for row in reader:
     if row['tags']:
         tags = row['tags'].split('+')
         for tag in tags:
+            # TODO: code duplicated with parse_custom_data
             if tag == 'm':
                 namedata.set_gender('masc')
             elif tag == 'f':
                 namedata.set_gender('fem')
+            elif tag == 's':
+                namedata.add_tag('surname')
             elif tag == 'pseudo':
                 namedata.authenticity = NameAuthenticity.PSEUDO
             elif tag == 'fictional':

@@ -4,8 +4,35 @@ Current task: finish researchmap import [DONE]
  - maybe look at the 'messy conversions' and add custom.csv entries.
  - there are 3,293 xx-romaji entries. [3,255 errors]
 
-長谷部 寿女士 - says 'doing messy conversion' but there is a kanji
-entry??
+ - Convert trailing 'ow' to 'oh'
+ - Handle 'm' e.g. 'mp', 'mb'
+
+I've cleaned up double-barreled names, middle initials, most dots, 'III'
+Not properly checked for >2 names (especially >2 kana in 1st column)
+
+Some fun readings to check:
+
+ - Rare 雅篤 [masa-atsu]
+ - 大洞 将嗣	Oh-hora Masatsugu
+ - 寺澤 知潮	Tomo-o Terasawa
+ - 廣瀬 貴章	廣瀬 貴章	Taka-aki Hirose
+ - 木村 善一郎	Kimura Zen-ichiro
+ - 松裏 恵子	Keiko Matsuura
+ - 大竹 伸平	Shimpei Otake
+
+### m slipped into wikipedia too
+
+wikipedia_en: jsonl/wikipedia_en.jsonl:{"kaki": "新保 海鈴", "yomi": "しmぼ かいlい", "authenticity": "real", "lifetime": {"birth_year": 2002, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Kaili Shimbo", "tags": ["xx-romaji", "masc"]}
+ maybe map (vowel)mb or mp to n
+
+### oya? should be ooya.
+
+jsonl/wikipedia_en.jsonl:{"kaki": "大矢 歩", "yomi": "おや あゆみ", "authenticity": "real", "lifetime": {"birth_year": 1994, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Ayumi Oya", "tags": ["xx-romaji", "fem"]}
+
+
+## seijiyama import
+
+Yay!
 
 ### RomajiDB improvement
 
@@ -60,6 +87,9 @@ This would simplify logic in both researchmap and wikidata_nokana.
 
 Indicates the item should not be counted as a person, it's only for dictionary
 completeness. To be implemented in the final database code.
+
+ ... in gender, it should contribute, as it usually is supplementary to
+     an item with no gender.
 `
 1. Replace romaji_to_hiragana, and indicate romaji with xx-romaji tag [DONE]
 

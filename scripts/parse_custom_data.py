@@ -37,6 +37,8 @@ for row in reader:
                 namedata.set_gender('masc')
             elif tag == 'f':
                 namedata.set_gender('fem')
+            elif tag == 's':
+                namedata.set_gender('surname')
             elif tag == 'pseudo':
                 namedata.authenticity = NameAuthenticity.PSEUDO
             elif tag == 'fictional':

@@ -66,8 +66,7 @@ def test_parser(test_page: tuple[Path, str]):
     result = module.parse_wikipedia_article(
         path.name, content, add_source=False)
 
-    result.remove_tag('xx-romaji')
-    result.remove_tag('xx-split')
+    result.remove_xx_tags()
 
     expected = build_namedata_from_test_header(metadata)
 

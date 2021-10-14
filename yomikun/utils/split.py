@@ -173,6 +173,7 @@ def try_to_swap_names(kanji: str, kana: str) -> tuple[str, str]:
     # The current method joins the kanji together then tries to split it.
     # This requires there to be JMnedict data.
     # TODO: A better method would just check our existing surname/mei/sei data.
+    # TODO: Why do we return kanji here?
     old_kanji, old_kana = kanji, kana
     kanji = kanji.replace(' ', '')
 

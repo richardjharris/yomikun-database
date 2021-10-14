@@ -68,6 +68,12 @@ class NameData():
             self.tags.remove(tag)
         return self
 
+    def remove_xx_tags(self):
+        to_remove = [tag for tag in self.tags if tag.startswith('xx-')]
+        for tag in to_remove:
+            self.tags.remove(tag)
+        return self
+
     def is_person(self):
         return 'person' in self.tags or (' ' in self.kaki and ' ' in self.yomi)
 
@@ -189,7 +195,7 @@ class NameData():
         """
         return json.dumps(self.to_dict(), ensure_ascii=False)
 
-    @classmethod
+    @ classmethod
     def from_dict(cls, data: dict) -> NameData:
         if 'authenticity' in data:
             data['authenticity'] = NameAuthenticity[data['authenticity'].upper()]
@@ -202,7 +208,7 @@ class NameData():
             del data['orig']
         return NameData(**data)
 
-    @classmethod
+    @ classmethod
     def from_jsonl(cls, jsonl: str) -> NameData:
         return cls.from_dict(json.loads(jsonl))
 
@@ -220,6 +226,9 @@ class NameData():
         if 'fem' in tags:
             tags.remove('fem')
             tags.add('f')
+        if 'surname' in tags:
+            tags.remove('surname')
+            tags.add('s')
 
         fields = [self.kaki, self.yomi, '+'.join(tags)]
         lifetime = self.lifetime.to_csv()
@@ -233,3 +242,9 @@ def test_normalise():
     assert normalise(' foo ') == 'foo'
     assert normalise('A   B') == 'A B'
     assert normalise('亜　美') == '亜 美'
+
+
+def test_remove_xx():
+    nd = NameData(tags=['xx-romaji', 'xx-split', 'foo'])
+    nd.remove_xx_tags()
+    assert set(nd.tags) == {'foo'}
