@@ -1,26 +1,26 @@
 ## Romaji to kana conversion
 
 Current task: finish researchmap import [DONE]
- - maybe look at the 'messy conversions' and add custom.csv entries.
- - there are 3,293 xx-romaji entries. [3,255 errors]
- - still going to be a WIP
+ - messy conversions? down to 2,844 errors (from 3,255). Most seem okay though.
 
-I've cleaned up double-barreled names, middle initials, most dots, 'III'
-Fixed 3 romaji names, 3 kana names [DONE]
+For some names (ゆうき・ゆき) perhaps we shouldn't even generate records, as they
+would bias the stats? Picking randomly doesn't work either if it's gender-based.
 
-Some fun readings to check:
-
- - 松裏 恵子	Keiko Matsuura
- - 大竹 伸平	Shimpei Otake
+For example ochi/大内 has two readings おおち、おうち, clearly either of them is better
+than returning おち!
 
 ### m slipped into wikipedia too
 
 wikipedia_en: jsonl/wikipedia_en.jsonl:{"kaki": "新保 海鈴", "yomi": "しmぼ かいlい", "authenticity": "real", "lifetime": {"birth_year": 2002, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Kaili Shimbo", "tags": ["xx-romaji", "masc"]}
  maybe map (vowel)mb or mp to n
 
+大内義一? not broken into two.
+
 ### oya? should be ooya.
 
 jsonl/wikipedia_en.jsonl:{"kaki": "大矢 歩", "yomi": "おや あゆみ", "authenticity": "real", "lifetime": {"birth_year": 1994, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Ayumi Oya", "tags": ["xx-romaji", "fem"]}
+
+5	ohyama, 大山 - failed to convert? similarly kohyama 神山
 
 ## KENTARO!!
 
@@ -70,6 +70,9 @@ Change unique key to (Q, birth_date % 2, kanji) ?
         #      e.g. the one we were able to split.
         # Dump has 143,141 unique names and 147,676 records - so not a major problem,
         # but could return incorrect readings.
+
+Some records make no sense and could be rejected, e.g.
+jsonl/wikidata.jsonl:{"kaki": "河野悠里", "yomi": "だいぜんじ ふみこ", "authenticity": "real", "lifetime": {"birth_year": 1983, "death_year": null}, "subreadings": [], "source": "wikidata:http://www.wikidata.org/entity/Q11554202", "tags": ["fem"]}
 
 [**] Also need a re-run for katakana handling update.
 

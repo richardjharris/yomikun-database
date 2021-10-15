@@ -13,6 +13,9 @@ remove_vowel_h = {
     'ohike': 'oike',
     'ohishi': 'oishi',
     'ohiwa': 'oiwa',
+    'ohyama': 'oyama',
+    'ohya': 'oya',
+    'kohyama': 'koyama',
     'ohizumi': 'oizumi',
     'ohoka': 'oka',
     'ohori': 'ori',
@@ -69,8 +72,11 @@ def romaji_key(romaji: str) -> str:
     romaji = unicodedata.normalize('NFC', romaji)
     romaji = remove_accents(romaji)
 
+    # Replace Satow with Sato
+    romaji = regex.sub(r'ow$', 'oh', romaji)
+
     # Replace shumpei with shunpei
-    romaji = regex.sub(r'm(?=[bp])', 'n', romaji)
+    romaji = regex.sub(r'm(?=[bpm])', 'n', romaji)
 
     # Remove hyphens, sometimes seen in real world data: 'ke-nichiro'
     romaji = regex.sub(r'[-]', '', romaji)
@@ -82,9 +88,6 @@ def romaji_key(romaji: str) -> str:
     # not ma'nyou). We don't care about this because it's unlikely that
     # a name will have two ambiguous kana forms but the same kanji.
     romaji = romaji.replace("'", '')
-
-    # Replace Satow with Sato
-    romaji = regex.sub(r'ow$', 'oh', romaji)
 
     # Collapse vowels into one, including 'h' if not followed by a vowel
     # TODO: we could ignore 'y', 'hya' is very rare in names and always
@@ -116,7 +119,14 @@ def test_romaji_key():
     assert romaji_key('sito') != romaji_key('saito')
     assert romaji_key('satow') == romaji_key('satou')
     assert romaji_key('shumpei') == romaji_key('shunpei')
+
+
+def test_romaji_key_m():
     assert romaji_key('shimba') == romaji_key('shinba')
+    assert romaji_key('homma') == romaji_key('honma')
+
+
+def test_romaji_key_punct():
     assert romaji_key('tomo-o') == romaji_key('tomo')
     assert romaji_key("ken'ichi") == romaji_key('kenichi')
 
