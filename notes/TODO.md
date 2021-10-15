@@ -3,6 +3,7 @@
 Current task: finish researchmap import [DONE]
  - maybe look at the 'messy conversions' and add custom.csv entries.
  - there are 3,293 xx-romaji entries. [3,255 errors]
+ - still going to be a WIP
 
  - Convert trailing 'ow' to 'oh'
  - Handle 'm' e.g. 'mp', 'mb'
@@ -29,10 +30,21 @@ wikipedia_en: jsonl/wikipedia_en.jsonl:{"kaki": "新保 海鈴", "yomi": "しm�
 
 jsonl/wikipedia_en.jsonl:{"kaki": "大矢 歩", "yomi": "おや あゆみ", "authenticity": "real", "lifetime": {"birth_year": 1994, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Ayumi Oya", "tags": ["xx-romaji", "fem"]}
 
+## KENTARO!!
+
+ {{nihongo|'''Kentaro Shiga'''|志賀 賢太郎|Shiga Kentaro}}
+
+- specifically test 'Kota Ohashi' which used to be おはし　こた. Should be
+  おおはし　こうた.
+   one way to support this is for romajidb to generate all the possible
+   romaji forms, e.g. 後藤（ごとう）generates goto, gotou, gotoh, goto(macron).
 
 ## seijiyama import
 
-Yay!
+* Basic import is done.
+* Need to remove duplicates with no gender info.
+* potentially could scrape gender info - namegen.jp clearly did this as it has
+  a male entry for 夏希.
 
 ### RomajiDB improvement
 
@@ -118,15 +130,12 @@ completeness. To be implemented in the final database code.
 
 e.g. this one is wrong:
 
- {{nihongo|'''Kentaro Shiga'''|志賀 賢太郎|Shiga Kentaro}}
 
 - requires splitting support
 - need to keep an eye that we aren't bulldozing well-formed stuff,
   though.
 - TODO if we see macrons, should probably ensure the final result
   matches the macron length (e.g. o-bar is exactly 2)
-- specifically test 'Kota Ohashi' which used to be おはし　こた. Should be
-  おおはし　こうた.
 
 ## 'People' counting
 

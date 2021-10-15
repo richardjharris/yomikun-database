@@ -5,6 +5,23 @@ the future.
 
 Currently we use a manual dictionary to correct these.
 
+## More robust romaji to hiragana conversion
+
+Instead of simplifying romaji to a romaji key (which loses data)
+we could generate all possible romaji forms of a word in RomajiDB
+then look the form up directly.
+
+For example 後藤(ごとう) would generate goto gotou gotoh goto (macron)
+俊平（しゅんぺい） could generate shunpei, shumpei, shumpeh (?)
+
+Could get unweildly quickly. But it allows us to use all the data
+in the original romaji, e.g. if macrons are used they'll be respected.
+
+## Better gender data from seijiyama
+
+ - seijiyama profiles have gender markings, and ages. We could find names
+   for which we have no reliable gender info, and look them up there.
+
 ## Name lists online
 
 Could develop a crawler + extractor for these.
@@ -29,6 +46,9 @@ Could develop a crawler + extractor for these.
    Some are dupes (しまじり　あいこ has 3 entries). Some have no furigana.
 
  * https://www.wasedarugby.com/member_list/
+
+ * http://kazina.com/dummy/
+ 
 
 ## Other name data (?)
 
@@ -98,3 +118,19 @@ that all the records are for the same person.
  - https://en.wikipedia.org/wiki/Shingo\_Tano
 
 Born name in infobox.
+
+## JA Wikipedia - names inside articles
+
+Crawl for names **inside** articles (e.g. in kanji(kana) form). Most of these
+are character names, but probably still useful for reading data.
+
+## Alternate kanji forms
+
+Names like Akira Kurosawa and many old names have multiple forms. Currently we
+handle this by making duplicate records, but it would be better to tolerate common
+pairings like 高・髙 (for 髙木). OTOH alt forms seem to be collocated with particular
+kanji most of the time (木 in this case), so not a priority.
+
+## MeCab data
+
+ - Not sure how to use. Probably overlaps with jmnedict
