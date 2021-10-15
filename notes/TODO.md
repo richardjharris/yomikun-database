@@ -26,6 +26,10 @@ jsonl/wikipedia_en.jsonl:{"kaki": "大矢 歩", "yomi": "おや あゆみ", "aut
 
  {{nihongo|'''Kentaro Shiga'''|志賀 賢太郎|Shiga Kentaro}}
 
+- should use the same logic as research map, much easier. Maybe with a "do not reverse"
+  option.
+- We were skipping this guy due to requiring >4 template parts. Probably more work to be done there e.g. work out how many we're rejecting.
+
 - specifically test 'Kota Ohashi' which used to be おはし　こた. Should be
   おおはし　こうた.
    one way to support this is for romajidb to generate all the possible

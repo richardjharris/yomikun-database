@@ -54,7 +54,7 @@ ROMAJI = r"[A-Za-zŌōā']"
 ROMAJI_NAME = ROMAJI + r'+\s+' + ROMAJI + '+'
 
 NIHONGO_TEMPLATE_PAT = r'\{\{' + \
-    fr"[Nn]ihongo\|'''{ROMAJI_NAME}'''\|({name_pat})\|({ROMAJI_NAME})\|(.*?)" + \
+    fr"[Nn]ihongo\|'''{ROMAJI_NAME}'''\|({name_pat})\|({ROMAJI_NAME})(?:\|(.*?))?" + \
     r'\}\}(.{1,5000})'
 
 
@@ -113,6 +113,7 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
             namedata.add_tag('fem')
     else:
         # Return an empty record
+        logging.info("No nihongo template found, skipping")
         namedata = NameData()
 
     if namedata.has_name():
