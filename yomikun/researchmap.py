@@ -113,9 +113,9 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
     for romaji in romajis:
         logging.info(f"Trying smart '{romaji}' for {kanji}")
 
-        if regex.search(r'[a-gi-z]', romkan.to_kana(romaji)):
+        if regex.search(r'[[a-z]--[hmw]]', romkan.to_kana(romaji), regex.V1):
             # Could not convert to kana - probably a non-Japanese name.
-            # (allow h as in 'oh' - will be dealt with later)
+            # (allow w (~ow), h as in 'oh', and 'm' (n).
             logging.debug("Rejecting (non-japanese name?)")
             return NameData()
 
@@ -249,6 +249,15 @@ tests = [
     (('', '後藤 云々真間', 'Goto Shikajikamama'), '後藤 云々真間', 'ごとう しかじかまま'),
     (('', '云々真間 侑香', 'Yuka Shikajikamama'), '云々真間 侑香', 'しかじかまま ゆうか'),
     (('', '云々真間 侑香', 'Shikajikamama Yuka'), '云々真間 侑香', 'しかじかまま ゆうか'),
+    # Hyphens!
+    (('', '寺澤 知潮', 'Tomo-o Terasawa'), '寺澤 知潮', 'てらさわ ともお'),
+    (('', '田中 雅篤', 'Masa-atsu Tanaka'), '田中 雅篤', 'たなか まさあつ'),
+    (('', '大洞 将嗣', 'Oh-hora Masatsugu'), '大洞 将嗣', 'おおほら まさつぐ'),
+    (('', '廣瀬 貴章', 'Taka-aki Hirose'), '廣瀬 貴章', 'ひろせ たかあき'),
+    (('', '木村 善一郎', 'Kimura Zen-ichiro'), '木村 善一郎', 'きむら ぜんいちろう'),
+    # mp/mb
+    (('', '池 俊平', 'Shumpei IKE'), '池 俊平', 'いけ しゅんぺい'),
+    (('', '神林 由美', 'Yumi Kambayashi'), '神林 由美', 'かんばやし ゆみ'),
 ]
 
 

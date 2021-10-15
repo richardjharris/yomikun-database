@@ -5,19 +5,11 @@ Current task: finish researchmap import [DONE]
  - there are 3,293 xx-romaji entries. [3,255 errors]
  - still going to be a WIP
 
- - Convert trailing 'ow' to 'oh'
- - Handle 'm' e.g. 'mp', 'mb'
-
 I've cleaned up double-barreled names, middle initials, most dots, 'III'
-Not properly checked for >2 names (especially >2 kana in 1st column)
+Fixed 3 romaji names, 3 kana names [DONE]
 
 Some fun readings to check:
 
- - Rare 雅篤 [masa-atsu]
- - 大洞 将嗣	Oh-hora Masatsugu
- - 寺澤 知潮	Tomo-o Terasawa
- - 廣瀬 貴章	廣瀬 貴章	Taka-aki Hirose
- - 木村 善一郎	Kimura Zen-ichiro
  - 松裏 恵子	Keiko Matsuura
  - 大竹 伸平	Shimpei Otake
 
@@ -45,6 +37,12 @@ jsonl/wikipedia_en.jsonl:{"kaki": "大矢 歩", "yomi": "おや あゆみ", "aut
 * Need to remove duplicates with no gender info.
 * potentially could scrape gender info - namegen.jp clearly did this as it has
   a male entry for 夏希.
+
+   - use gender db to get names with no info
+   - map seijiyama name -> profile URL
+   - check names and pull out any that we don't have info for, using db
+   - fetch URL
+   - populate gender/birth date
 
 ### RomajiDB improvement
 
