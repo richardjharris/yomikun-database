@@ -82,6 +82,7 @@ for line in sys.stdin:
     kanji = regex.sub(r'（.*?）$', '', kanji)
     kanji = kanji.replace(r'・', ' ')
     kanji = regex.sub(r' [一ニ三四五]代$', '', kanji)
+    kanji = regex.sub(r'[(（](.*?)[)）]$', '', kanji)
 
     kana = extract(data, 'kana.value')
     assert kana is not None
