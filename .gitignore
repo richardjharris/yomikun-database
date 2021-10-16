@@ -22,11 +22,11 @@ data/jawiki-articles.gz
 data/*.xml.bz2
 
 # dictionaries converted to json
-data/pdd.json.gz
-data/koujien.json.gz
-data/daijisen.json.gz
-data/researchmap.gz
-data/researchmap.jsonl
+#data/pdd.json.gz
+#data/koujien.json.gz
+#data/daijisen.json.gz
+#data/researchmap.gz
+#data/researchmap.jsonl
 
 # backups
 old/
