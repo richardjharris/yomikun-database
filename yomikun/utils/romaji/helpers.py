@@ -121,6 +121,7 @@ def test_romaji_key():
     assert romaji_key('sito') != romaji_key('saito')
     assert romaji_key('satow') == romaji_key('satou')
     assert romaji_key('shumpei') == romaji_key('shunpei')
+    assert romaji_key('kaili') == romaji_key('kairi')
 
 
 def test_romaji_key_m():

@@ -76,6 +76,10 @@ def test_ow():
     assert romaji_to_hiragana_messy('Satow') == 'さとう'
 
 
+def test_l():
+    assert romaji_to_hiragana_messy('Kaili') == 'かいり'
+
+
 def test_shumpei():
     assert romaji_to_hiragana_messy('Shumpei') == 'しゅんぺい'
     assert romaji_to_hiragana_messy('SINBA') == 'しんば'
