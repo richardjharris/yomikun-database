@@ -9,12 +9,14 @@ would bias the stats? Picking randomly doesn't work either if it's gender-based.
 For example ochi/大内 has two readings おおち、おうち, clearly either of them is better
 than returning おち!
 
-### m slipped into wikipedia too
+### l slipped into wikipedia too
 
-wikipedia_en: jsonl/wikipedia_en.jsonl:{"kaki": "新保 海鈴", "yomi": "しmぼ かいlい", "authenticity": "real", "lifetime": {"birth_year": 2002, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Kaili Shimbo", "tags": ["xx-romaji", "masc"]}
- maybe map (vowel)mb or mp to n
+{"kaki": "新保 海鈴", "yomi": "しんぼ かいlい", "authenticity": "real", "lifetime": {"birth_year": 2002, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Kaili Shimbo", "tags": ["xx-romaji", "masc"]}
 
-大内義一? not broken into two.
+ - add mapping from l to r.
+
+ - need to re-run wikipedia_en
+ - need to re-run wikidata as i added bracket stripping
 
 ### oya? should be ooya.
 

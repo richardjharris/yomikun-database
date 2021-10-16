@@ -39,6 +39,7 @@ def romaji_to_hiragana_messy(romaji: str, kanji: str | None = None, leading_o: s
 
     romaji = regex.sub(r'ow$', 'oh', romaji)
     romaji = regex.sub(r'm(?=[bpm])', 'n', romaji)
+    romaji = romaji.replace('l', 'r')
 
     # Replace 'oh' sound unless the h is part of a new mora.
     # Sometimes (less often) this could be 'oo', but oh well.

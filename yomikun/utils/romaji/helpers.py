@@ -81,6 +81,8 @@ def romaji_key(romaji: str) -> str:
     # Remove hyphens, sometimes seen in real world data: 'ke-nichiro'
     romaji = regex.sub(r'[-]', '', romaji)
 
+    romaji = romaji.replace('l', 'r')
+
     # Normalise romaji forms (hu/fu, sya/sha)
     romaji = romkan.to_roma(romkan.to_kana(romaji))
 
