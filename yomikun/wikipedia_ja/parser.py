@@ -148,8 +148,9 @@ def add_category_data(reading: NameData, content: str):
     for category in get_categories(content):
         # A blanket search for '女性' might cause false positives
         # Even 日本の女子 can be an FP e.g. if person is a coach
-        if regex.search(r'(ソプラノ歌手|日本の女性|日本の女子|女性(騎手|競輪選手)|女優$|中国の女性)', category) or \
-                category in ('グラビアアイドル', 'レースクイーン', '女院'):
+        if regex.search(r'(ソプラノ歌手|日本の女性|日本の女子|女性(騎手|競輪選手)|女優$|中国の女性|女流棋士$|の女性$)', category) or \
+                category in ('グラビアアイドル', 'レースクイーン', '女院', '日本の尼僧', '女房名') or \
+                regex.search(r'^日本の女子.*選手$‎', category):
             if category != '日本の女子サッカー':
                 reading.add_tag('fem')
         elif regex.search(r'(日本の男性|日本の男優|日本の男子)', category):
