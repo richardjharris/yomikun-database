@@ -17,10 +17,14 @@ For example 後藤(ごとう) would generate goto gotou gotoh goto (macron)
 Could get unweildly quickly. But it allows us to use all the data
 in the original romaji, e.g. if macrons are used they'll be respected.
 
-## Better gender data from seijiyama
+ - this would be useful for 'りよう' and friends, where the small
+   kana is large instead. But equally we could romaji_key ryo -> riyo
+   to handle this.
 
- - seijiyama profiles have gender markings, and ages. We could find names
-   for which we have no reliable gender info, and look them up there.
+## Wikipedia JA gender
+
+If we compute all subcategories belonging to the root 'Japanese women'
+category we can match against that instead of handcrafted patterns.
 
 ## Name lists online
 

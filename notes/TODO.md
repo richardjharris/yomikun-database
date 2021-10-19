@@ -1,7 +1,31 @@
-## Romaji to kana conversion
+## Current task
 
-Current task: finish researchmap import [DONE]
- - messy conversions? down to 2,844 errors (from 3,255). Most seem okay though.
+ - extracting gender/dob from seijiyama (need to run to completion)
+   - first pass is for names with NO existing hits
+   - can then extend to < 3 hits
+   - can also fetch >1 card if the name seems unisex, or we got an 'unknown'
+     result.
+
+ - There are some bogus 2021 values (due to missing DOB data) that should
+   be ignored.
+
+ - researchmap is almost done but has 2.8k errors (skim them)
+
+ - reruns: wikipedia_en, _ja, wikidata (?) etc. ja parser has new categories for women.
+   wikidata has bracket stripping. wikidata+wiki_en have romaji improvements.
+
+### seijiyama import
+
+* Basic import is done.
+* Need to remove duplicates with no gender info.
+
+- Scraping gender info atm. This produces a mapping of card_url -> data
+  which can be reintegrated into the seijiyama import somehow.
+    - we only do one fetch per name, we could do more.
+    - we ignore things with hits > 5 for now
+    - obviously a big male bias.
+
+### Observations
 
 For some names (ゆうき・ゆき) perhaps we shouldn't even generate records, as they
 would bias the stats? Picking randomly doesn't work either if it's gender-based.
@@ -9,14 +33,26 @@ would bias the stats? Picking randomly doesn't work either if it's gender-based.
 For example ochi/大内 has two readings おおち、おうち, clearly either of them is better
 than returning おち!
 
-### l slipped into wikipedia too
+46 entries for 純一・じゅん which are clearly wrong. Similarly 賢一・けん etc.
 
-{"kaki": "新保 海鈴", "yomi": "しんぼ かいlい", "authenticity": "real", "lifetime": {"birth_year": 2002, "death_year": null}, "subreadings": [], "source": "wikipedia_en:Kaili Shimbo", "tags": ["xx-romaji", "masc"]}
+Fun stuff here (17 hits):
+    "kaki": "京子",
+    "yomi": "きようこ",
 
- - add mapping from l to r.
+    "kaki": "純一",
+    "yomi": "じゆんいち",
 
- - need to re-run wikipedia_en
- - need to re-run wikidata as i added bracket stripping
+Oh boy...
+
+    "kaki": "淳一",
+    "yomi": "じゆんいち",
+
+    "kaki": "亮",
+    "yomi": "りよう",
+
+From wikipedia and also researchmap:
+jsonl/researchmap.jsonl:{"kaki": "吉田 亮", "yomi": "よしだ りよう", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "researchmap", "tags": ["person"]}
+For 'ryou', 274 of these vs. 8830 total. So not too bad. But annoying.
 
 ### oya? should be ooya.
 
@@ -36,19 +72,6 @@ jsonl/wikipedia_en.jsonl:{"kaki": "大矢 歩", "yomi": "おや あゆみ", "aut
   おおはし　こうた.
    one way to support this is for romajidb to generate all the possible
    romaji forms, e.g. 後藤（ごとう）generates goto, gotou, gotoh, goto(macron).
-
-## seijiyama import
-
-* Basic import is done.
-* Need to remove duplicates with no gender info.
-* potentially could scrape gender info - namegen.jp clearly did this as it has
-  a male entry for 夏希.
-
-   - use gender db to get names with no info
-   - map seijiyama name -> profile URL
-   - check names and pull out any that we don't have info for, using db
-   - fetch URL
-   - populate gender/birth date
 
 ### RomajiDB improvement
 
@@ -82,21 +105,12 @@ jsonl/wikidata.jsonl:{"kaki": "河野悠里", "yomi": "だいぜんじ ふみこ
 
 [**] Also need a re-run for katakana handling update.
 
-### Unambiguous romaji
-
-Technically 'masaya' is unambiguous. 'shinya' etc. are generally
-fine, it's mostly u, o and e. Then again, the fallback handles
-this, but currently our conversion is 'all or nothing', it does not
-treat mei/sei seperately.
-
 ### All or nothing
 
- e.g. 後藤 幸織
-
- - DEBUG:root:Parsing ('', '常喜儒彦', 'Michihiko Jogi')
- - here if michihiko fails but jogi matches, that should be enough to
-   carry out partial conversion, so we at least get 'jougi' right
-   and michihiko is probably fine too.
+Could tag individual parts of the name with xx-romaji if we had dictionary
+data for some but not all?
+ - would work if individual scripts output the name part records,
+   rather than doing it later.
 
 ## Make romaji_to_hiragana_fullname swap names for you
 
