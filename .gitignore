@@ -8,6 +8,7 @@ __pycache__
 .env
 
 .vscode
+scripts/topn
 
 # Build products
 *.jsonl
@@ -17,6 +18,7 @@ tmp/
 db/
 *.sqlite
 data/enwiki-nihongo-articles.gz
+data/enwiki-template-only.gz
 data/jawiki-articles.gz
 *.cache
 
@@ -32,3 +34,4 @@ data/*.xml.bz2
 
 # backups
 old/
+**/*.old
