@@ -14,6 +14,9 @@ endif
 ZCAT = scripts/pzcat
 CAT = pv
 
+# Much faster than bzcat
+BZCAT = lbzcat
+
 export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
@@ -56,18 +59,24 @@ data/jawiki.xml.bz2:
 
 # We pre-filter the wikipedia XML dump for articles likely to be Japanese names
 # and also convert the XML to JSON. Takes ~2 hours.
+# After this, the dump can be deleted (or replaced with an empty file)
 data/enwiki-nihongo-articles.gz: data/enwiki.xml.bz2
-	bzcat data/enwiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl |\
+	${BZCAT} data/enwiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl |\
 	  fgrep -e '{{Nihongo' -e '{{nihongo' -e Japanese -e japanese -e Japan -e japan | gzip -9f > $@
 
+# Further filter to match only template uses, as we don't currently support any other
+# type of article.
+data/enwiki-template-only.gz: data/enwiki-nihongo-articles.gz
+	${ZCAT} $< | fgrep -e '{{Nihongo' -e '{{nihongo' | gzip -9f > $@
+
 data/jawiki-articles.gz: data/jawiki.xml.bz2
-	bzcat data/jawiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl | gzip -9f > $@
+	${BZCAT} data/jawiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl | gzip -9f > $@
 
 # Generated from whatever JSON files are available. Should be rebuilt periodically.
 data/romajidb.tsv.gz:
 	${CAT} jsonl/* | python scripts/build_romajidb.py | gzip -9f > $@
 
-jsonl/wikipedia_en.jsonl: data/enwiki-nihongo-articles.gz
+jsonl/wikipedia_en.jsonl: data/enwiki-template-only.gz
 	${ZCAT} data/enwiki-nihongo-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
 
 jsonl/wikipedia_ja.jsonl: data/jawiki-articles.gz
