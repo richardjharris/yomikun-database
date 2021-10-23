@@ -26,11 +26,11 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
-db/gender.jsonl db/gender.weights &: db/people.jsonl data/name_lists.json
-	${CAT} db/people.jsonl | python scripts/build_gender_db.py > db/gender.jsonl
+db/gender.jsonl: db/deduped.jsonl data/name_lists.json
+	python scripts/build_gender_db.py < $< > $@
 
-db/names.sqlite: ${JSONLFILES} db/people.jsonl
-	${CAT} $^ | python scripts/load_data.py $@
+#db/names.sqlite: ${JSONLFILES} db/people.jsonl
+#	${CAT} $^ | python scripts/load_data.py $@
 
 clean:
 	rm -f ${JSONLFILES}
@@ -47,7 +47,7 @@ prep:
 prep-perl:
 	cpanm MediaWiki::DumpFile::FastPages JSON::XS
 
-db/people.jsonl: ${JSONLFILES}
+db/deduped.jsonl: ${JSONLFILES}
 	${CAT} $^ | python scripts/person_dedupe.py > $@
 
 # Caution: LARGE! 36GB as of Oct 2021

@@ -1,7 +1,7 @@
 from collections import defaultdict
 import logging
 
-from more_itertools import first
+from yomikun.models import Lifetime
 
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData
@@ -11,13 +11,18 @@ class PersonDedupe():
     def __init__(self):
         self.people = defaultdict(list)
 
-    def ingest(self, data: NameData):
+    def ingest(self, data: NameData) -> bool:
+        """
+        For people records, returns True and ingests the data.
+        For other records, returns False and ignores it.
+        """
         if not data.is_person():
-            return
+            return False
 
         key = (data.kaki, data.yomi, data.lifetime.birth_year)
 
         self.people[key].append(data)
+        return True
 
     def deduped_people(self):
         """
@@ -92,7 +97,12 @@ class PersonDedupe():
         merged.source = self.best_source(list(p.source for p in people))
 
         # Pick notes
-        merged.notes = first((p.notes for p in people if p), '')
+        all_notes = [(p.source, p.notes) for p in people if p.notes]
+        if len(all_notes):
+            # use wikipedia_en field in preference
+            all_notes.sort(key=lambda x: x[0].startswith(
+                'wikipedia_en:'), reverse=True)
+            merged.notes = all_notes[0][1]
 
         # Return the deduplicated record
         logging.info("Merged into 1 record")
@@ -119,3 +129,26 @@ def test_preferred_sources():
     ]) == 'wikipedia_ja:黒沢明'
 
     assert PersonDedupe.best_source(['jmnedict', 'custom']) == 'jmnedict'
+
+
+def test_akira():
+    jsonl = """
+{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "jmnedict", "tags": ["person"]}
+{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikidata:http://www.wikidata.org/entity/Q8006", "tags": ["person", "masc"], "notes": "日本の映画監督"}
+{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikipedia_en:Akira Kurosawa", "tags": ["xx-romaji", "masc", "person"], "notes": "Filmmaker and painter who directed 30 films in a career spanning 57 years"}
+{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikipedia_ja:黒澤明", "tags": ["person"]}
+    """.strip()
+
+    pd = PersonDedupe()
+    for person in jsonl.splitlines():
+        pd.ingest(NameData.from_jsonl(person))
+
+    people = list(pd.deduped_people())
+    assert len(people) == 1
+
+    assert people[0] == NameData.person('黒澤 明', 'くろさわ あきら',
+                                        lifetime=Lifetime(1910, 1998),
+                                        source='wikipedia_en:Akira Kurosawa',
+                                        tags=['person', 'masc'],
+                                        notes='Filmmaker and painter who directed 30 films in a career spanning 57 years'
+                                        )

@@ -1,9 +1,9 @@
 """
-Processes de-duped Person entries (from person_dedupe.py) and builds
-a gender dictionary and trains a machine learning model which can be
-used to guess missing gender information.
+Processes deduped.py (deduped Person entries + other name entires) and
+builds a gender dictionary and trains a machine learning model which
+can be used to guess missing gender information.
 
-Usage: cat people.json | python build_gender_db.py > output.dict.json
+Usage: cat db/deduped.json | python build_gender_db.py > db/gender.jsonl
   # extra input: data/name_lists.json
   # extra output: db/gender.weights
 """
@@ -27,6 +27,7 @@ try:
                      weights=GENDER_WEIGHTS_OUT)
 except KeyboardInterrupt:
     logging.warning('Caught SIGINT, exiting')
-    pass
+    sys.exit(1)
 except:
     logging.exception('Error generating gender DB')
+    sys.exit(1)

@@ -6,6 +6,7 @@ for dictionary loading.
 """
 
 from __future__ import annotations
+import logging
 import sys
 import json
 from typing import cast
@@ -24,6 +25,18 @@ def extract(data: dict, path: str) -> str | None:
         assert isinstance(data, str)
         return data
     except KeyError:
+        return None
+
+
+def extract_string(data: str | dict) -> str | None:
+    if isinstance(data, dict):
+        if data.get('xml:lang') == 'ja':
+            return data['value']
+        else:
+            return None
+    elif isinstance(data, str):
+        return data
+    else:
         return None
 
 
@@ -86,6 +99,7 @@ for line in sys.stdin:
 
     kana = extract(data, 'kana.value')
     assert kana is not None
+    kana = regex.sub(r'\dだいめ$', '', kana)
 
     kana = kana.replace('・', ' ')
     kana = cast(str, jcconv3.kata2hira(kana))
@@ -111,10 +125,16 @@ for line in sys.stdin:
             kanji = split_kanji_name(kanji, kana)
             namedata.add_subreading(NameData(kanji, kana))
 
-    #description = extract(data, 'itemDescription')
-    #country_ = extract(data, 'countryLabel.value')
+    description = extract(data, 'itemDescription.value')
+    if description:
+        description = regex.sub(r'^Japanese ', '', description, regex.I)
+        description = description[0].upper() + description[1:]
+        namedata.notes = description
 
     namedata.add_tag('person')
-    namedata.clean_and_validate()
 
-    print(namedata.to_jsonl())
+    try:
+        namedata.clean_and_validate()
+        print(namedata.to_jsonl())
+    except ValueError as e:
+        logging.error(f"Validation failure: {e}")

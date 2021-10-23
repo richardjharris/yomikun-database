@@ -76,10 +76,22 @@ def vw_example(features: str, is_female: bool):
 
 
 def vw_features(kaki, yomi):
+    """
+    Vowpal Wabbit features for a name:
+    |y yomi
+    |c yomi kana characters
+    |k kaki characters         - this is also bigrammed
+    |l last_kaki
+    |m last_yomi
+    |n last_two_yomi           - new, may not really help
+    |stats kaki_len:(kaki_len) yomi_len:(yomi_len)
+    """
+
     last_kaki = kaki[-1]
     last_yomi = yomi[-1]
+    last_two_yomi = yomi[-2:]
     kaki_len = len(kaki)
     yomi_len = len(yomi)
-    ex = f"|y {yomi} |c {' '.join(yomi)} |k {' '.join(kaki)} |l {last_kaki} |m {last_yomi}"
+    ex = f"|y {yomi} |c {' '.join(yomi)} |k {' '.join(kaki)} |l {last_kaki} |m {last_yomi} |n {last_two_yomi}"
     ex += f" |stats kaki_len:{kaki_len} yomi_len:{yomi_len}"
     return ex

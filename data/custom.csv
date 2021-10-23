@@ -2,6 +2,7 @@
 # Format: kaki,yomi,tags (separated by +),lifetime (birth-death),notes
 # 'm' and 'f' are supported as shorthand for masc/fem.
 
+柳原 尚之,やなぎはら なおゆき,m,,Chef
 齋藤 訓之,さいとう さとし,m,1964-,Food Watch Japan writer and editor
 會田 悦久,あいだ　よしひさ,m,1977
 小林 直之,こばやし なおゆき,m
@@ -65,6 +66,7 @@
 公亮,こうすけ,m,1979
 糀谷,こじだに,surname
 田向 泰輝,たむかい たいき,m,1992
+小林 正能,こばやし　せいのう,m,,Map researcher
 佐々木 章光,ささき あきみつ,m
 近見 哲平,ちかみ　てっぺい,m
 梶原,かじわら,s
@@ -82,6 +84,8 @@
 萌,もえ,f
 新保,しんぼ,surname
 鹿毛,かげ,surname
+侑毅,ゆうき,m
+侑毅,ゆうき,m+dict
 和樹,かずき,f
 慶喜,よしのぶ,m,1837-1913
 谷川 治恵,たにかわ　はるえ,f,1954-

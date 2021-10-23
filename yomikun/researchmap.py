@@ -54,7 +54,7 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | 
        井草 剛 IGUSA GO       (=gou)
     We handle this by producing a RomajiDB that maps normalised romaji (e.g. all long
     vowels removed) and kanji to a list of possible kana names. This data is produced
-    from reliable sources such as Wikipedia.
+    from reliable sources such as ja-wikipedia.
     """
     raw_data = (kana, kanji, english)
     logging.debug(f"Parsing {raw_data}")

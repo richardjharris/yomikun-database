@@ -140,6 +140,8 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
         # 'Japanese' is usually implied
         namedata.notes = regex.sub(
             r'^Japanese (\w)(.*)$', lambda m: m[1].upper() + m[2], namedata.notes)
+        # Remove italic
+        namedata.notes = regex.sub(r"'{2,}", '', namedata.notes)
     else:
         # Return an empty record
         logging.info(f"[{title}] No nihongo template found, skipping")

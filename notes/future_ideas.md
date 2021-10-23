@@ -5,6 +5,12 @@ the future.
 
 Currently we use a manual dictionary to correct these.
 
+## 反り目、反リ目 (etc.) ought to be treated identically
+
+## Pitch accents
+
+ - see pitch text.
+
 ## Kanji picker
 
 A better kanji picker. Top/bottom slots, pick radical, etc.
@@ -24,6 +30,29 @@ in the original romaji, e.g. if macrons are used they'll be respected.
  - this would be useful for 'りよう' and friends, where the small
    kana is large instead. But equally we could romaji_key ryo -> riyo
    to handle this.
+
+## seijiyama improvements
+
+  - maybe go back and add names with kana-only surnames, as we can still
+    use the forename data.
+
+  - go back and scrape missing cards (currently we ignore things we have
+    \> 5 hits for)
+
+## yuuki / yuki and other stuff
+
+For some names (ゆうき・ゆき) perhaps we shouldn't even generate records, as they
+would bias the stats? Picking randomly doesn't work either if it's gender-based.
+
+For example ochi/大内 has two readings おおち、おうち, clearly either of them is better
+than returning おち!
+ - I think we currently do this (only messy romajise one part, not both) but
+   need to check
+
+## Importer module
+
+A module to handle logging, execution time, validation, errors/okays
+etc. would be useful here.
 
 ## Okinawan names
 
@@ -69,7 +98,8 @@ Frequency data is not considered when splitting.
 
  ... for example such entries can be ignored when building RomajiDB,
      which could be used as a hint for splitting kanji (rather than JMnedict)
-     However RomajiDB would need to support >1 reading first.
+
+ - low priority - not many false positives there
 
 ## Gender data
 
@@ -86,14 +116,8 @@ https://ja.wikipedia.org/wiki/Category:日本語の女性名 (男性名・姓)
 ### Wikidata gender override
 
 wikidata is sometimes wrong about gender. We could override it if we have
-enough data, e.g. wikipedia en/ja disagree with it.
-
-Example: 房之介 m m f
-
-### Last two kana of name
-
-Last two kana of name (not just first) is a useful vector. This is based
-on reading baby name books.
+enough data, e.g. wikipedia en/ja disagree with it. Currently we just take
+the majority.
 
 ## Counters
 
@@ -104,11 +128,7 @@ on reading baby name books.
 ## Refactor
 
  - Remove subreadings system, replace with `list[NameData]`
- - Force 'person' tag
- - Remove gender tags from jmnedict data to avoid special casing (?)
- - Map names back to sources
-
-## Flutter app
+ - Map names back to sources?
 
 ## Bugs
 
@@ -141,3 +161,54 @@ kanji most of the time (木 in this case), so not a priority.
 ## MeCab data
 
  - Not sure how to use. Probably overlaps with jmnedict
+
+### Weird missing 'いち', and 'りよう' entries
+
+Fun stuff here (17 hits):
+
+    "kaki": "京子",
+    "yomi": "きようこ",
+               ^
+    "kaki": "純一",
+    "yomi": "じゆんいち",
+               ^
+Oh boy...
+
+    "kaki": "淳一",
+    "yomi": "じゆんいち",
+               ^
+    "kaki": "亮",
+    "yomi": "りよう",
+               ^
+From wikipedia and also researchmap:
+jsonl/researchmap.jsonl:{"kaki": "吉田 亮", "yomi": "よしだ りよう", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "researchmap", "tags": ["person"]}
+For 'ryou', 274 of these vs. 8830 total. So not too bad. But annoying.
+
+### All or nothing
+
+Could tag individual parts of the name with xx-romaji if we had dictionary
+data for some but not all?
+ e.g. xx-romaji-sei, xx-romaji-mei
+
+## wikidata: de-dupe variant records
+
+Somehow when removing nakaguro I stripped 300 records from wikidata.jsonl?
+I think due to the seen() stuff? None of my code would have changed it, yet
+the .old version has 2 copies of Q55526706
+
+Change unique key to (Q, birth_date % 2, kanji) ?
+ if kanji is not split, don't store it? or warn
+ Check for unsplit people
+
+        # TODO we also get dupe records with different kanji/kana combinations,
+        #      only some make sense. Whoops. e.g. https://www.wikidata.org/wiki/Q6753582
+        #      has two 'name in kana', only one makes sense.
+        # TODO we could improve this by doing all of them then outputting the 'best'
+        #      e.g. the one we were able to split.
+        # Dump has 143,141 unique names and 147,676 records - so not a major problem,
+        # but could return incorrect readings.
+
+Some records make no sense and could be rejected, e.g.
+jsonl/wikidata.jsonl:{"kaki": "河野悠里", "yomi": "だいぜんじ ふみこ", "authenticity": "real", "lifetime": {"birth_year": 1983, "death_year": null}, "subreadings": [], "source": "wikidata:http://www.wikidata.org/entity/Q11554202", "tags": ["fem"]}
+
+[**] Also need a re-run for katakana handling update.

@@ -206,7 +206,10 @@ class NameData():
         part = None
         if self.is_person():
             kaki_pat = patterns.name_pat
-            yomi_pat = patterns.reading_pat
+            if len(self.kaki.split()) == 1:
+                yomi_pat = patterns.reading_pat_optional_space
+            else:
+                yomi_pat = patterns.reading_pat
             part = 'person'
         elif self.is_given_name():
             kaki_pat = patterns.mei_pat

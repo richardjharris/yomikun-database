@@ -93,7 +93,7 @@ class Aggregator():
     def extract_name_parts(data: NameData) -> list[tuple[NamePart, Gender | None]]:
         parts = []
         if data.is_person():
-            # Rarely, is tagged [person, fem] to indicate the person's gender.
+            # Sometimes is tagged [person, fem] to indicate the person's gender.
             gender = Aggregator.gender_from_tags(data.tags)
             kakis = data.kaki.split()
             yomis = data.yomi.split()
@@ -105,9 +105,13 @@ class Aggregator():
                 parts += [(sei, gender), (mei, gender)]
             else:
                 # Can't reliably assign positions to names
-                pass
+                part = NamePart(kaki=data.kaki, yomi=data.yomi,
+                                position=NamePosition.unknown)
+                parts.append((part, gender))
         elif 'unclass' in data.tags:
-            assert len(data.tags) == 1  # no other tags
+            for tag in ('person', 'surname', 'given', 'fem', 'masc'):
+                assert not data.has_tag(tag)
+
             part = NamePart(kaki=data.kaki, yomi=data.yomi,
                             position=NamePosition.unknown)
             parts.append((part, None))

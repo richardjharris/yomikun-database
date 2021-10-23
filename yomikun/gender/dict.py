@@ -12,7 +12,7 @@ from math import sqrt
 import logging
 
 from yomikun.gender.ml import GenderML
-from yomikun.loader.aggregator import Aggregator
+from yomikun.loader.aggregator import Aggregator, NamePart
 from yomikun.loader.models import Gender, NamePosition
 from yomikun.models import NameData
 from yomikun.utils.romaji import romaji_to_hiragana_messy
@@ -114,11 +114,6 @@ def score_from_counts(
         # Convert margin of error (0..0.5) to confidence (0..1)
         confidence = 1 - (margin_of_error * 2)
 
-        # Margin of error is more meaningful at the edges (difference between
-        # a male/female-only name and unisex) and less meaningful for scores
-        # close to 0.5.
-        confidence = min(1, confidence * (1.5 - abs(score - 0.5)))
-
         return score, confidence
     else:
         # Not enough information
@@ -138,7 +133,6 @@ def make_gender_dict(
     """
     counts_kana = defaultdict(Counter)
     counts_kanji = defaultdict(Counter)
-    all_names = set()
     model = GenderML(quiet=True)
 
     tags_for_name = load_name_lists(name_list_data)
@@ -146,10 +140,16 @@ def make_gender_dict(
     # Count the occurences, per-gender, for each input name.
     # Train the ML model
     for name in names:
-        # XXX this is wrong, we should also consider given names
-        assert 'person' in name.tags
-
         source = name.source.split(':')[0]
+
+        if name.is_given_name() and name.gender() and name.has_tag('dict'):
+            # A gendered 'dict' entry is intended to gender-tag a non-
+            # gender-tagged entry elsewhere.
+            part = NamePart(name.kaki, name.yomi, NamePosition.mei)
+            counts_kana[part.yomi][Gender.unknown] -= 1
+            counts_kanji[part][Gender.unknown] -= 1
+            # TODO potentially force use of hits-based gender determination
+            # in this case.
 
         Aggregator.copy_data_to_subreadings(name)
         for part, gender in Aggregator.extract_name_parts(name):
@@ -162,12 +162,9 @@ def make_gender_dict(
             if gender and gender != Gender.unknown:
                 model.train(part.kaki, part.yomi, gender == Gender.female)
 
-            # TODO i think counts_kanji covers this
-            all_names.add(part)
-
     # Now do testing
     # As for Sep 11 Sep, about 8.7k names fail testing (!!)
-    for test in all_names:
+    for test in counts_kanji.keys():
         by_kana = counts_kana[test.yomi]
         by_kanji = counts_kanji[test]
         tags = tags_for_name[test.yomi]
@@ -180,10 +177,8 @@ def make_gender_dict(
         # A confidence of 1 means 'a lot of data'
         ct_score, ct_confidence = score_from_counts(by_kana, by_kanji)
 
-        # Decide which score to use
+        # Test locally, picking a suitable score
         gender_score = ct_score if ct_confidence > 0.5 else ml_score
-
-        # Sanity check score against Wikipedia name lists
         err = sanity_check_score(gender_score, tags)
         if err:
             logging.warning(f"{test} error: {err}")
@@ -194,10 +189,9 @@ def make_gender_dict(
             'ml_score': ml_score,
             'ct_score': ct_score,
             'ct_confidence': ct_confidence,
-            'final_score': gender_score,
             'hits_male': by_kanji[Gender.male],
             'hits_female': by_kanji[Gender.female],
-            'hits_unknown': by_kanji[Gender.unknown],
+            'hits_unknown': max(by_kanji[Gender.unknown], 0),
             'err': err,
         }, ensure_ascii=False), file=dict_out)
 
