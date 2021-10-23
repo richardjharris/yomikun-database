@@ -10,7 +10,7 @@ import logging
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData
 
-fields = ('kaki', 'yomi', 'tags', 'lifetime', 'extra')
+fields = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
 
 # Remember last CSV input line, for error handling
 last_raw_line = ''
@@ -23,7 +23,7 @@ def skip_lines_and_comments(lines):
         last_raw_line = line.rstrip()
         line = regex.sub(r'#.*$', '', line)
         if regex.search(r'\S', line):
-            yield line
+            yield line.rstrip()
 
 
 # Skips comments and blank lines
@@ -55,6 +55,9 @@ for row in reader:
             namedata.lifetime.birth_year = int(birth)
         if len(death):
             namedata.lifetime.death_year = int(death)
+
+    if row['notes']:
+        namedata.notes = row['notes']
 
     namedata.source = 'custom'
 

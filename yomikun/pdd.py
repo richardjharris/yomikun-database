@@ -1,14 +1,10 @@
-#!/usr/bin/env python3
-
 # Parses PDD (public domain dictionary) 人名辞典.
 
 from __future__ import annotations
-import sys
 import regex
-import json
 
 
-from yomikun.models import Reading, NameAuthenticity, NameData, Lifetime
+from yomikun.models import NameData, Lifetime
 from yomikun.utils.patterns import name_pat, reading_pat
 
 
@@ -52,7 +48,9 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
             if m := regex.search(r'^\s*(\d{4})\.', right):
                 reading.lifetime.death_year = int(m[1])
 
+        reading.add_tag('person')
         reading.source = f'pdd:{heading}'
+        reading.validate()
         return reading
     else:
         #raise Exception(f"Cannot parse heading {heading}")
@@ -63,7 +61,7 @@ def test_parse_pdd():
     assert name_from_entry(
         "さんゆうてい　えんしょう【三遊亭　円生(６代)】",
         "いのうえ　ああ【井上　唖々】\n1878. 1.30(明治11) 〜 1923. 7.11(大正12)\n◇小説家・俳人。本名は精一、別号は九穂(キュウスイ)・玉山。名古屋生れ。\n",
-    ) == NameData(
+    ) == NameData.person(
         kaki="三遊亭 円生",
         yomi="さんゆうてい えんしょう",
         lifetime=Lifetime(1878, 1923),

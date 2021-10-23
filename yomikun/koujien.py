@@ -32,6 +32,8 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         reading.kaki = split_kanji_name(reading.kaki, reading.yomi)
 
         reading.source = f"koujien:{heading}"
+        reading.add_tag('person')
+        reading.clean_and_validate()
         return reading
     else:
         return None
@@ -43,9 +45,9 @@ def test_parse_koujien():
         "text": "おぶち‐けいぞう【小渕恵三】ヲ‥ザウ\n政治家。群馬県生れ。早大卒。官房長官・外相を歴任。1998年自由民主党総裁・首相。在任中に急死。（1937〜2000）\n小渕恵三\n提供：毎日新聞社\n小渕恵三官房長官、「平成」の新元号を発表（1989年01月07日）\n提供：毎日新聞社\n{{w_46677}}おぶち【小渕】\n"
     }
 
-    assert name_from_entry(data['heading'], data['text']) == NameData(
+    assert name_from_entry(data['heading'], data['text']) == NameData.person(
         kaki="小渕 恵三",
         yomi="おぶち けいぞう",
         lifetime=Lifetime(1937, 2000),
-        source='koujien:おぶち‐けいぞう【小渕恵三】ヲ‥ザウ'
+        source='koujien:おぶち‐けいぞう【小渕恵三】ヲ‥ザウ',
     )

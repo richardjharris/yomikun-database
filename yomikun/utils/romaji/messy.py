@@ -37,6 +37,9 @@ def romaji_to_hiragana_messy(romaji: str, kanji: str | None = None, leading_o: s
 
     # TODO We don't try to handle ē -> ei. We could use a kanji dictionary.
 
+    # e.g. Itchiku -> icchiku
+    romaji = romaji.replace('tch', 'cch')
+
     romaji = regex.sub(r'ow$', 'oh', romaji)
     romaji = regex.sub(r'm(?=[bpm])', 'n', romaji)
     romaji = romaji.replace('l', 'r')

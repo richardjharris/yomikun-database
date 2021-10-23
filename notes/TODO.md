@@ -1,10 +1,12 @@
+## Actual current task
+
+ - Generate test database in zipped jsonl format for inclusion into
+   the test flutter app.
+
 ## Current task
 
- - extracting gender/dob from seijiyama (need to run to completion)
-   - first pass is for names with NO existing hits
-   - can then extend to < 3 hits
-   - can also fetch >1 card if the name seems unisex, or we got an 'unknown'
-     result.
+ - extracting gender/dob from seijiyama (done)
+  -> join into results, generate anonymised JSONL
 
  - There are some bogus 2021 values (due to missing DOB data) that should
    be ignored.
@@ -13,6 +15,35 @@
 
  - reruns: wikipedia_en, _ja, wikidata (?) etc. ja parser has new categories for women.
    wikidata has bracket stripping. wikidata+wiki_en have romaji improvements.
+
+## Basic app!
+
+Let's make a simple app with test data yeah.
+
+## Pitch accents?
+
+Do we have data for common names?
+
+## Random observation
+
+https://en.wikipedia.org/wiki/Kaori\_Manabe
+We didn't parse this? We got the other two versions though. In particular,
+a crude romajification would lose the を!
+
+https://ja.wikipedia.org/wiki/%E5%B1%B1%E8%88%A9%E6%99%83%E5%A4%AA%E9%83%8E
+ - is new, so we son't have it .parsed okay.
+
+## koujien
+
+Fails to split in some places, could be fixed by using RomajiDB
+
+## Gender issues
+
+```
+{"kaki": "侑毅", "yomi": "ゆうき", "ml_score": -2.9185547828674316, "ct_score": -0.4463276836158192, "ct_confidence": 0.5115697437195134, "final_score": -0.4463276836158192, "hits_male": 0, "hits_female": 0, "hits_unknown": 1, "err": null}
+```
+ 
+Why is the final score based on 1 unknown hit? Should be using ml\_score?
 
 ### seijiyama import
 

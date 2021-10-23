@@ -32,6 +32,17 @@ class Lifetime():
         if self.death_year is None:
             self.death_year = other.death_year
 
+    def expand(self, other: Lifetime):
+        """
+        Expand this lifetime so it uses `other`'s birth_year if it is earlier than
+        this one, and `other`'s death_year if it is later.
+        """
+        if self.birth_year is None or (other.birth_year is not None and self.birth_year > other.birth_year):
+            self.birth_year = other.birth_year
+
+        if self.death_year is None or (other.death_year is not None and self.death_year < other.death_year):
+            self.death_year = other.death_year
+
     def to_dict(self) -> dict:
         return dataclasses.asdict(self)
 

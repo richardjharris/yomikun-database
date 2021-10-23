@@ -43,6 +43,8 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         reading.kaki = split_kanji_name(reading.kaki, reading.yomi)
 
         reading.source = f"daijisen:{heading}"
+        reading.add_tag('person')
+        reading.clean_and_validate()
         return reading
     else:
         return None
@@ -53,7 +55,7 @@ def test_parse_daijisen():
         "しみず‐はまおみ【清水浜臣】しみづ‐",
         "しみず‐はまおみ【清水浜臣】しみづ‐\n［一七七六〜一八二四］江戸後期の歌人・国学者。江戸の人。号、泊{{w_49708}}舎（さざなみのや）。" +
         "村田春海に国学を学び、古典の考証・注釈にすぐれ、王朝的情趣のある歌文を残した。著「泊{{w_49708}}舎文藻」「泊{{w_49708}}舎集」など。\n",
-    ) == NameData(
+    ) == NameData.person(
         kaki="清水 浜臣",
         yomi="しみず はまおみ",
         lifetime=Lifetime(1776, 1824),

@@ -199,7 +199,7 @@ def merge_namedata(box_data: NameData, article_data: NameData) -> NameData:
     return result
 
 
-def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData:
+def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData | None:
     """
     Parse ja.wikipedia article for names/readings and return the primary one.
     (At some point, other extracted names may also be returned)
@@ -219,17 +219,25 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
 
     add_category_data(namedata, content)
 
-    if namedata.has_name():
-        # Exclude certain names which are likely to not be people
-        # Also exclude cases where we were unable to split the name
-        if len(namedata.kaki.split()) == 1 or should_ignore_name(namedata.kaki):
-            logging.info(
-                f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
-            # Remove all information except for source
-            namedata = NameData()
+    if not namedata.has_name():
+        return
+
+    # Exclude certain names which are likely to not be people
+    # Also exclude cases where we were unable to split the kanji
+    if len(namedata.kaki.split()) == 1 or should_ignore_name(namedata.kaki):
+        logging.info(
+            f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
+        return
 
     if add_source:
         namedata.source = f"wikipedia_ja:{title}"
+
+    namedata.add_tag('person')
+    for s in namedata.subreadings:
+        s.add_tag('person')
+
+    namedata.clean_and_validate()
+
     return namedata
 
 
@@ -240,7 +248,7 @@ def test_basic():
 }}
 '''阿部 寛'''（あべ ひろし、[[1964年]]〈昭和39年〉[[6月22日]]<ref name="rirekisho" /> - ）は、[[日本]]の[[俳優]]。[[茂田オフィス]]所属。
 """.strip()
-    assert parse_wikipedia_article('foo', content) == NameData(
+    assert parse_wikipedia_article('foo', content) == NameData.person(
         kaki='阿部 寛',
         yomi='あべ ひろし',
         lifetime=Lifetime(1964),
@@ -252,9 +260,10 @@ def test_ref_in_first_line():
     content = """
 '''鈴置 洋孝'''（すずおき ひろたか、[[1950年]][[3月6日]]<ref name="kenproduction">{{Cite web|date=|url=blah}}</ref>
 """
-    assert parse_wikipedia_article('bar', content) == NameData(
+    assert parse_wikipedia_article('bar', content) == NameData.person(
         kaki='鈴置 洋孝',
         yomi='すずおき ひろたか',
         lifetime=Lifetime(1950),
         source='wikipedia_ja:bar',
+        tags=['person'],
     )

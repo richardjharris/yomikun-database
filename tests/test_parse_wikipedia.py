@@ -31,7 +31,8 @@ def load_test(file: Path) -> tuple[str, dict]:
 
     assert len(content)
 
-    metadata: dict = yaml.load(''.join(header), Loader=yaml.BaseLoader)
+    metadata = yaml.load(''.join(header), Loader=yaml.BaseLoader) or {}
+    assert isinstance(metadata, dict)
 
     return ''.join(content), metadata
 
@@ -66,6 +67,9 @@ def test_parser(test_page: tuple[Path, str]):
     result = module.parse_wikipedia_article(
         path.name, content, add_source=False)
 
+    if result is None:
+        result = NameData()
+
     result.remove_xx_tags()
 
     expected = build_namedata_from_test_header(metadata)
@@ -97,6 +101,8 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
                 namedata.add_tag('fem')
             else:
                 raise Exception(f"Unknown gender value '{value}'")
+        elif key == 'notes':
+            namedata.notes = value
         elif key == 'tags':
             for tag in value:
                 namedata.add_tag(tag)
@@ -111,4 +117,6 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
         else:
             raise Exception(f"invalid test key '{key}'")
 
+    if namedata.has_name():
+        namedata.add_tag('person')
     return namedata

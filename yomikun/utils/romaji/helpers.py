@@ -78,6 +78,9 @@ def romaji_key(romaji: str) -> str:
     # Replace shumpei with shunpei
     romaji = regex.sub(r'm(?=[bpm])', 'n', romaji)
 
+    # Replace Itchiku with Icchiku
+    romaji = romaji.replace('tch', 'cch')
+
     # Remove hyphens, sometimes seen in real world data: 'ke-nichiro'
     romaji = regex.sub(r'[-]', '', romaji)
 

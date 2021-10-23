@@ -5,6 +5,10 @@ the future.
 
 Currently we use a manual dictionary to correct these.
 
+## Kanji picker
+
+A better kanji picker. Top/bottom slots, pick radical, etc.
+
 ## More robust romaji to hiragana conversion
 
 Instead of simplifying romaji to a romaji key (which loses data)

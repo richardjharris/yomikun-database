@@ -80,4 +80,7 @@ for line in sys.stdin:
     if tag := gender(data.get('genderLabel', None)):
         namedata.add_tag(tag)
 
+    namedata.add_tag('person')
+    namedata.clean_and_validate()
+
     print(namedata.to_jsonl())

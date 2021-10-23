@@ -1,8 +1,13 @@
 """
 Pattern for kanji characters used in surnames
+
+ Interesting examples: 三ツ木 (みつぎ), 木ノ本
+ 茂り松 etc. are very rare, but interesting.
 """
-sei_chars = r'\p{Han}ヶヵノ'
-sei_pat = fr'[{sei_chars}]+'
+sei_chars = r'\p{Han}ヶヵノツ'
+sei_with_kana = r'(?:\p{Han}+[ツノ]\p{Han}+|茂り松|下り|走り|渡り|回り道|広エ|新タ|見ル野|反リ目|安カ川)'
+
+sei_pat = fr'(?:[{sei_chars}]+|{sei_with_kana})'
 
 """
 Pattern for characters used in given names

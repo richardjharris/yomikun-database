@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-# Parses en.wikipedia.org dump and extracts Japanese names, dates of birth and gender.
+"""
+Parses en.wikipedia.org dump and extracts Japanese names, dates of birth and gender.
+"""
 
 from __future__ import annotations
 import logging
@@ -40,15 +42,13 @@ if args.article:
     pages = DumpReaderArticles().read(dump)
     for page in pages:
         logging.debug(f'Page: {page.title}')
-        result = parse_wikipedia_article(page.title, page.content)
-        if result.has_name():
+        if result := parse_wikipedia_article(page.title, page.content):
             print(result.to_jsonl())
 else:
     for line in sys.stdin:
         data = json.loads(line)
-        result = parse_wikipedia_article(data['title'], data['text'])
-        # Require a lifetime, as results without birth/death years have too many false positives.
-        # Examples: 立命館大学, 名探偵コナン, 天上天下, 拡張新字体, 艦隊これくしょん
-        # We could also use the fact we didn't split the name to reject.
-        if result.has_name() and result.lifetime:
-            print(result.to_jsonl())
+        try:
+            if result := parse_wikipedia_article(data['title'], data['text']):
+                print(result.to_jsonl())
+        except ValueError as e:
+            logging.error(f"Error processing article {data['title']}: {e}")

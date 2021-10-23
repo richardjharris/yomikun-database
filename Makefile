@@ -58,7 +58,7 @@ data/jawiki.xml.bz2:
 # and also convert the XML to JSON. Takes ~2 hours.
 data/enwiki-nihongo-articles.gz: data/enwiki.xml.bz2
 	bzcat data/enwiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl |\
-	  fgrep -e '{{Nihongo' -e '{{nihongo' -e 'Japanese' -e 'japanese' | gzip -9f > $@
+	  fgrep -e '{{Nihongo' -e '{{nihongo' -e Japanese -e japanese -e Japan -e japan | gzip -9f > $@
 
 data/jawiki-articles.gz: data/jawiki.xml.bz2
 	bzcat data/jawiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl | gzip -9f > $@

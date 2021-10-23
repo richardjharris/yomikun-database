@@ -11,6 +11,9 @@ Our strategy here is to import all of it, then use Wikipedia and other data to
 identify the readings that are actually seen in the real world. For this reason we
 also import 'unclass'-type names that are not confirmed to be person names at all.
 These would show up dead last in a dictionary lookup, but are good for completeness.
+
+Entries are tagged 'dict' to indicate they are not real world name sightings,
+and do not have fem/masc tags (as these are usually wrong).
 """
 
 from __future__ import annotations
@@ -27,8 +30,8 @@ logging.basicConfig(level=LOGLEVEL)
 
 for data in yomikun.utils.name_dict.all_jmnedict_data():
     try:
-        for output in yomikun.jmnedict.parse(data):
-            print(json.dumps(output, ensure_ascii=False))
+        for name in yomikun.jmnedict.parse(data):
+            print(name.to_jsonl())
     except KeyboardInterrupt:
         print("caught INT, exiting", file=sys.stderr)
         sys.exit(1)

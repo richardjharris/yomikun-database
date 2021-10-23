@@ -50,6 +50,20 @@ def get_categories(content: str) -> list[str]:
     return regex.findall(CATEGORY_PAT, content)
 
 
+def notes_from_categories(categories: list[str]) -> str | None:
+    """
+    Returns a short summary of this person (occupation etc.) based on
+    the article categories
+    """
+    for category in categories:
+        if category == 'Manga artists':
+            return 'manga artist'
+        if m := regex.match(r'^Japanese (?:male |female )?(writer|philosopher|artist|singer)s', category):
+            return m[1].capitalize()
+
+    return
+
+
 ROMAJI = r"[A-Za-zŌōā']"
 ROMAJI_NAME = ROMAJI + r'+\s+' + ROMAJI + '+'
 
@@ -58,7 +72,7 @@ NIHONGO_TEMPLATE_PAT = r'\{\{' + \
     r'\}\}(.{1,5000})'
 
 
-def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData:
+def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData | None:
     """
     Parse en.wikipedia article for names/readings and return the primary one.
     """
@@ -111,24 +125,61 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
             namedata.add_tag('masc')
         elif gender == Gender.female:
             namedata.add_tag('fem')
+
+        # Figure out what kind of person this is
+        if not namedata.notes:
+            cleaned_first_sentence = clean(rest_of_line)
+            if m := regex.match(r'(?:.*?[,\)])?\s*(?:is|was) (?:the|a|an) (.+?)[.]', cleaned_first_sentence):
+                desc = m[1]
+                namedata.notes = desc[0].upper() + desc[1:]
+            elif m := regex.match(r'^\{\{Infobox (.*?)', content):
+                namedata.notes = m[1]
+            elif notes := notes_from_categories(categories):
+                namedata.notes = notes
+
+        # 'Japanese' is usually implied
+        namedata.notes = regex.sub(
+            r'^Japanese (\w)(.*)$', lambda m: m[1].upper() + m[2], namedata.notes)
     else:
         # Return an empty record
-        logging.info("No nihongo template found, skipping")
-        namedata = NameData()
+        logging.info(f"[{title}] No nihongo template found, skipping")
+        return
 
-    if namedata.has_name():
-        # Exclude probable false positives.
-        # This includes cases where we could not split the name, obviously invalid
-        # names, and (for the English wikipedia only) cases where we have no birth
-        # or death year. Examples:
-        #  - 拡張新字体 (from 'Extended shinjitai' page)
-        #  - 亜馬尻 菊の助 (name from the 'Characters' section of a series page)
-        #  - 艦隊これくしょん
-        if len(namedata.kaki.split()) == 1 or should_ignore_name(namedata.kaki):
+    if not namedata.has_name():
+        logging.info(f"[{title}] No name found, skipping")
+        return
+
+    # Exclude probable false positives.
+    # This includes cases where we could not split the name, obviously invalid
+    # names, and (for the English wikipedia only) cases where we have no birth
+    # or death year. Examples:
+    #  - 拡張新字体 (from 'Extended shinjitai' page)
+    #  - 亜馬尻 菊の助 (name from the 'Characters' section of a series page)
+    #  - 艦隊これくしょん
+    if len(namedata.kaki.split()) == 1:
+        logging.info(
+            f"[{title}] Name '{namedata.kaki}' could not be split, skipping")
+        return
+    elif should_ignore_name(namedata.kaki):
+        if namedata.authenticity == NameAuthenticity.REAL:
             logging.info(
                 f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
-            # Remove all information except for source
-            namedata = NameData()
+            return
+        else:
+            logging.info(
+                f"[{title}] Name '{namedata.kaki}' matched ignore rules but character is not real - allowing")
+            pass
+    elif not namedata.lifetime:
+        if namedata.authenticity == NameAuthenticity.REAL:
+            logging.info(f"[{title}] No birth / death year found, skipping")
+            return
+        else:
+            logging.info(
+                f"[{title}] No birth / death year found, but character is not real - allowing")
+            pass
+
+    namedata.add_tag('person')
+    namedata.clean_and_validate()
 
     if add_source:
         namedata.source = f'wikipedia_en:{title}'
@@ -146,9 +197,14 @@ def test_basic():
         kaki='遠藤 章史',
         yomi='えんどう あきふみ',
         lifetime=Lifetime(1964),
-        tags=['xx-romaji', 'masc'],
+        tags=['xx-romaji', 'masc', 'person'],
         source='wikipedia_en:Akifumi Endo',
+        notes='Voice actor who is affiliated with Troubadour Musique Office',
     ), 'extracts gender from category'
+
+
+def test_fail():
+    assert parse_wikipedia_article('Sausages', 'Sausages') is None
 
 
 def test_gender_from_text():
@@ -165,8 +221,9 @@ Murata was born on July 14, 1986, in [[Uozu, Toyama]].<ref>{{cite web|url=https:
         kaki='村田 顕弘',
         yomi='むらた あきひろ',
         lifetime=Lifetime(1986),
-        tags=['xx-romaji', 'masc'],
+        tags=['xx-romaji', 'masc', 'person'],
         source='wikipedia_en:Akihiro Murata',
+        notes='Professional shogi player ranked 6-dan',
     ), 'extracts gender from text'
 
 
@@ -180,8 +237,9 @@ def test_nya_romaji():
         kaki='加藤 潤也',
         yomi='かとう じゅんや',
         lifetime=Lifetime(1994),
-        tags=['xx-romaji', 'masc'],
+        tags=['xx-romaji', 'masc', 'person'],
         source='wikipedia_en:Junya Kato',
+        notes='Football player',
     ), 'should not convert to じゅにゃ'
 
 
@@ -198,12 +256,27 @@ In 2000, a 21-year-old campaign volunteer accused Yokoyama of [[sexual harassmen
 [[Category:2007 deaths]]
 """.strip()
     result = parse_wikipedia_article('Knock Yokoyama', content)
-    # We don't expect Isamu Yamada to be extracted, but we do want to mark it as pseudo at least
+    # We don't expect Yamada Isamu to be extracted, but we do want to mark it as pseudo at least
     assert result == NameData(
         kaki='横山 ノック',
         yomi='よこやま のっく',
         lifetime=Lifetime(1932, 2007),
         authenticity=NameAuthenticity.PSEUDO,
-        tags=['xx-romaji', 'masc'],
+        tags=['xx-romaji', 'masc', 'person'],
         source='wikipedia_en:Knock Yokoyama',
+        notes='Politician and comedian',
+    )
+
+
+def test_allow_fictional_character_with_no_lifetime():
+    content = """
+{{nihongo|'''Mai Shiranui'''|不知火 舞|Shiranui Mai|lead=yes}} (alternatively written しらぬい まい) is a [[fictional character]] in the ''[[Fatal Fury]]'' and ''[[The King of Fighters]]'' series of [[fighting game]]s by [[SNK]]. She has also appeared in other media of these franchises and in a number of other games since her debut in 1992's ''[[Fatal Fury 2]]'' as the first female character in an SNK fighting game. She also appears in the games' various manga and anime adaptations and plays a leading role in the [[The King of Fighters (film)|live-action film]].    
+""".strip()
+    assert parse_wikipedia_article('foo', content) == NameData.person(
+        kaki='不知火 舞',
+        yomi='しらぬい まい',
+        authenticity=NameAuthenticity.FICTIONAL,
+        source='wikipedia_en:foo',
+        tags=['xx-romaji', 'fem'],
+        notes='Fictional character in the Fatal Fury and The King of Fighters series of fighting games by SNK'
     )

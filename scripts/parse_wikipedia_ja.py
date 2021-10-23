@@ -40,12 +40,10 @@ if args.article:
     for page in pages:
         # TODO no way to distinguish "no name here" from "there's a name here,
         # but we failed to parse it"
-        result = parse_wikipedia_article(page.title, page.content)
-        if result.has_name():
+        if result := parse_wikipedia_article(page.title, page.content):
             print(result.to_jsonl())
 else:
     for line in sys.stdin:
         data = json.loads(line)
-        result = parse_wikipedia_article(data['title'], data['text'])
-        if result.has_name():
+        if result := parse_wikipedia_article(data['title'], data['text']):
             print(result.to_jsonl())

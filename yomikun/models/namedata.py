@@ -2,6 +2,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import copy
+import pytest
 
 import regex
 
@@ -42,10 +43,20 @@ class NameData():
     # whether a name is a forename or a surname, etc.
     tags: list[str] = dataclasses.field(default_factory=list)
 
+    # Arbitrary notes. For person records, this indicates the type of person
+    # e.g. (actor, musician, politician etc.)
+    notes: str = ''
+
     def __post_init__(self):
         # Do basic type checking, as dataclasses does not
         assert isinstance(self.subreadings, list)
         self.clean()
+
+    @classmethod
+    def person(cls, *args, **kvargs):
+        nd = NameData(*args, **kvargs)
+        nd.add_tag('person')
+        return nd
 
     def add_subreading(self, subreading: NameData):
         """
@@ -67,6 +78,9 @@ class NameData():
         if tag in self.tags:
             self.tags.remove(tag)
         return self
+
+    def has_tag(self, tag: str):
+        return tag in self.tags
 
     def remove_xx_tags(self):
         to_remove = [tag for tag in self.tags if tag.startswith('xx-')]
@@ -163,16 +177,28 @@ class NameData():
             yomi_pat = patterns.hiragana_pat
             part = 'surname'
         else:
-            raise ValueError('Data should be tagged to indicate part of name')
+            raise ValueError(
+                f'Data should be tagged to indicate part of name: {self.to_jsonl()}')
 
         if not regex.match(fr'^{kaki_pat}$', self.kaki):
-            raise ValueError(f"Invalid kaki '{self.kaki}' for part {part}")
+            if self.authenticity == NameAuthenticity.REAL:
+                raise ValueError(
+                    f"Invalid kaki '{self.kaki}' for part {part} ({self.to_jsonl()})")
+            else:
+                # Anything is allowed for pen-names and fictional characters
+                pass
 
         if not regex.match(fr'^{yomi_pat}$', self.yomi):
-            raise ValueError(f"Invalid yomi '{self.yomi}' for part {part}")
+            raise ValueError(
+                f"Invalid yomi '{self.yomi}' for part {part} ({self.to_jsonl()})")
 
         for sub in self.subreadings:
             sub.validate()
+
+    def clean_and_validate(self) -> NameData:
+        self.clean()
+        self.validate()
+        return self
 
     def to_dict(self) -> dict:
         self.clean()
@@ -180,12 +206,20 @@ class NameData():
         # asdict() converts lifetime and subreadings for us. However, it does not call
         # our overriden to_dict (this method) on the subreadings, so we need to do that
         # manually.
-        # TODO we could use __dict__ directly instead.
         data = dataclasses.asdict(self)
 
         data['authenticity'] = data['authenticity'].name.lower()
         for subreading in data['subreadings']:
             subreading['authenticity'] = subreading['authenticity'].name.lower()
+
+        if data['notes'] == '':
+            del data['notes']
+
+        if not data['subreadings']:
+            del data['subreadings']
+
+        if not self.lifetime:
+            del data['lifetime']
 
         return data
 
@@ -232,8 +266,10 @@ class NameData():
 
         fields = [self.kaki, self.yomi, '+'.join(tags)]
         lifetime = self.lifetime.to_csv()
-        if lifetime:
+        if lifetime or self.notes:
             fields.append(lifetime)
+        if self.notes:
+            fields.append(self.notes)
 
         return ','.join(fields)
 
@@ -244,7 +280,41 @@ def test_normalise():
     assert normalise('亜　美') == '亜 美'
 
 
+def test_add_tag():
+    nd = NameData('高次', 'こうじ')
+    nd.add_tag('foo')
+    assert nd == NameData('高次', 'こうじ', tags=['foo'])
+
+    nd.add_tag('bar')
+    assert nd == NameData('高次', 'こうじ', tags=['foo', 'bar'])
+
+
 def test_remove_xx():
     nd = NameData(tags=['xx-romaji', 'xx-split', 'foo'])
     nd.remove_xx_tags()
     assert set(nd.tags) == {'foo'}
+
+
+def test_pos_validation():
+    with pytest.raises(ValueError, match=r'^Data should be tagged'):
+        NameData('愛', 'あい').validate()
+
+    NameData('愛', 'あい', tags=['fem']).validate()
+
+
+def test_kaki_validation():
+    nd = NameData.person('梅の里 昭二', 'うめのさと しょうじ')
+    with pytest.raises(ValueError, match=r'^Invalid kaki'):
+        nd.validate()
+
+    nd.authenticity = NameAuthenticity.PSEUDO
+    nd.validate()
+
+    # Allow ノ as it is genuinely seen in names
+    NameData.person('木ノ元 明博', 'きのもと あけひろ').validate()
+
+
+def test_kana_validation():
+    nd = NameData('心', 'ココロ', tags=['given'])
+    with pytest.raises(ValueError, match=r'^Invalid yomi'):
+        nd.validate()

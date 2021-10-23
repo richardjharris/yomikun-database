@@ -19,6 +19,9 @@ def romaji_to_hiragana_strict(romaji: str) -> str:
     if not regex.match(r"^[a-z' ]*$", romaji):
         raise ValueError(f"Input '{romaji}' has weird characters in it. Yuk!")
 
+    # Fix 'Itchiku' (いっちく、一竹)
+    romaji = romaji.replace('tch', 'cch')
+
     return romkan.to_hiragana(romaji)
 
 

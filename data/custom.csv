@@ -6,6 +6,7 @@
 會田 悦久,あいだ　よしひさ,m,1977
 小林 直之,こばやし なおゆき,m
 小野辺 美智子,おのべ みちこ,f
+和田 三造,わだ さんぞう,m,1883-1967,Painter
 真美,まさみ,f
 真美,まさみ,f
 由佳,よしか,f
@@ -13,7 +14,7 @@
 純子,じゅんこ,f
 十市 新二郎,とおち しんじろう,m
 十市,といち,s
-澗泉,たにいずみ,m+dict,1933-2017,correct kanji is actually 月 not 日
+澗泉,たにいずみ,m+dict,1933-2017 # correct kanji is actually 月 not 日
 たに泉,たにいずみ,m,1933-2017
 金原 明善,きんぱら　めいぜん,m,1832-1923
 岩佐 大輝,いわさ ひろき,m,1977-,Businessman and author
@@ -28,7 +29,7 @@
 桜木 紀子,さくらぎ　のりこ,pseudo,,Author
 中村 貴美子,なかむら　きみこ,pseudo,,Author
 中村 寿子,なかむら　ひさこ,pseudo,,Author
-中村 壽子,なかむら　ひさこ,pseudo,,Author (variant) 
+中村 壽子,なかむら　ひさこ,pseudo,,Author # variant kanji
 山田 あき子,やまだ　あきこ,pseudo,,Author
 原 正彦,はら　まさひこ,m,,Author & doctor
 出口 汪,でぐち　ひろし,m,1955-,Author & professor
@@ -44,7 +45,7 @@
 紀好,きよし,m+dict
 大樹,だいき,m+dict
 みさき,みさき,f+dict
-昌奎,ちゃんきゅ,m+dict,,Chang Kyu
+昌奎,ちゃんきゅ,m+dict,#Chang Kyu
 晋子,ゆきこ,f
 晋子,くにこ,f+dict
 究,きわむ,m
@@ -271,11 +272,11 @@
 左,ずお,surname
 東 直生,ひがし　ただお,,1959-
 前川 幸市,まえかわ　こういち
-松風 直美,しょうふう　なおみ,f,,possibly penname
+松風 直美,しょうふう　なおみ,f # possibly penname
 小澤 康麿,おざわ　やすまろ,m,1955-
 桒原 淑男,くわばら　よしお
 直生人,なおと,m
-亀井　靜香,かめい　しずか,m,1936-,politican (old kanji)
+亀井　靜香,かめい　しずか,m,1936-,Politican # old kanji
 出井 知恵子,いずい　ちえこ,f,1929-1986
 向井　慧,むかい　さとし,m,1985-
 都築 拓紀,つづき ひろき,m,1997-
@@ -505,7 +506,7 @@
 荒武,あらたけ,surname
 村瀬,むらせ,surname
 児玉,こだま,surname
-鄭 蘭貞,てい　らんてい,f,1565-,Jeong Nan-jeong
+鄭 蘭貞,てい　らんてい,f,1565- # Jeong Nan-jeong
 常喜　章弘,じょうぎ　あきひろ,m
 井嶋,いじま,surname
 若狭,わかさ,surname
@@ -633,9 +634,9 @@
 髙橋,たかはし,surname
 
 # Fictional
-風野 灯織,かざの　ひおり,f+fictional,,Idolmaster
-鹿目 まどか,かなめ　まどか,f+fictional
-暁美 ほむら,あけみ　ほむら,f+fictional
+風野 灯織,かざの　ひおり,f+fictional,,Fictional character (Idolmaster)
+鹿目 まどか,かなめ　まどか,f+fictional,,Fictional character
+暁美 ほむら,あけみ　ほむら,f+fictional,,Fictional character
 
 # News authors
 飯田 一史,いいだ　いちし,m
@@ -652,6 +653,39 @@
 森川 天喜,もりかわ あき,m
 大坂 直樹,おおさか なおき,m
 
+# Rare names found via some app
+地名,ちめい,s+dict,,Rare (10 people)
+林檎,りんご,s+dict,,Rare (20 people)
+樵,きこり,s+dict,,Rare (40 people)
+兄父,けいふ,s+dict,,Rare (50 people)
+鴨脚,いちょう,s+dict,,Rare (60 people)
+息,いき,s+dict,,Rare (70 people)
+父母,ふぼ,s+dict,,Rare (80 people)
+田舎,いなか,s+dict,,Rare (90 people)
+狼,おおかみ,s+dict,,Rare (100 people)
+煙草,たばこ,s+dict,,Rare (110 people)
+竹ノ子,たけのこ,s+dict,,Rare (120 people)
+温泉,おんせん,s+dict,,Rare (130 people)
+満月,まんげつ,s+dict,,Rare (140 people)
+黒板,こくばん,s+dict,,Rare (150 people)
+日本,にっぽん,s+dict,,Rare (160 people)
+留守,るす,s+dict,,Rare (170 people)
+観音,かんのん,s+dict,,Rare (180 people)
+部屋,へや,s+dict,,Rare (200 people)
+櫻,さくら,s+dict,,Rare (220 people)
+魚屋,うおや,s+dict,,Rare (250 people)
+一言,ひとこと,s+dict,,Rare (270 people)
+炭屋,すみや,s+dict,,Rare (280 people)
+明治,めいじ,s+dict,,Rare (300 people)
+簾,すだれ,s+dict,,Rare (380 people)
+七夕,たなばた,s+dict,,Rare (390 people)
+金持,かねもち,s+dict,,Rare (400 people)
+地蔵,じぞう,s+dict,,Rare (440 people)
+敷島,しきしま,s+dict,,Rare (510 people)
+和歌,わか,s+dict,,Rare (520 people)
+王子,おうじ,s+dict,,Rare (670 people)
+木ノ本,きのもと,s+dict,,Rare (210 people)
+
 # 月曜から夜ふかし
 小豆,あずき,f,2010-
 麦田,むぎた,m,2000-
@@ -661,13 +695,13 @@
 海上　知哉,うなかみ　ともや,m
 海上,かいじょう,surname
 田畑　耕作,たばた　こうさく,m
-仮名　尊,かりな　たける,m,,<<20 people
+仮名　尊,かりな　たける,m # <<20 people
 いく子,いくこ,f
-紙子　健太郎,かみこ　けんたろう,m,,<100 people
+紙子　健太郎,かみこ　けんたろう,m # <100 people
 筑波　大,つくば　だい,m
-結束　好,けっそく　このむ,m,,assumed male
+結束　好,けっそく　このむ,m # assumed male
 伏見　寅威,ふしみ　とらい,m
-本間　かよ,ほんま　かよ,f
+本間　かよ,ほんま　かよ,f,,Real name!
 会　愛,あい　あい,f
 佐藤　敏夫,さとう　としお,m
 武政　武子,たけまさ　たけこ,f
@@ -679,6 +713,6 @@
 野口　裕美,のぐち　ひろみ,m,1970-
 野口　浩美,のぐち　ひろみ,f,1970-
 花澤　薫,はなざわ　かおる,m,1970-
-花澤　薫,はなざわ　かおる,m,1970-,couple with same kanji
+花澤　薫,はなざわ　かおる,f,1970- # couple with same kanji
 沼部　文彰,ぬまべ　ふみあき,m
 喜納　大作,きな　だいさく,m

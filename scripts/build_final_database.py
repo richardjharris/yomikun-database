@@ -1,19 +1,29 @@
 """
-Takes these inputs:
- 1) deduped Person data
- 2) deduped Name data (various name parts)
- 3) gender dictionary
- 4) gender ML model
-
-Produces data in a format suitable for database load:
-Name:
- ID, kaki, yomi, pos (sei/mei/unclas), male_people, female_people, total_people, gender_score, ml_gender_score,
-   from_year, to_year, normalised_romaji, confidence
-
- (confidence is based on count of people + whether those people are fictional or pen-names)
- (where kaki='*', yomi=kana, stats are aggregated for all uses of a particular yomi (regardless of written
-  style)
-
-People:
- sei (ID), mei (ID), birth_year, death_year, gender, authenticity (fictional/pseudo/real), sources
+Builds the final database which aggregates all data.
 """
+import sys
+import json
+import logging
+import os
+import time
+
+from yomikun.models import NameData
+from yomikun.loader import make_final_db
+
+LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
+logging.basicConfig(level=LOGLEVEL)
+
+start_time = time.monotonic()
+
+names = (NameData.from_dict(json.loads(line)) for line in sys.stdin)
+try:
+    make_final_db(names, db_out=sys.stdout)
+except KeyboardInterrupt:
+    logging.warning('Caught SIGINT, exiting')
+    pass
+except:
+    logging.exception('Error generating final DB')
+    sys.exit(1)
+
+elapsed = time.monotonic() - start_time
+print(f'Generated final database in {elapsed:.0f}s', file=sys.stderr)

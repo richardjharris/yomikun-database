@@ -113,4 +113,8 @@ for line in sys.stdin:
 
     #description = extract(data, 'itemDescription')
     #country_ = extract(data, 'countryLabel.value')
+
+    namedata.add_tag('person')
+    namedata.clean_and_validate()
+
     print(namedata.to_jsonl())
