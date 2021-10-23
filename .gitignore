@@ -7,6 +7,8 @@ __pycache__
 /*.egg-info
 .env
 
+.vscode
+
 # Build products
 *.jsonl
 !data/*.jsonl
