@@ -11,7 +11,9 @@ from yomikun.loader.aggregator import Aggregator
 from yomikun.loader.models import NamePosition
 from yomikun.utils.romaji import romaji_key
 
-# TODO skip jmnedict ?
+# TODO skip jmnedict ? - probably don't need to.
+# #    could use 'dict' count as reference when picking 'canonical' values
+# TODO use deduped people input?
 
 
 def make_romajidb(names: Iterable[NameData], db_out: TextIO):
@@ -32,7 +34,7 @@ def make_romajidb(names: Iterable[NameData], db_out: TextIO):
             # Generate romaji key
             kana = part.yomi
 
-            # XXX for some reason this contains katakana
+            # XXX for some reason this contains katakana (maybe not anymore?)
             kana = jcconv3.kata2hira(kana)
 
             romkey = romaji_key(romkan.to_roma(kana))
