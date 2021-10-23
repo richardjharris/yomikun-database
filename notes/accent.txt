@@ -1,0 +1,10 @@
+Pitch accent file (ACCDB\_unicode.csv)
+ - I don't think it's useful, no name data really.
+
+https://accent.u-biq.org/namae.html
+https://accent.u-biq.org/yuumeijin.html
+http://immanuel.sakura.ne.jp/hoby/osakaben/jinmei.htm
+  - OSAKA-BEN!
+
+For counting too:
+https://accent.u-biq.org/counter1.html
