@@ -6,14 +6,14 @@
 
 ## Current task
 
-Rebuilding all data, checking each step
-
- - rebuild gender/romaji dictionaries. check 'dict' tag!
-  - rebuild genderdb
-    - need to identify final_score (doing...)
-  - rebuild romajidb
-
   - final database build
+  - code is already there
+    - use deduped.json input
+    - AGGREGATE YO
+    - Build final jsonl
+    - Join with gender stuff
+    - DONE
+    - BIM BAM BOOM
 
 ## Use the Researchmap code in all importers
 

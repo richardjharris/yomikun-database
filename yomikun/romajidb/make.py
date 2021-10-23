@@ -14,6 +14,13 @@ from yomikun.utils.romaji import romaji_key
 # TODO skip jmnedict ? - probably don't need to.
 # #    could use 'dict' count as reference when picking 'canonical' values
 # TODO use deduped people input?
+#      - this will lose some records: if a name has 1 xx-romaji entry and
+#        a few non-xx-romajis, we will ignore the whole name because the
+#        deduped entry will have xx-romaji.
+#      - some names will no longer have a 'canonical' reading. I'd say that
+#        giving wikipedia more weight than say, jmnedict is a good idea anyway
+#
+# Conclusion: don't use deduped input.
 
 
 def make_romajidb(names: Iterable[NameData], db_out: TextIO):
