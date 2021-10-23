@@ -7,9 +7,11 @@
 小林 直之,こばやし なおゆき,m
 小野辺 美智子,おのべ みちこ,f
 和田 三造,わだ さんぞう,m,1883-1967,Painter
+亘洋,こうよう,m
 真美,まさみ,f
 真美,まさみ,f
 由佳,よしか,f
+厚子,あつこ,f
 麻理佳,まりか,f
 純子,じゅんこ,f
 十市 新二郎,とおち しんじろう,m
@@ -83,6 +85,7 @@
 和樹,かずき,f
 慶喜,よしのぶ,m,1837-1913
 谷川 治恵,たにかわ　はるえ,f,1954-
+音喜多 由梨香,おときた ゆりか,f,1985-,Politician
 優花,ゆうか,f
 知念,ちねん,s
 満梨奈,まりな,f
@@ -141,10 +144,33 @@
 早石,はやいし,s
 柳元,やなぎもと,s
 朴,ぼく,s
+金,じん,s+dict
+陳,ちぇん,s+dict
+悦,ゆえ,given+dict
+仁奈,にな,f+dict
+重文,しげのり,m+dict  # possibly Chinese
 松渕,まつぶち,s
 笹井,ささい,s
+光象,こうぞう,m+dict
+十味,とおみ,f+pseudo
+逢坂,おうさか,surname+dict,,おおさか is also possible.
 齊藤,さいとう,surname
+藤澤,ふじさわ,surname
+丸上,まるかみ,surname+dict
+洸哉,こうや,m+dict
+彰伍,しょうご,m+dict
+翔之,しょうじ,m+dict
+宗篤,そうとく,m+dict
+添祥多,しょうた,m+dict
+髙砂,たかさご,surname+dict
+立昌,りゅうすけ,m+dict
+興太,こうた,m+dict
+齊藤 隆夫,さいとう たかを,m,1936-2021,Manga artist
+福田　代造,ふくだ　だいぞう,m,1879-
+伊部 庄藏,いべ　しょうぞう,m,1854-
+暢一朗,ちょういちろう,m  # unusual ろう kanji
 磯野,いその,s
+伊波,いは,s,,Okinawan name pronounced イファ
 座本,ざもと,surname
 梶本,かじもと,surname
 濱村,はまむら,surname

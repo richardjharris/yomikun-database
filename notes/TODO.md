@@ -6,12 +6,17 @@
 ## Current task
 
  - extracting gender/dob from seijiyama (done)
-  -> join into results, generate anonymised JSONL
+  -> join into results, generate anonymised JSONL (done)
+  -> remove exact-name duplicates, preserving card info
+     confirm: 三河 明史 (3 records, one card info - m)
+     三沢 公雄 (3 records, no card info)
+     三次 由梨香 (2 records, one card info - f/1992)
 
  - There are some bogus 2021 values (due to missing DOB data) that should
    be ignored.
 
- - researchmap is almost done but has 2.8k errors (skim them)
+ - Ignore entries with no kana
+
 
  - reruns: wikipedia_en, _ja, wikidata (?) etc. ja parser has new categories for women.
    wikidata has bracket stripping. wikidata+wiki_en have romaji improvements.

@@ -21,9 +21,9 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test prep
+.PHONY: all clean test prep prep-perl
 
-JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap
+JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
 db/gender.jsonl db/gender.weights &: db/people.jsonl data/name_lists.json
@@ -44,6 +44,9 @@ prep:
 	pip install wheel
 	pip install -r requirements.txt
 
+prep-perl:
+	cpanm MediaWiki::DumpFile::FastPages JSON::XS
+
 db/people.jsonl: ${JSONLFILES}
 	${CAT} $^ | python scripts/person_dedupe.py > $@
 
@@ -58,7 +61,7 @@ data/jawiki.xml.bz2:
 	curl https://dumps.wikimedia.org/jawiki/latest/jawiki-latest-pages-meta-current.xml.bz2 -o $@
 
 # We pre-filter the wikipedia XML dump for articles likely to be Japanese names
-# and also convert the XML to JSON. Takes ~2 hours.
+# and also convert the XML to JSON. Takes ~1 hour.
 # After this, the dump can be deleted (or replaced with an empty file)
 data/enwiki-nihongo-articles.gz: data/enwiki.xml.bz2
 	${BZCAT} data/enwiki.xml.bz2 | perl scripts/parse_mediawiki_dump_fast.pl |\
@@ -77,7 +80,7 @@ data/romajidb.tsv.gz:
 	${CAT} jsonl/* | python scripts/build_romajidb.py | gzip -9f > $@
 
 jsonl/wikipedia_en.jsonl: data/enwiki-template-only.gz
-	${ZCAT} data/enwiki-nihongo-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
+	${ZCAT} $< | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
 
 jsonl/wikipedia_ja.jsonl: data/jawiki-articles.gz
 	${ZCAT} data/jawiki-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_ja.py > $@
@@ -91,11 +94,12 @@ jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
 jsonl/custom.jsonl: data/custom.csv
 	python scripts/parse_custom_data.py < $< > $@
 
+# Anonymise names
+jsonl/researchmap.jsonl jsonl/seijiyama.jsonl: jsonl/%.jsonl: data/%.jsonl
+	python scripts/split_names.py < $< | sort > $@
+
 data/researchmap.jsonl:
 	${ZCAT} data/researchmap.gz | ${PARALLEL} python scripts/import_researchmap.py > $@
-
-jsonl/researchmap.jsonl: data/researchmap.jsonl
-	cp $^ $@
 
 jsonl/jmnedict.jsonl:
 	python scripts/parse_jmnedict.py > $@

@@ -12,14 +12,14 @@ sei_pat = fr'(?:[{sei_chars}]+|{sei_with_kana})'
 """
 Pattern for characters used in given names
 """
-mei_pat = fr'[{sei_chars}' + r'\p{Hiragana}\p{Katakana}]+'
+mei_pat = fr'[{sei_chars}' + r'\p{Hiragana}\p{Katakana}ー]+'
 
 """
 Pattern for a full written name. We focus on names with kanji surnames.
 """
 name_pat = fr'{sei_pat}\s*{mei_pat}'
 
-hiragana_pat = r'\p{Hiragana}+'
+hiragana_pat = r'[\p{Hiragana}ー]+'
 
 """
 Pattern for a full name reading.

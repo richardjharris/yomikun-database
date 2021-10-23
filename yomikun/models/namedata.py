@@ -58,6 +58,12 @@ class NameData():
         nd.add_tag('person')
         return nd
 
+    def set_name(self, kaki: str, yomi: str):
+        self.kaki = kaki
+        self.yomi = yomi
+        self.clean()
+        return self
+
     def add_subreading(self, subreading: NameData):
         """
         Add a subreading.
@@ -77,6 +83,12 @@ class NameData():
     def remove_tag(self, tag: str):
         if tag in self.tags:
             self.tags.remove(tag)
+        return self
+
+    def remove_tags(self, *tags):
+        for tag in tags:
+            if tag in self.tags:
+                self.tags.remove(tag)
         return self
 
     def has_tag(self, tag: str):
@@ -126,6 +138,34 @@ class NameData():
     def clone(self) -> NameData:
         # Use our existing JSONL serialization rather than coding the logic again.
         return NameData.from_jsonl(self.to_jsonl())
+
+    def split(self) -> tuple[NameData, NameData]:
+        """
+        Split this NameData object into two (surname + given name components).
+        This object must be a person with two name parts, and no subreadings,
+        otherwise ValueError will be raised.
+        """
+        if not self.is_person():
+            raise ValueError("split(): NameData must be a person")
+        if self.subreadings:
+            raise ValueError("split(): NameData must not have any subreadings")
+        if len(self.kaki.split()) == 1:
+            # Even though it's tagged as a person, the kanji is not split into two
+            raise ValueError("split(): NameData kaki is not split")
+
+        self.clean_and_validate()
+
+        sei_kaki, mei_kaki = self.kaki.split()
+        sei_yomi, mei_yomi = self.yomi.split()
+
+        mei_tag = self.gender() or 'given'
+
+        sei = self.clone().set_name(sei_kaki, sei_yomi) \
+            .remove_tags('person', 'masc', 'fem', 'given').add_tag('surname')
+        mei = self.clone().set_name(mei_kaki, mei_yomi) \
+            .remove_tags('person', 'given').add_tag(mei_tag)
+
+        return (sei, mei)
 
     def clean(self):
         """
@@ -318,3 +358,13 @@ def test_kana_validation():
     nd = NameData('心', 'ココロ', tags=['given'])
     with pytest.raises(ValueError, match=r'^Invalid yomi'):
         nd.validate()
+
+
+def test_split():
+    nd = NameData.person('黒澤 明', 'くろさわ あきら', tags=[
+                         'xx-romaji', 'masc'], source='wikipedia_en')
+    sei, mei = nd.split()
+    assert sei == NameData('黒澤', 'くろさわ', tags=[
+                           'surname', 'xx-romaji'], source='wikipedia_en')
+    assert mei == NameData(
+        '明', 'あきら', tags=['masc', 'xx-romaji'], source='wikipedia_en')

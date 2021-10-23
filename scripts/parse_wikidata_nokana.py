@@ -7,6 +7,7 @@ import format because I downloaded it directly from the web UI.
 """
 
 from __future__ import annotations
+import logging
 import sys
 import json
 import regex
@@ -61,6 +62,7 @@ for line in sys.stdin:
     romaji = ' '.join(reversed(romaji.split()))
 
     # TODO use messy parsing for now. Will re-run with improved dictionary later
+    # TODO should just use the same logic as researchmap
     kana = romaji_to_hiragana_messy(romaji, kanji)
 
     # Since we used the 'messy' method, no dictionary was consulted so the names
@@ -81,6 +83,8 @@ for line in sys.stdin:
         namedata.add_tag(tag)
 
     namedata.add_tag('person')
-    namedata.clean_and_validate()
-
-    print(namedata.to_jsonl())
+    try:
+        namedata.clean_and_validate()
+        print(namedata.to_jsonl())
+    except ValueError as e:
+        logging.error(f"Validation failure: {e}")

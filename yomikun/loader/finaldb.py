@@ -8,6 +8,7 @@ import logging
 import sys
 from typing import Iterable, TextIO, cast
 
+import regex
 import jcconv3
 import romkan
 
@@ -31,6 +32,10 @@ class AggregatedData():
         return self.hits_male + self.hits_female + self.hits_unknown
 
     def record_hit(self, part: NamePart, gender: Gender, name: NameData):
+        if name.has_tag('dict'):
+            # Does not count as a hit
+            return
+
         self._record_gender_hit(gender)
         self.years_seen.expand(name.lifetime)
         # TODO this should only apply to the particular part
@@ -65,10 +70,7 @@ def make_final_db(names: Iterable[NameData], db_out: TextIO):
         for part, gender in Aggregator.extract_name_parts(name):
             kana = part.yomi
 
-            # TODO jmnedict tags should not be respected.
-
-            # XXX for some reason this sometimes contains katakana
-            kana = cast(str, jcconv3.kata2hira(kana))
+            assert not regex.search(r'\p{Katakana}', kana)
 
             kaki = part.kaki
             pos = part.position
@@ -85,7 +87,6 @@ def make_final_db(names: Iterable[NameData], db_out: TextIO):
         row['yomi'] = kana
         row['pos'] = pos.name
 
-    # TODO: don't count 'dict' or 'jmnedict' entries
     # TODO: gender ML stuff (gender dict / gender ML)
     # TODO: people (de-duped Person data)
     # TODO: top5k stuff

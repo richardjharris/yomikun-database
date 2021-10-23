@@ -24,9 +24,9 @@ Some examples:
 # name after.
 honmyo_pats = [
     regex.compile(
-        fr"本名(?:は、?|、|\s|：|・)\s*({name_pat})\s*{name_paren_start}({reading_pat})[）\)、]"),
+        fr"本名(?:・旧芸名)?(?:は、?|、|\s|：|・)\s*({name_pat})\s*{name_paren_start}({reading_pat})[）\)、]"),
     regex.compile(
-        fr"本名(?:は、?|、|\s|：|・)\s*'''({name_pat})'''{name_paren_start}({reading_pat})[）\)、]"),
+        fr"本名(?:・旧芸名)?(?:は、?|、|\s|：|・)\s*'''({name_pat})'''{name_paren_start}({reading_pat})[）\)、]"),
 ]
 
 

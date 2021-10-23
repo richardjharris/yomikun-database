@@ -1,3 +1,4 @@
+from __future__ import annotations
 from operator import itemgetter
 from typing import cast
 
@@ -13,31 +14,47 @@ from yomikun.utils.split import split_kana_name, split_kanji_name, split_kanji_n
 from yomikun.utils.romaji import romaji_to_hiragana_fullname, romaji_to_hiragana_messy, romaji_to_hiragana_fullname_parts
 
 
-def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
+def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:
     """
     Parse a researchmap card (kana, kanji, english fields) and return
-    a NameData object. The NameData object may be empty if the input was
-    not a Japanese name.
-
-    Raises NotImplementedError for inputs we don't yet understand.
+    a NameData object, or None if we know the input is not a Japanese
+    name.
     """
+    data = _parse_researchmap_inner(kana, kanji, english)
+    if not data:
+        return
 
+    assert data.has_name()
+
+    # Normalise spaces etc.
+    data.clean()
+
+    # Fix some common errors
+    if data.kaki.startswith('金 ') and data.yomi.startswith('きm '):
+        data.yomi = data.yomi.replace('きm', 'きん')
+
+    data.yomi = data.yomi.replace('ヱ', 'ゑ')
+
+    data.source = 'researchmap'
+    data.add_tag('person')
+    data.clean_and_validate()
+
+    return data
+
+
+def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | None:
     """
-    Formats:
-     - kana, kanji (w/ spaces), english [in caps or not]
-     - kana is sometimes missing or ==kanji or ==romaji reversed, have to use romaji
-       - romaji is sometimes reverse order
+    This code does the hard work of figuring out what fields correspond to what name
+    parts (if out of order), mapping romaji to kana, splitting kanji names that aren't
+    split, reversing names if in reverse order.
 
-     - Chinese names are difficult: ['', '徐 ぎゅう', 'Qiu Xu']  ['', '李 鯤', 'Kun Li']
-     - Many other errors, e.g. '望 岡亮介       望岡 亮介       Ryosuke Mochioka'
-     - Romaji conversion is hard
+    Romaji conversion is particularly hard due to ambiguities:
        加来 洋 Yo Kaku        (=you)
        伊藤 桃代  Momoyo Ito  (=itou)
        井草 剛 IGUSA GO       (=gou)
-
-     - Romaji dash: ヤマシタ ヨウイチ       山下 洋市       YO-ICHI YAMASHITA
-       also used as a '
-       タダキ シンイチ 只木 進一       Shin-ichi TADAKI
+    We handle this by producing a RomajiDB that maps normalised romaji (e.g. all long
+    vowels removed) and kanji to a list of possible kana names. This data is produced
+    from reliable sources such as Wikipedia.
     """
     raw_data = (kana, kanji, english)
     logging.debug(f"Parsing {raw_data}")
@@ -50,13 +67,14 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
     english = regex.sub(r'^([A-Z][a-z]+)([A-Z][a-z]+)$', r'\1 \2', english)
     # ... and firstnameLASTNAME
     english = regex.sub(r'^([A-Za-z][a-z]+)([A-Z]+)$', r'\2 \1', english)
+    english = english.replace('ｰ', '-')
     english = english.lower()
 
     kanji_ok = regex.fullmatch(name_pat, kanji)
     if not kanji_ok:
         # Records without kanji in the second field are generally non-Japanese
         logging.debug("Rejecting (not kanji_ok)")
-        return NameData()
+        return
 
     # Convert half-width
     if kana:
@@ -70,7 +88,7 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
     if kana == 'no data' or kana == 'no date':
         # These records never contain any readings.
         logging.debug("Rejecting (no data)")
-        return NameData()
+        return
 
     if regex.match(r'^\p{Hiragana}+\s+\p{Hiragana}+$', kana):
         # Most common case: kana is as expected
@@ -97,7 +115,7 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
     if not regex.search('[a-z]', kana + english):
         # Neither field contains romaji
         logging.debug("Rejecting (no romaji)")
-        return NameData()
+        return
 
     # If both fields are romaji then the 'kana' entry tends to be
     # in Japanese name order while the 'english' entry tends to be
@@ -117,7 +135,7 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData:
             # Could not convert to kana - probably a non-Japanese name.
             # (allow w (~ow), h as in 'oh', and 'm' (n).
             logging.debug("Rejecting (non-japanese name?)")
-            return NameData()
+            return
 
         # May need to split the kanji (rare)
         new_kanji = split_kanji_name_romaji(kanji, romaji)
@@ -264,5 +282,7 @@ tests = [
 @ pytest.mark.parametrize('test', tests, ids=lambda x: x[0][1])
 def test_parse_researchmap(test):
     test_args, expected_kaki, expected_yomi = test
-    result = parse_researchmap(*test_args).remove_xx_tags()
-    assert result == NameData(expected_kaki, expected_yomi)
+    result = parse_researchmap(*test_args) or NameData(source='researchmap')
+    result.remove_xx_tags()
+    assert result == NameData(
+        expected_kaki, expected_yomi, source='researchmap')

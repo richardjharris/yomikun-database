@@ -50,7 +50,12 @@ for row in reader:
         namedata.add_tag('person')
 
     if row['lifetime']:
-        birth, death = row['lifetime'].split('-')
+        try:
+            birth, death = row['lifetime'].split('-')
+        except ValueError:
+            birth = row['lifetime']
+            death = ''
+
         if len(birth):
             namedata.lifetime.birth_year = int(birth)
         if len(death):

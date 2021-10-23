@@ -25,6 +25,14 @@ in the original romaji, e.g. if macrons are used they'll be respected.
    kana is large instead. But equally we could romaji_key ryo -> riyo
    to handle this.
 
+## Okinawan names
+
+https://www.shurei.com/
+
+## Nagoya who's-who database
+
+https://jahis.law.nagoya-u.ac.jp/who/search  (multiple editions)
+
 ## Wikipedia JA gender
 
 If we compute all subcategories belonging to the root 'Japanese women'
@@ -45,17 +53,8 @@ Could develop a crawler + extractor for these.
 
 * http://sakurashigikai.gijiroku.com/g07_giinlistP.asp - lots of these, doing some
 * https://oneosaka.jp/member/
-* https://seijiyama.jp/area/table/3811/B0qbJG/M?S=rcla2ldnbk - 1.3M records (or 1368 fetches)
-
- Just do https://seijiyama.jp/area/table/3811/B0qbJG/M?detect=%94%BB%92%E8&_limit_13878=100&S=rcla2ldnbk&_page_13878=1
-   with each page
-   Then parse out
-   Sub-pages have age, gender.
-   Some are dupes (しまじり　あいこ has 3 entries). Some have no furigana.
-
- * https://www.wasedarugby.com/member_list/
-
- * http://kazina.com/dummy/
+* https://www.wasedarugby.com/member_list/
+* http://kazina.com/dummy/
  
 
 ## Other name data (?)

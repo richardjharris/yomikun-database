@@ -12,7 +12,7 @@ ignore_words = [
     '地球',
     '組合',
 ]
-ignore_words_pat = regex.compile(r"(\L<words>|の乱$)", words=ignore_words)
+ignore_words_pat = regex.compile(r"\L<words>", words=ignore_words)
 
 
 """
@@ -65,6 +65,8 @@ def should_ignore_name(kaki: str) -> bool:
         return True
     elif ignore_words_pat.search(mei):
         return True
+    elif regex.match(r"^.*の\s*[乱炎]$", kaki):
+        return True
     else:
         return False
 
@@ -73,3 +75,9 @@ def test_ignore():
     assert should_ignore_name("上宮 高等学校")
     assert should_ignore_name("李 施愛の乱")
     assert should_ignore_name("飛騨 信用組合")
+    assert should_ignore_name("藤原是助の 乱")
+    assert should_ignore_name("欲望の 炎")
+
+
+def test_allow():
+    assert not should_ignore_name("田中 義明")

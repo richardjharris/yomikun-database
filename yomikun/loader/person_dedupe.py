@@ -1,6 +1,8 @@
 from collections import defaultdict
 import logging
 
+from more_itertools import first
+
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData
 
@@ -88,6 +90,9 @@ class PersonDedupe():
 
         # Pick a source
         merged.source = self.best_source(list(p.source for p in people))
+
+        # Pick notes
+        merged.notes = first((p.notes for p in people if p), '')
 
         # Return the deduplicated record
         logging.info("Merged into 1 record")

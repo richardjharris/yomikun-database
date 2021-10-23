@@ -27,15 +27,15 @@ for line in sys.stdin:
         kanji = parts[1]
         english = parts[2] if len(parts) == 3 else ''
 
-        data = parse_researchmap(kana, kanji, english)
-        if data.has_name():
-            data.source = 'researchmap'
-            data.add_tag('person')
+        if data := parse_researchmap(kana, kanji, english):
             print(data.to_jsonl())
             parsed += 1
     except NotImplementedError:
         logging.error(f"Failed to parse {parts}", exc_info=True)
         logging.error('-----')
+        errors += 1
+    except ValueError as e:
+        logging.error(f"Failed to validate {parts}: {e}")
         errors += 1
     except Exception:
         logging.exception(f'Error when parsing {parts}')
