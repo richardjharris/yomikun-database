@@ -43,8 +43,6 @@ class AggregatedData():
             # Does not count as a hit
             return
 
-        print(part, gender, name)
-
         self._record_gender_hit(gender)
         self.years_seen.expand(name.lifetime)
         # TODO this should only apply to the particular part
