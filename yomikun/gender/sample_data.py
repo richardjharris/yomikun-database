@@ -1,6 +1,6 @@
 """
 Sample gender/kanji data. This has not currently been integrated into
-the ML model, but is useful for sanity checking.
+the ML model, but could be useful for checking.
 """
 
 # First two rows are popular ones, 3 are 個性的, rest are supplementary

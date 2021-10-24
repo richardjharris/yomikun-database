@@ -29,12 +29,12 @@ JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 db/gender.jsonl: db/deduped.jsonl data/name_lists.json
 	python scripts/build_gender_db.py < $< > $@
 
-#db/names.sqlite: ${JSONLFILES} db/people.jsonl
-#	${CAT} $^ | python scripts/load_data.py $@
+db/final.jsonl: db/deduped.jsonl
+	python scripts/build_final_database.py < $< > $@
 
 clean:
 	rm -f ${JSONLFILES}
-	rm -f db/people.jsonl db/names.sqlite
+	rm -f db/deduped.jsonl db/final.jsonl
 
 test:
 	pytest

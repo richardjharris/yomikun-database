@@ -3,7 +3,6 @@ Parser for Japanese Wikipedia articles.
 """
 from __future__ import annotations
 import logging
-from sys import exec_prefix
 
 import regex
 from mediawiki_dump.tokenizer import clean
@@ -29,6 +28,7 @@ def parse_article_text(title: str, content: str) -> NameData:
 
     `title` is used for logging.
     """
+
     # To speed things up we limit how much of the document we search.
     excerpt = content[0:10_000]
 
@@ -153,7 +153,10 @@ def add_category_data(reading: NameData, content: str):
                 regex.search(r'^日本の女子.*選手$‎', category):
             if category != '日本の女子サッカー':
                 reading.add_tag('fem')
-        elif regex.search(r'(日本の男性|日本の男優|日本の男子)', category):
+        elif regex.search(r'(日本の男性|日本の男子)', category):
+            reading.add_tag('masc')
+        elif regex.search(r'(日本の男優)', category) and not reading.has_tag('fem'):
+            # There are some false positives here (or rather women performing male roles?)
             reading.add_tag('masc')
 
         # TBD 架空 by itself may be enough
@@ -208,6 +211,11 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     This examines both the article Infobox and an early line of text that
     contains the name in bold followed by the reading in round brackets.
     """
+    if ':' in title:
+        # 1,500+ Template/Talk/Project/User pages have extractable names
+        logging.debug(f"Skipping '{title}' (not an article page)")
+        return
+
     box_data = parse_infoboxes(extract_infoboxes(content)).clean()
     article_data = parse_article_text(title, content).clean()
 
@@ -236,7 +244,7 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     for s in namedata.subreadings:
         s.add_tag('person')
 
-    namedata.clean_and_validate()
+    # namedata.clean_and_validate()
 
     return namedata
 

@@ -11,7 +11,7 @@ import json
 import sys
 import logging
 from yomikun.models import NameData
-from yomikun.gender import make_gender_dict
+from yomikun.gender.make import make_gender_dict
 
 NAME_LISTS_JSON = 'data/name_lists.json'
 GENDER_WEIGHTS_OUT = 'db/gender.weights'

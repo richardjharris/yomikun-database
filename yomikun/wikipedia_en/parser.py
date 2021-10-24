@@ -22,7 +22,6 @@ TODO: Natsume Soseki
 from __future__ import annotations
 import logging
 import enum
-import sys
 from yomikun.wikipedia_ja.ignore import should_ignore_name
 
 import regex

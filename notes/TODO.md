@@ -6,14 +6,10 @@
 
 ## Current task
 
-  - final database build
-  - code is already there
-    - use deduped.json input
-    - AGGREGATE YO
-    - Build final jsonl
-    - Join with gender stuff
-    - DONE
-    - BIM BAM BOOM
+ - Final database build
+
+- Later on, need to rebuild wikipedia-ja to exclude non-article pages.
+  - Check the same for english (35 such articles)
 
 ## Use the Researchmap code in all importers
 

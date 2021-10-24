@@ -15,6 +15,10 @@ from mediawiki_dump.reader import DumpReaderArticles
 
 from yomikun.wikipedia_ja.parser import parse_wikipedia_article
 
+import traceback
+import warnings
+import sys
+
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
 
