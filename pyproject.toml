@@ -1,3 +1,10 @@
 [tool.vulture]
 ignore_names = ["test_*", "pytest*"]
 paths = ["tests", "scripts", "yomikun"]
+
+[tool.pytest.ini_options]
+# Allow generated tests use readable Unicode names
+disable_test_id_escaping_and_forfeit_all_rights_to_community_support = true
+# Search for module-inline tests
+python_files = "*.py"
+addopts = "--ignore=setup.py --ignore=scripts"
