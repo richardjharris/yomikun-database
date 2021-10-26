@@ -21,7 +21,7 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test prep prep-perl
+.PHONY: all clean test prep prep-perl deadcode cover
 
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
@@ -39,10 +39,23 @@ clean:
 test:
 	pytest
 
+cover:
+	coverage run -m pytest
+	coverage html
+	(sleep 1 && xdg-open http://localhost:8111) & python -m http.server --directory htmlcov 8111
+
 prep:
 	# Wheel is required for jamdict-data
 	pip install wheel
 	pip install -r requirements.txt
+	# Optional
+	pip install coverage vulture
+
+deadcode: vulture-whitelist
+	vulture vulture-whitelist
+
+vulture-whitelist:
+	-vulture --make-whitelist > $@
 
 prep-perl:
 	cpanm MediaWiki::DumpFile::FastPages JSON::XS
