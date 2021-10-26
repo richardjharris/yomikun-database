@@ -1,25 +1,15 @@
 ## Sort of current task
 
- - Generate test database in zipped jsonl format
+ - SQLite database: 45M (with yomi index), 36M without
+  - 13M gzip9, 10M bz2, 9.2m xz
+  - Flutter can unpack xz files.
+
+  - JSONL file: 126M, 9.6M compressed
+
  - Make Flutter app load it
  - Make Flutter app use it
 
-## Sanity check on 春日
-
- namegen says: sei is かすが (C confidence) 100%
-               mei is 100% female, はるひ 58.6%, はるか 24.1%, かすが 17.2% (D confidence)
-
- our data:
-  - sei 0 results (not even from jmnedict?)
-  - mei かすが 36/24/82 results for various genders (?), a couple of はるか・はるひ
-
-Clearly wrong as the researchmap alone has a ton of surname entries (and one 'given')
-
-wikipedia\_ja.json is missing.
-
-## Current task
-
- - Final database build
+---
 
 - Later on, need to rebuild wikipedia-ja to exclude non-article pages.
   - Check the same for english (35 such articles)
