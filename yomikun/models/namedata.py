@@ -48,8 +48,6 @@ class NameData():
     notes: str = ''
 
     def __post_init__(self):
-        print(f"POST INIT {self}")
-
         # Do basic type checking, as dataclasses does not
         assert isinstance(self.subreadings, list)
 
@@ -255,20 +253,21 @@ class NameData():
         data = dataclasses.asdict(self)
 
         data['authenticity'] = data['authenticity'].name.lower()
-        for subreading in data['subreadings']:
-            subreading['authenticity'] = subreading['authenticity'].name.lower()
 
         if data['notes'] == '':
             del data['notes']
-
-        if not data['subreadings']:
-            del data['subreadings']
 
         if not self.lifetime:
             del data['lifetime']
 
         # Use list for tags as JSON has no set operator
-        data['tags'] = list(self.tags)
+        data['tags'] = list(data['tags'])
+
+        # Does not seem to recurse via asdict()
+        if not data['subreadings']:
+            del data['subreadings']
+        else:
+            data['subreadings'] = [x.to_dict() for x in self.subreadings]
 
         return data
 
