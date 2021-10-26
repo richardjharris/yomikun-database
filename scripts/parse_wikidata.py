@@ -99,7 +99,7 @@ for line in sys.stdin:
 
     namedata = NameData(kanji, kana, lifetime=lifetime,
                         source=f'wikidata:{item}', tags=['person'])
-    tags = []
+
     if tag := gender(extract(data, 'genderLabel.value')):
         namedata.add_tag(tag)
 

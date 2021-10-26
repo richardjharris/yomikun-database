@@ -107,7 +107,7 @@ def parse(data: dict) -> list[NameData]:
                         tags.add('given')
 
                 namedata = NameData(
-                    kanji, kana, tags=list(tags), source='jmnedict')
+                    kanji, kana, tags=tags, source='jmnedict')
 
                 if gloss.lifetime:
                     namedata.lifetime = gloss.lifetime
@@ -176,7 +176,7 @@ def test_given_name():
     result = parse(data)
     # Should ignore gender tag and add 'dict'
     assert result == [
-        NameData('愛', 'ゆき', tags=['given', 'dict'], source='jmnedict'),
+        NameData('愛', 'ゆき', tags={'given', 'dict'}, source='jmnedict'),
     ]
 
 
@@ -185,7 +185,7 @@ def test_surname():
         {'SenseGloss': [{'lang': 'eng', 'text': 'Saitou'}], 'name_type': ['surname']}]}
     result = parse(data)
     assert result == [
-        NameData('斎藤', 'さいとう', tags=['surname', 'dict'], source='jmnedict'),
+        NameData('斎藤', 'さいとう', tags={'surname', 'dict'}, source='jmnedict'),
     ]
 
 

@@ -41,18 +41,25 @@ class NameData():
 
     # Arbitrary tags assigned to the name. Used by JMNedict to mark
     # whether a name is a forename or a surname, etc.
-    tags: list[str] = dataclasses.field(default_factory=list)
+    tags: set[str] = dataclasses.field(default_factory=set)
 
     # Arbitrary notes. For person records, this indicates the type of person
     # e.g. (actor, musician, politician etc.)
     notes: str = ''
 
     def __post_init__(self):
+        print(f"POST INIT {self}")
+
         # Do basic type checking, as dataclasses does not
         assert isinstance(self.subreadings, list)
+
+        # Some tests create NameData with tags as a list
+        if isinstance(self.tags, list):
+            self.tags = set(self.tags)
+
         self.clean()
 
-    @classmethod
+    @ classmethod
     def person(cls, *args, **kvargs):
         nd = NameData(*args, **kvargs)
         nd.add_tag('person')
@@ -76,8 +83,7 @@ class NameData():
         self.add_subreading(honmyo)
 
     def add_tag(self, tag: str):
-        if tag not in self.tags:
-            self.tags.append(tag)
+        self.tags.add(tag)
         return self
 
     def remove_tag(self, tag: str):
@@ -104,7 +110,7 @@ class NameData():
         return 'person' in self.tags or (' ' in self.kaki and ' ' in self.yomi)
 
     def is_given_name(self):
-        # Yeah this is a mess
+        # Assumes is_person/is_surname already checked.
         return 'masc' in self.tags or 'fem' in self.tags or 'given' in self.tags
 
     def is_surname(self):
@@ -125,13 +131,10 @@ class NameData():
             return None
 
     def set_gender(self, new_gender: str | None):
-        if 'masc' in self.tags:
-            self.tags.remove('masc')
-        if 'fem' in self.tags:
-            self.tags.remove('fem')
+        self.remove_tags('masc', 'fem')
 
         if new_gender:
-            self.tags.append(new_gender)
+            self.add_tag(new_gender)
 
         return self
 
@@ -264,6 +267,9 @@ class NameData():
         if not self.lifetime:
             del data['lifetime']
 
+        # Use list for tags as JSON has no set operator
+        data['tags'] = list(self.tags)
+
         return data
 
     def to_jsonl(self) -> str:
@@ -283,6 +289,9 @@ class NameData():
                 lambda x: NameData.from_dict(x), data['subreadings']))
         if 'orig' in data:
             del data['orig']
+        if 'tags' in data and isinstance(data['tags'], list):
+            data['tags'] = set(data['tags'])
+
         return NameData(**data)
 
     @ classmethod
@@ -326,23 +335,23 @@ def test_normalise():
 def test_add_tag():
     nd = NameData('高次', 'こうじ')
     nd.add_tag('foo')
-    assert nd == NameData('高次', 'こうじ', tags=['foo'])
+    assert nd == NameData('高次', 'こうじ', tags={'foo'})
 
     nd.add_tag('bar')
-    assert nd == NameData('高次', 'こうじ', tags=['foo', 'bar'])
+    assert nd == NameData('高次', 'こうじ', tags={'foo', 'bar'})
 
 
 def test_remove_xx():
-    nd = NameData(tags=['xx-romaji', 'xx-split', 'foo'])
+    nd = NameData(tags={'xx-romaji', 'xx-split', 'foo'})
     nd.remove_xx_tags()
-    assert set(nd.tags) == {'foo'}
+    assert nd.tags == {'foo'}
 
 
 def test_pos_validation():
     with pytest.raises(ValueError, match=r'^Data should be tagged'):
         NameData('愛', 'あい').validate()
 
-    NameData('愛', 'あい', tags=['fem']).validate()
+    NameData('愛', 'あい', tags={'fem'}).validate()
 
 
 def test_kaki_validation():
@@ -358,16 +367,16 @@ def test_kaki_validation():
 
 
 def test_kana_validation():
-    nd = NameData('心', 'ココロ', tags=['given'])
+    nd = NameData('心', 'ココロ', tags={'given'})
     with pytest.raises(ValueError, match=r'^Invalid yomi'):
         nd.validate()
 
 
 def test_split():
-    nd = NameData.person('黒澤 明', 'くろさわ あきら', tags=[
-                         'xx-romaji', 'masc'], source='wikipedia_en')
+    nd = NameData.person('黒澤 明', 'くろさわ あきら', tags={
+        'xx-romaji', 'masc'}, source='wikipedia_en')
     sei, mei = nd.split()
-    assert sei == NameData('黒澤', 'くろさわ', tags=[
-                           'xx-romaji', 'surname'], source='wikipedia_en')
+    assert sei == NameData('黒澤', 'くろさわ', tags={
+                           'xx-romaji', 'surname'}, source='wikipedia_en')
     assert mei == NameData(
-        '明', 'あきら', tags=['xx-romaji', 'masc'], source='wikipedia_en')
+        '明', 'あきら', tags={'xx-romaji', 'masc'}, source='wikipedia_en')

@@ -85,7 +85,7 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
 
         kanji = split_kanji_name(kanji, kana)
 
-        namedata = NameData(kaki=kanji, yomi=kana, tags=['xx-romaji'])
+        namedata = NameData(kaki=kanji, yomi=kana, tags={'xx-romaji'})
         gender = Gender.unknown
 
         if regex.search(r'\bfictional\b', rest_of_line):
@@ -198,7 +198,7 @@ def test_basic():
         kaki='遠藤 章史',
         yomi='えんどう あきふみ',
         lifetime=Lifetime(1964),
-        tags=['xx-romaji', 'masc', 'person'],
+        tags={'xx-romaji', 'masc', 'person'},
         source='wikipedia_en:Akifumi Endo',
         notes='Voice actor who is affiliated with Troubadour Musique Office',
     ), 'extracts gender from category'
@@ -222,7 +222,7 @@ Murata was born on July 14, 1986, in [[Uozu, Toyama]].<ref>{{cite web|url=https:
         kaki='村田 顕弘',
         yomi='むらた あきひろ',
         lifetime=Lifetime(1986),
-        tags=['xx-romaji', 'masc', 'person'],
+        tags={'xx-romaji', 'masc', 'person'},
         source='wikipedia_en:Akihiro Murata',
         notes='Professional shogi player ranked 6-dan',
     ), 'extracts gender from text'
@@ -238,7 +238,7 @@ def test_nya_romaji():
         kaki='加藤 潤也',
         yomi='かとう じゅんや',
         lifetime=Lifetime(1994),
-        tags=['xx-romaji', 'masc', 'person'],
+        tags={'xx-romaji', 'masc', 'person'},
         source='wikipedia_en:Junya Kato',
         notes='Football player',
     ), 'should not convert to じゅにゃ'
@@ -263,7 +263,7 @@ In 2000, a 21-year-old campaign volunteer accused Yokoyama of [[sexual harassmen
         yomi='よこやま のっく',
         lifetime=Lifetime(1932, 2007),
         authenticity=NameAuthenticity.PSEUDO,
-        tags=['xx-romaji', 'masc', 'person'],
+        tags={'xx-romaji', 'masc', 'person'},
         source='wikipedia_en:Knock Yokoyama',
         notes='Politician and comedian',
     )
@@ -278,6 +278,6 @@ def test_allow_fictional_character_with_no_lifetime():
         yomi='しらぬい まい',
         authenticity=NameAuthenticity.FICTIONAL,
         source='wikipedia_en:foo',
-        tags=['xx-romaji', 'fem'],
+        tags={'xx-romaji', 'fem'},
         notes='Fictional character in the Fatal Fury and The King of Fighters series of fighting games by SNK'
     )

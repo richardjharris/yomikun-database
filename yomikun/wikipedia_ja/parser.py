@@ -197,7 +197,7 @@ def merge_namedata(box_data: NameData, article_data: NameData) -> NameData:
         result.lifetime = box_data.lifetime
 
     # Merge tags
-    result.tags = list(set(box_data.tags).union(article_data.tags))
+    result.tags = set(box_data.tags).union(article_data.tags)
 
     return result
 
@@ -273,5 +273,5 @@ def test_ref_in_first_line():
         yomi='すずおき ひろたか',
         lifetime=Lifetime(1950),
         source='wikipedia_ja:bar',
-        tags=['person'],
+        tags={'person'},
     )
