@@ -1,5 +1,8 @@
 """
-Builds the final database which aggregates all data.
+Builds the final database which aggregates all data, in JSONL format,
+to stdout.
+
+Requires deduped.json as input, and also uses db/gender.jsonl.
 """
 import sys
 import json
@@ -8,7 +11,7 @@ import os
 import time
 
 from yomikun.models import NameData
-from yomikun.loader import make_final_db
+from yomikun.loader.finaldb import make_final_db
 
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)

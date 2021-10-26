@@ -7,7 +7,7 @@ import logging
 import regex
 from mediawiki_dump.tokenizer import clean
 
-from yomikun.models import Reading, NameData, NameAuthenticity, Lifetime
+from yomikun.models import NameData, NameAuthenticity, Lifetime
 from yomikun.wikipedia_ja.ignore import should_ignore_name
 from yomikun.wikipedia_ja.infobox import extract_infoboxes, parse_infoboxes
 from yomikun.wikipedia_ja.honmyo import find_honmyo

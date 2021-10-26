@@ -25,7 +25,7 @@ class ListTitle(str, enum.Enum):
     MALE = 'Japanese masculine given names'
     FEMALE = 'Japanese feminine given names'
     UNISEX = 'Japanese unisex given names'
-    SURNAME = 'Japanese-language surnames'
+    #SURNAME = 'Japanese-language surnames'
 
 
 def load_name_lists(name_list_data: NameLists) -> dict[str, set[ListTitle]]:

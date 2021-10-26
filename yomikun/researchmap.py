@@ -282,7 +282,12 @@ tests = [
 @ pytest.mark.parametrize('test', tests, ids=lambda x: x[0][1])
 def test_parse_researchmap(test):
     test_args, expected_kaki, expected_yomi = test
-    result = parse_researchmap(*test_args) or NameData(source='researchmap')
-    result.remove_xx_tags()
-    assert result == NameData(
-        expected_kaki, expected_yomi, source='researchmap')
+    result = parse_researchmap(*test_args)
+
+    if expected_yomi == '' and expected_kaki == '':
+        assert result is None
+    else:
+        assert result is not None
+        result.remove_xx_tags()
+        assert result == NameData(
+            expected_kaki, expected_yomi, source='researchmap', tags=['person'])

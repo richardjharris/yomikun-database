@@ -20,7 +20,6 @@ from __future__ import annotations
 import logging
 import os
 import sys
-import json
 
 import yomikun.jmnedict
 import yomikun.utils.name_dict

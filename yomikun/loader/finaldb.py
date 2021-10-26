@@ -6,14 +6,10 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 import dataclasses
 import json
-import logging
-import sys
 from typing import Iterable, TextIO, cast
-from isc import keydict
 
 import regex
 import jcconv3
-import romkan
 from yomikun.gender.dict import GenderDict
 
 from yomikun.loader.aggregator import Aggregator, NamePart
@@ -21,7 +17,6 @@ from yomikun.loader.models import Gender, NamePosition
 from yomikun.models import NameData
 from yomikun.models.lifetime import Lifetime
 from yomikun.models.nameauthenticity import NameAuthenticity
-from yomikun.utils.romaji.helpers import romaji_key
 
 
 @dataclass
@@ -76,7 +71,9 @@ class AggregatedData():
         self.is_top5k = True
         self.population = population
 
+
 DictKey = tuple[str, str, NamePosition]
+
 
 def make_final_db(names: Iterable[NameData], db_out: TextIO):
     aggregated_data: dict[DictKey,

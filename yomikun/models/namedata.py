@@ -368,6 +368,6 @@ def test_split():
                          'xx-romaji', 'masc'], source='wikipedia_en')
     sei, mei = nd.split()
     assert sei == NameData('黒澤', 'くろさわ', tags=[
-                           'surname', 'xx-romaji'], source='wikipedia_en')
+                           'xx-romaji', 'surname'], source='wikipedia_en')
     assert mei == NameData(
-        '明', 'あきら', tags=['masc', 'xx-romaji'], source='wikipedia_en')
+        '明', 'あきら', tags=['xx-romaji', 'masc'], source='wikipedia_en')

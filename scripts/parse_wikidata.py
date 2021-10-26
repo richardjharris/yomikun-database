@@ -28,18 +28,6 @@ def extract(data: dict, path: str) -> str | None:
         return None
 
 
-def extract_string(data: str | dict) -> str | None:
-    if isinstance(data, dict):
-        if data.get('xml:lang') == 'ja':
-            return data['value']
-        else:
-            return None
-    elif isinstance(data, str):
-        return data
-    else:
-        return None
-
-
 def year(date: str | None):
     if date:
         if date.startswith('t'):

@@ -3,7 +3,7 @@ import copy
 from dataclasses import dataclass
 
 from yomikun.models import NameData, NameAuthenticity
-from yomikun.loader.models import Gender, Person, Name, Base, NamePosition
+from yomikun.loader.models import Gender, NamePosition
 
 
 @dataclass(frozen=True)
@@ -14,10 +14,6 @@ class NamePart:
 
 
 class Aggregator():
-    def __init__(self):
-        self._people = []
-        self._names = {}
-
     @staticmethod
     def copy_data_to_subreadings(data: NameData):
         """
@@ -34,60 +30,6 @@ class Aggregator():
                     subreading.source = data.source
                 if data.tags and not subreading.tags:
                     subreading.tags = data.tags
-
-    def ingest(self, data: NameData):
-        # Prepare data for ingestion
-        self.copy_data_to_subreadings(data)
-
-        if not data.tags:
-            # Assume full name
-            data.add_tag('person')
-
-        if 'person' in data.tags:
-            self.add_person(data)
-
-        for part, gender in self.extract_name_parts(data):
-            if part not in self._names:
-                self._names[part] = Name(
-                    kaki=part.kaki,
-                    yomi=part.yomi,
-                    position=part.position,
-                    earliest_year=data.lifetime.birth_year,
-                    latest_year=data.lifetime.death_year,
-                )
-            else:
-                self._names[part].record_year(data.lifetime.birth_year)
-                self._names[part].record_year(data.lifetime.death_year)
-
-            if data.source == 'jmnedict' and 'person' not in data.tags:
-                # Don't record non-person jmnedict entries as they are inaccurate.
-                pass
-            else:
-                self._names[part].record_sighting(data.authenticity)
-
-            # NOTE: if we see >0 sightings of both gender we mark the
-            # name as 'neutral' which may not be accurate in all cases.
-            if gender:
-                self._names[part].record_gender(gender)
-
-            if data.source == 'myoji-yurai-5000' and part.position == NamePosition.sei:
-                self._names[part].set_top5000()
-
-            for subreading in data.subreadings:
-                self.ingest(subreading)
-
-    def people(self):
-        return self._people
-
-    def names(self):
-        return self._names.values()
-
-    def add_person(self, data: NameData):
-        person = Person(kaki=data.kaki, yomi=data.yomi,
-                        birth_year=data.lifetime.birth_year,
-                        death_year=data.lifetime.death_year
-                        )
-        self._people.append(person)
 
     @staticmethod
     def extract_name_parts(data: NameData) -> list[tuple[NamePart, Gender | None]]:

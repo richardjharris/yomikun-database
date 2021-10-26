@@ -76,7 +76,7 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     Parse en.wikipedia article for names/readings and return the primary one.
     """
     if m := regex.search(NIHONGO_TEMPLATE_PAT, content, regex.S):
-        kanji, romaji, template_extra, rest_of_line = m.groups()
+        kanji, romaji, _template_extra, rest_of_line = m.groups()
 
         # Clean doesn't remove '' ... '' (??)
         romaji = regex.sub(r"^''(.*?)''$", r"\1", romaji)

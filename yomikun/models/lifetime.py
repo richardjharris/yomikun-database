@@ -20,18 +20,6 @@ class Lifetime():
     def __repr__(self):
         return f"<{self.birth_year or ''} ~ {self.death_year or ''}>"
 
-    def merge_in(self, other: Lifetime):
-        """
-        Fill missing data with data from another object.
-        """
-        # TODO if the other object is complete and we aren't, really
-        #      we should prefer the other object? Do we want to ensure
-        #      the other data matches first?
-        if self.birth_year is None:
-            self.birth_year = other.birth_year
-        if self.death_year is None:
-            self.death_year = other.death_year
-
     def expand(self, other: Lifetime):
         """
         Expand this lifetime so it uses `other`'s birth_year if it is earlier than

@@ -2,7 +2,7 @@ from __future__ import annotations
 from operator import itemgetter
 import re
 from dataclasses import dataclass, field
-from typing import Set, cast
+from typing import cast
 from yomikun.models.namedata import NameData
 from yomikun.utils.romaji import romaji_to_hiragana_messy
 
@@ -22,7 +22,6 @@ class JmneGloss:
     # some are like 'Sōkokurai Eikichi (sumo wrestler from Inner Mongolia, 1984-)' so
     # we also match on a preceding comma.
     DATE_SPAN_PAT = re.compile(fr'[\(, ]{DATE_PAT}-(?:{DATE_PAT})?\)')
-    NAME_PAT = re.compile(r'^(\w+ \w+)')
 
     name: str | None = None
     lifetime: Lifetime = field(default_factory=Lifetime)
@@ -186,7 +185,7 @@ def test_surname():
         {'SenseGloss': [{'lang': 'eng', 'text': 'Saitou'}], 'name_type': ['surname']}]}
     result = parse(data)
     assert result == [
-        NameData('斎藤', 'さいとう', tags=['dict', 'surname'], source='jmnedict'),
+        NameData('斎藤', 'さいとう', tags=['surname', 'dict'], source='jmnedict'),
     ]
 
 

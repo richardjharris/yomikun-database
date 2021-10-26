@@ -6,7 +6,6 @@ import json
 from functools import reduce
 import time
 import logging
-from typing import cast, Any
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 

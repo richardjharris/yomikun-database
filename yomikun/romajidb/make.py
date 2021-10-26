@@ -56,7 +56,8 @@ def make_romajidb(names: Iterable[NameData], db_out: TextIO):
         values = data[key]
         counts = collections.Counter(values)
         unique = _find_unique_reading(key, counts, values)
-        print(*key, unique or '', ','.join(sorted(counts.keys())), sep='\t')
+        print(*key, unique or '', ','.join(sorted(counts.keys())),
+              sep='\t', file=db_out)
 
 
 def _find_unique_reading(key, counts, values):

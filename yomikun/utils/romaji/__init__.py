@@ -82,50 +82,6 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
     # Otherwise give up, as the reading is ambiguous.
     return
 
-    """
-    if sei:
-        matches = NameDict.find_surname(kanji)
-    else:
-        matches = NameDict.find_given_name(kanji)
-
-    if not matches:
-        logging.debug('No matches, returning')
-        return
-
-    key = romaji_key(romaji)
-    hits = []
-    for match in matches:
-        if not any(kanji == k for k in match.kanji):
-            continue
-
-        for kana in match.kana:
-            match_key = romaji_key(romkan.to_roma(kana))
-            matches_target = romaji_key(romkan.to_roma(kana)) == key
-            if matches_target:
-                hits.append(kana)
-
-            logging.debug(
-                f"[rom->hira] input({romaji}, {kanji}, {'Sei' if sei else 'Mei'}, {key}) match({kana}, {match_key}) => {matches_target}")
-
-    # Pick the longest one (for now).
-    # However given the choice between おごお and おごう (-oo and -ou), pick -ou, as -oo
-    # seems very rare.
-    # TODO: (HACK!) this can go away once we use frequency information
-    if hits:
-        hits.sort(key=len, reverse=True)
-        best = hits[0]
-
-        # Prefer おごう over おごお
-        best_roma = romkan.to_roma(best)
-        if len(hits) > 1 and len(hits[0]) == len(hits[1]) and len(hits[0]) > 2 and best_roma[-1] == best_roma[-2]:
-            best = hits[1]
-
-        logging.debug(f"Returning {best} from {hits}")
-        return best
-    else:
-        return
-    """
-
 
 def test_hiragana_part():
     assert romaji_to_hiragana_part('Saito', '齋藤', sei=True) == 'さいとう'
