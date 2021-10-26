@@ -98,7 +98,7 @@ for line in sys.stdin:
                         year(extract(data, 'dod.value')))
 
     namedata = NameData(kanji, kana, lifetime=lifetime,
-                        source=f'wikidata:{item}', tags=['person'])
+                        source=f'wikidata:{item}', tags={'person'})
 
     if tag := gender(extract(data, 'genderLabel.value')):
         namedata.add_tag(tag)

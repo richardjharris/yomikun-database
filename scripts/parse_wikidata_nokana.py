@@ -77,7 +77,7 @@ for line in sys.stdin:
 
     # Include xx-romaji tag, as we only have romaji data
     namedata = NameData(kanji, kana, lifetime=lifetime,
-                        source=f'wikidata:{item}', tags=['xx-romaji'])
+                        source=f'wikidata:{item}', tags={'xx-romaji'})
 
     if tag := gender(data.get('genderLabel', None)):
         namedata.add_tag(tag)

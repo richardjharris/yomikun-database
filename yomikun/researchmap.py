@@ -190,7 +190,7 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | 
             logging.warning(warning)
         # TODO We tag xx-romaji even if only one part of the name was guessed; this
         #      can be fixed if we return 2 parts.
-        return NameData(kanji, kana, tags=['xx-romaji'])
+        return NameData(kanji, kana, tags={'xx-romaji'})
 
     raise NotImplementedError("don't know how to handle this")
 
@@ -290,4 +290,4 @@ def test_parse_researchmap(test):
         assert result is not None
         result.remove_xx_tags()
         assert result == NameData(
-            expected_kaki, expected_yomi, source='researchmap', tags=['person'])
+            expected_kaki, expected_yomi, source='researchmap', tags={'person'})
