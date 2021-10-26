@@ -26,11 +26,11 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
-db/gender.jsonl: db/deduped.jsonl data/name_lists.json
-	python scripts/build_gender_db.py < $< > $@
-
 db/final.jsonl: db/deduped.jsonl
 	python scripts/build_final_database.py < $< > $@
+
+db/gender.jsonl: db/deduped.jsonl data/name_lists.json
+	python scripts/build_gender_db.py < $< > $@
 
 clean:
 	rm -f ${JSONLFILES}

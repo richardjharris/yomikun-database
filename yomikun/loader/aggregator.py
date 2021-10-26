@@ -121,8 +121,7 @@ class Aggregator():
                 sei = NamePart(kaki=data.kaki, yomi=data.yomi,
                                position=NamePosition.sei)
                 parts.append((sei, None))
-
-            if set(data.tags).intersection({'masc', 'fem', 'given'}):
+            elif set(data.tags).intersection({'masc', 'fem', 'given'}):
                 gender = Aggregator.gender_from_tags(data.tags)
                 mei = NamePart(kaki=data.kaki, yomi=data.yomi,
                                position=NamePosition.mei)

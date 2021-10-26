@@ -58,6 +58,9 @@ class AggregatedData():
             self.hits_female += 1
         elif gender == Gender.unknown:
             self.hits_unknown += 1
+        elif gender == Gender.neutral:
+            # Both masc/fem tags
+            self.hits_unknown += 1
         else:
             raise Exception(f'Unknown Gender value: {gender}')
 
@@ -73,11 +76,9 @@ class AggregatedData():
         self.is_top5k = True
         self.population = population
 
+DictKey = tuple[str, str, NamePosition]
 
 def make_final_db(names: Iterable[NameData], db_out: TextIO):
-    genderdb = GenderDict()
-
-    DictKey = tuple[str, str, NamePosition]
     aggregated_data: dict[DictKey,
                           AggregatedData] = defaultdict(AggregatedData)
 
@@ -104,14 +105,20 @@ def make_final_db(names: Iterable[NameData], db_out: TextIO):
 
                 aggregated_data[key].mark_top5k(population)
 
+    _output_aggregated_data(aggregated_data)
+
+
+def _output_aggregated_data(aggregated_data: dict[DictKey, AggregatedData]):
+    genderdb = GenderDict()
+
     # Output aggregated data
     for key, aggregated in aggregated_data.items():
-        kaki, kana, pos = key
+        kaki, kana, part = key
 
         row = aggregated.to_dict()
         row['kaki'] = kaki
         row['yomi'] = kana
-        row['pos'] = pos.name
+        row['part'] = part.name
 
         if info := genderdb.lookup(kaki, kana):
             row.update(info.to_dict())
