@@ -6,6 +6,10 @@
 
   - JSONL file: 126M, 9.6M compressed
 
+ - To reduce size:
+   - ml\_score is 8 bytes, we basically only need 1 (a gender score from 0 to 255)
+   - top5k list should be on its own
+
  - Make Flutter app load it
  - Make Flutter app use it
 

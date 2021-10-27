@@ -38,6 +38,7 @@ cur.executescript("""
     ml_score REAL,
     PRIMARY KEY (kaki, yomi, part)
     );
+    CREATE INDEX names_yomi ON names (yomi);
 """)
 
 

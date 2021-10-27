@@ -1,6 +1,16 @@
 This lists stuff I don't have time to do now, but could look at in
 the future.
 
+## Names allowed in kanji
+
+https://namegen.jp/jinmei_moji.html
+
+ - would be interesting to generate a gender graph of these
+ - small kana are allowed
+ - other old kana (wo, we, wi) are allowed
+ - small wa is allowed
+ - ゝゞ are allowed
+
 ## More robust handling of 'yuhya'-type names
 
 Currently we use a manual dictionary to correct these.
