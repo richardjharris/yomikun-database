@@ -18,17 +18,16 @@ import sys
 import regex
 
 from yomikun.custom_data.importer import convert_to_hiragana
+from yomikun.models.lifetime import Lifetime
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData
 
-fields = ('kaki', 'yomi', 'tags', 'lifetime', 'extra')
+fields = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
 
 reader = csv.DictReader(sys.stdin, fields)
 
 for row in reader:
     kaki = row['kaki']
-    if not regex.match(r'^\p{Han}+(\s+\p{Han}+)?$', kaki):
-        raise ValueError(f'Invalid kaki value {kaki}')
 
     yomi = convert_to_hiragana(row['yomi'])
 
@@ -37,6 +36,7 @@ for row in reader:
 
     namedata = NameData(kaki, yomi)
 
+    # TODO write NameData.from_csv, else this can get out of sync if new fields are added
     if row['tags']:
         tags = row['tags'].split('+')
         for tag in tags:
@@ -55,16 +55,23 @@ for row in reader:
                 namedata.add_tag(tag)
 
     if row['lifetime']:
-        birth, death = row['lifetime'].split('-')
-        if len(birth):
-            namedata.lifetime.birth_year = int(birth)
-        if len(death):
-            namedata.lifetime.death_year = int(death)
+        years = row['lifetime'].split('-')
+        if len(years) > 0 and years[0]:
+            namedata.lifetime.birth_year = int(years[0])
+        if len(years) > 1 and years[1]:
+            namedata.lifetime.death_year = int(years[1])
+
+    if row['notes']:
+        namedata.notes = row['notes']
 
     namedata.source = 'custom'
 
     # Split person into two parts for anonymity
     if namedata.is_person():
+        for part in namedata.split():
+            print(part.to_csv())
+
+        """
         kaki_parts = namedata.kaki.split()
         yomi_parts = namedata.yomi.split()
         gender = namedata.gender()
@@ -77,5 +84,6 @@ for row in reader:
         namedata.kaki, namedata.yomi = kaki_parts[0], yomi_parts[0]
         namedata.remove_tag('given').add_tag('surname').set_gender(None)
         print(namedata.to_csv())
+        """
     else:
         print(namedata.to_csv())
