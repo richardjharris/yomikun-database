@@ -99,6 +99,8 @@ Could develop a crawler + extractor for these.
 ## Other name data (?)
 
 * https://pon-navi.net/nazuke/name/ranking
+* https://b-name.jp/
+* https://name-power.net/
 
 ## Tagging name splits
 
@@ -134,6 +136,9 @@ the majority.
  - categories (time / food / etc.)
  - rarity within category
  - implement tidy-up code and sanity checker
+
+ https://www.benricho.org/kazu/index.html
+ https://www.sanabo.com/kazoekata/
 
 ## Refactor
 

@@ -2,6 +2,9 @@
 
 """
 Parses en.wikipedia.org dump and extracts Japanese names, dates of birth and gender.
+
+Does not filter out 'User' pages as they contain good quality names, in some cases
+the only source for a particular name.
 """
 
 from __future__ import annotations

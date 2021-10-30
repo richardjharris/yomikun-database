@@ -1,22 +1,27 @@
-## Sort of current task
+## Current task
 
- - SQLite database: 45M (with yomi index), 36M without
-  - 13M gzip9, 10M bz2, 9.2m xz
-  - Flutter can unpack xz files.
+Building an SQLite database good enough to use with the app, ideally
+in 100MB or less.
 
-  - JSONL file: 126M, 9.6M compressed
+ - convert ml\_score to 1 byte (not 8)
+ - remove top5k
+ - add back birth years etc.
 
- - To reduce size:
-   - ml\_score is 8 bytes, we basically only need 1 (a gender score from 0 to 255)
-   - top5k list should be on its own
+Enable compression: gzipping the sqlite file shrinks it from 45M or 13M
+ - bz2 and xz are even better
+ - size is comparable to the gzipped JSONL, and faster to load.
+
+Removing indexes helps a bit (10M less uncompressed) but would prevent us
+from using the database as read-only, which is currently required for web.
+On the other hand, a web version would probably use an API for the database
+anyway.
 
  - Make Flutter app load it
  - Make Flutter app use it
 
----
+ - At some point, add 'people' too.
 
-- Later on, need to rebuild wikipedia-ja to exclude non-article pages.
-  - Check the same for english (35 such articles)
+---
 
 ## Use the Researchmap code in all importers
 
@@ -42,6 +47,7 @@ Fails to split in some places, could be fixed by using RomajiDB
  {{nihongo|'''Kentaro Shiga'''|志賀 賢太郎|Shiga Kentaro}}
 
  ^ we currently do a reverse hack for this
+ - researchmap code would negate the need for it.
 
 ### oya? should be ooya.
 
@@ -56,16 +62,6 @@ jsonl/wikipedia_en.jsonl:{"kaki": "大矢 歩", "yomi": "おや あゆみ", "aut
 
 - This is hard to fix, but we're definitely doing something wrong with
   ohashi here.
-
-## Final database
-
-We count everyone except for 'dict'
-
-- deduplicates people from people records (done)
-- expands subreadings (?)
-- fixes lifetime, tags in subreading (?)
-- convert yomi to hiragana, rejecting anything non-kana (this is done earlier)
-- Somehow integrate gender data.
 
 ## Minor issues with 'notes'
 
