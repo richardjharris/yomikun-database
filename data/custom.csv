@@ -964,6 +964,10 @@
 鹿目 まどか,かなめ　まどか,f+fictional,,Fictional character
 暁美 ほむら,あけみ　ほむら,f+fictional,,Fictional character
 空木 俊介,うつぎ　しゅんすけ,m+fictional,Fictional detective
+宇治,うじ,s+fictional
+鯖江,さばえ,s+fictional
+勝木,かちき,s+fictional
+早坂 啓吾,はやさか けいご,m+fictional,,Manga artist
 
 # News authors
 飯田 一史,いいだ　いちし,m
@@ -1227,75 +1231,77 @@
 茉莉花,まりか,f+dict
 万莉乃,まりの,f+dict
 香莉菜,かりな,f+dict
-蓮,れん,ｍ+dict 
-陽翔,はると,ｍ+dict
-蒼,あおい,ｍ+dict
-樹,いつき,ｍ+dict
-湊,みなと,ｍ+dict
-悠真,ゆうま,ｍ+dict
-大翔,ひろと,ｍ+dict
-律,りつ,ｍ+dict
-朝陽,あさひ,ｍ+dict
-結翔,ゆいと,ｍ+dict
-悠之助,ゆうのすけ,ｍ+dict
-未来哉,みきや,ｍ+dict
-都史正,としまさ,ｍ+dict
-朔太郎,さくたろう,ｍ+dict
-龍之介,りゅうのすけ,ｍ+dict
-明希人,あきと,ｍ+dict
-海衣翔,かいと,ｍ+dict
-景虎,かげとら,ｍ+dict
-阿蘭,あらん,ｍ+dict
-楽,がく,ｍ+dict
-宙,そら,ｍ+dict
-天,そら,ｍ+dict
-碧,あお,ｍ+dict
-慧,けい,ｍ+dict
-中,あたる,ｍ+dict
-逞,たくま,ｍ+dict
-誉,ほまれ,ｍ+dict
-朝,はじめ,ｍ+dict
-奏太郎,そうたろう,ｍ+dict
-琥太郎,こたろう,ｍ+dict
-大維志,たいし,ｍ+dict
-凛太郎,りんたろう,ｍ+dict
-淳之介,じゅんのすけ,ｍ+dict
-孝士郎,こうしろう,ｍ+dict
-之介,くらのすけ,ｍ+dict
-輝星,きせい,ｍ+dict
-虹羽,こう,ｍ+dict
-琉生,るい,ｍ+dict
-徒夢,とむ,ｍ+dict
-一星,いっせい,ｍ+dict
-理人,りひと,ｍ+dict
-在久里,あぐり,ｍ+dict
-国太郎,くにたろう,ｍ+dict
-具理夢,ぐりむ,ｍ+dict
-桜史郎,おうしろう,ｍ+dict
-伊桜吏,いおり,ｍ+dict
-小次郎,こじろう,ｍ+dict
-陽向汰,ひなた,ｍ+dict
-慶,けい,ｍ+dict
-初,うい,ｍ+dict
-天,そら,ｍ+dict
-壱,いち,ｍ+dict
-浬,かいり,ｍ+dict
-道,あゆむ,ｍ+dict
-庵,いおり,ｍ+dict
-縁,えにし,ｍ+dict
-楽空,がく,ｍ+dict
-弦希,げんき,ｍ+dict
-凛斗,りんと,ｍ+dict
-時矢,ときや,ｍ+dict
-朝弥,あさや,ｍ+dict
-歩夢,あゆむ,ｍ+dict
-開斗,かいと,ｍ+dict
+蓮,れん,m+dict 
+陽翔,はると,m+dict
+蒼,あおい,m+dict
+樹,いつき,m+dict
+湊,みなと,m+dict
+悠真,ゆうま,m+dict
+大翔,ひろと,m+dict
+律,りつ,m+dict
+朝陽,あさひ,m+dict
+結翔,ゆいと,m+dict
+悠之助,ゆうのすけ,m+dict
+未来哉,みきや,m+dict
+都史正,としまさ,m+dict
+朔太郎,さくたろう,m+dict
+龍之介,りゅうのすけ,m+dict
+明希人,あきと,m+dict
+海衣翔,かいと,m+dict
+景虎,かげとら,m+dict
+阿蘭,あらん,m+dict
+楽,がく,m+dict
+宙,そら,m+dict
+天,そら,m+dict
+碧,あお,m+dict
+慧,けい,m+dict
+中,あたる,m+dict
+逞,たくま,m+dict
+誉,ほまれ,m+dict
+朝,はじめ,m+dict
+奏太郎,そうたろう,m+dict
+琥太郎,こたろう,m+dict
+大維志,たいし,m+dict
+凛太郎,りんたろう,m+dict
+淳之介,じゅんのすけ,m+dict
+孝士郎,こうしろう,m+dict
+之介,くらのすけ,m+dict
+輝星,きせい,m+dict
+虹羽,こう,m+dict
+琉生,るい,m+dict
+徒夢,とむ,m+dict
+一星,いっせい,m+dict
+理人,りひと,m+dict
+在久里,あぐり,m+dict
+国太郎,くにたろう,m+dict
+具理夢,ぐりむ,m+dict
+桜史郎,おうしろう,m+dict
+伊桜吏,いおり,m+dict
+小次郎,こじろう,m+dict
+陽向汰,ひなた,m+dict
+慶,けい,m+dict
+初,うい,m+dict
+天,そら,m+dict
+壱,いち,m+dict
+浬,かいり,m+dict
+道,あゆむ,m+dict
+庵,いおり,m+dict
+縁,えにし,m+dict
+楽空,がく,m+dict
+弦希,げんき,m+dict
+凛斗,りんと,m+dict
+時矢,ときや,m+dict
+朝弥,あさや,m+dict
+歩夢,あゆむ,m+dict
+開斗,かいと,m+dict
 
 # 月曜から夜ふかし
 小豆,あずき,f,2010-
 麦田,むぎた,m,2000-
 宮下　友彰,みやした　ともあき,m,1987-,Author
 三本 秀人,みつもと　ひでと,m,,Author
+吉岡　純彌,よしおか　じゅんや,m,,Baker
+道祖尾 貞浩,さいのお さだひろ,m,,Farmer who discovered a potato that looks like Detective Conan's hand
 
 # 有吉のお金発見　突撃！カネオくん
 塩島 朋子,しおじま ともこ,f
