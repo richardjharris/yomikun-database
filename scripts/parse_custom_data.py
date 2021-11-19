@@ -66,15 +66,16 @@ def parse_row(row: dict):
 
     # Normalise spaces
     namedata.clean()
-    namedata.validate()
     return namedata
 
 
 # Skips comments and blank lines
 reader = csv.DictReader(skip_lines_and_comments(sys.stdin), fields)
 for row in reader:
+    namedata = None
     try:
         namedata = parse_row(row)
+        namedata.validate()
         print(namedata.to_jsonl())
     except ValueError as e:
         logging.exception(

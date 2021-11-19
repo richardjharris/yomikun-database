@@ -1,25 +1,21 @@
 ## Current task
 
-Building an SQLite database good enough to use with the app, ideally
-in 100MB or less.
+Add people back to the database!
 
- - convert ml\_score to 1 byte (not 8)
  - remove top5k
  - add back birth years etc.
+ - make_final_db should output data which has the format [table, {column: value, ...}]
+   then the data loader can split stuff by table and load them seperately
 
 Enable compression: gzipping the sqlite file shrinks it from 45M or 13M
  - bz2 and xz are even better
  - size is comparable to the gzipped JSONL, and faster to load.
+ - Android asset stuff does this for you
 
 Removing indexes helps a bit (10M less uncompressed) but would prevent us
 from using the database as read-only, which is currently required for web.
 On the other hand, a web version would probably use an API for the database
 anyway.
-
- - Make Flutter app load it
- - Make Flutter app use it
-
- - At some point, add 'people' too.
 
 ---
 
@@ -57,8 +53,10 @@ jsonl/wikipedia_en.jsonl:{"kaki": "大矢 歩", "yomi": "おや あゆみ", "aut
 ### Kota Ohashi
 
 - 'Kota Ohashi' was おはし　こた. Should be  おおはし　こうた.
-
 - Recently おおあし こた ... that's not any better !!
+  - database shows 587 hits of oohashi, 11 ooashi, 1 ouhashi
+  - so slightly misleading but not a huge deal
+  - they are all for 大橋, so we could override it.
 
 - This is hard to fix, but we're definitely doing something wrong with
   ohashi here.

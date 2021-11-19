@@ -120,7 +120,7 @@ def _output_aggregated_data(aggregated_data: dict[DictKey, AggregatedData]):
         if info := genderdb.lookup(kaki, kana):
             row.update(info.to_dict())
             # Convert ml_score to sqlite int 0-255
-            row['ml_score'] = ml_score_float_to_int(row.get('ml_score'), 0)
+            row['ml_score'] = ml_score_float_to_int(row.get('ml_score', 0))
 
         print(json.dumps(row, ensure_ascii=False))
 
