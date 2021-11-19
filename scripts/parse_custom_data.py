@@ -26,9 +26,7 @@ def skip_lines_and_comments(lines):
             yield line.rstrip()
 
 
-# Skips comments and blank lines
-reader = csv.DictReader(skip_lines_and_comments(sys.stdin), fields)
-for row in reader:
+def parse_row(row: dict):
     namedata = NameData(row['kaki'], row['yomi'])
     if row['tags']:
         tags = row['tags'].split('+')
@@ -68,9 +66,16 @@ for row in reader:
 
     # Normalise spaces
     namedata.clean()
+    namedata.validate()
+    return namedata
 
+
+# Skips comments and blank lines
+reader = csv.DictReader(skip_lines_and_comments(sys.stdin), fields)
+for row in reader:
     try:
-        namedata.validate()
+        namedata = parse_row(row)
+        print(namedata.to_jsonl())
     except ValueError as e:
         logging.exception(
             f"Error parsing line '{last_raw_line}'\n"
@@ -78,5 +83,3 @@ for row in reader:
             f"Generated namedata: {namedata}\n"
             f"Error: {e}")
         sys.exit(1)
-
-    print(namedata.to_jsonl())

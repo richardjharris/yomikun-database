@@ -4,6 +4,9 @@ Scripts and modules to generate the name database used by Yomikun.
 This includes:
 
 - parsing Wikipedia and other dictionary data
+  - handling ambiguous romaji
+- collecting gender information
+  - uses a ML model to guess if no data exists
 - generating lists such as top 1000 lists
 - assembling the data into an SQLite file
 
