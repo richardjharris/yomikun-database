@@ -119,5 +119,32 @@ def _output_aggregated_data(aggregated_data: dict[DictKey, AggregatedData]):
 
         if info := genderdb.lookup(kaki, kana):
             row.update(info.to_dict())
+            # Convert ml_score to sqlite int 0-255
+            row['ml_score'] = ml_score_float_to_int(row.get('ml_score'), 0)
 
         print(json.dumps(row, ensure_ascii=False))
+
+
+def ml_score_float_to_int(score: float) -> int:
+    """
+    Convert ml_score into an int between 0 and 255 so it occupies 1 byte
+    instead of 8 (for a float)
+
+    If |score| > 3 it is capped at 3.
+    """
+    if score == 0:
+        return 128
+    else:
+        ml_sign = 1 if score > 0 else -1
+        score = min(abs(score), 3)
+        return int((ml_sign * (score / 3.0) * 127.5) + 127.5)
+
+
+def test_ml_score_float_to_int():
+    assert ml_score_float_to_int(3) == 255
+    assert ml_score_float_to_int(4) == 255
+    assert ml_score_float_to_int(1.5) == (127 + 255) / 2.0
+    assert ml_score_float_to_int(0) == 128
+    assert ml_score_float_to_int(-1.5) == 63
+    assert ml_score_float_to_int(-3) == 0
+    assert ml_score_float_to_int(-10) == 0

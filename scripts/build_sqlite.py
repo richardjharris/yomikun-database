@@ -35,7 +35,7 @@ cur.executescript("""
     hits_female INT,
     hits_unknown INT,
     hits_pseudo INT,
-    ml_score REAL,
+    ml_score INT,
     PRIMARY KEY (kaki, yomi, part)
     );
     CREATE INDEX names_yomi ON names (yomi);
