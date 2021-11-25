@@ -17,6 +17,35 @@ from using the database as read-only, which is currently required for web.
 On the other hand, a web version would probably use an API for the database
 anyway.
 
+## Also
+
+Testing wikipedia_en using researchamp
+ - add back the xx-romaji tag to make the diff smaller
+ - find a way to disable swapping names, or at least discourage it?
+   quite a few results are the wrong way around
+
+This is wrong:
+{"kaki": "周防 正行", "yomi": [-"すお-]{+"すおう+} まさゆき", "authenticity": "real", "lifetime": {"birth_year": 1956, "death_year": null}, "source": "wikipedia_en:Masayuki Suo", }
+
+This one is actually すおう
+{"kaki": "周防 義和", "yomi": [-"すお-]{+"すおう+} よしかず", "authenticity": "real", "lifetime": {"birth_year": 1953, "death_year": null}, "source": "wikipedia_en:Yoshikazu Suo", , "notes": "Musician from Tokyo, Japan"}
+
+姓:周防（すおう、すお、すほう）は日本人の姓の一つ。
+
+We could detect this at dedupe perhaps. Would be a little tricky. But otherwise we may overcount a bit.
+
+
+{"kaki": "大植 英次", "yomi": [-"おおうえ-]{+"おおえ+} えいじ", "authenticity": "real", "lifetime": {"birth_year": 1957, "death_year": null}, "source": "wikipedia_en:Eiji Oue", , "notes": "Conductor"}
+
+The majority (90%+) are an improvement!
+
+
+# Also
+ - kanji with most kana
+ - kana with most kanji
+ - relative to total (e.g. names with readings/kanji that account for 50% or something)
+ - ignoring '0' results
+
 ---
 
 ## Use the Researchmap code in all importers

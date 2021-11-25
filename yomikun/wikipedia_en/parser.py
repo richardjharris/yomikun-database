@@ -22,6 +22,7 @@ TODO: Natsume Soseki
 from __future__ import annotations
 import logging
 import enum
+from yomikun.researchmap import _parse_researchmap_inner
 from yomikun.wikipedia_ja.ignore import should_ignore_name
 
 import regex
@@ -66,6 +67,7 @@ def notes_from_categories(categories: list[str]) -> str | None:
 ROMAJI = r"[A-Za-zŌōā']"
 ROMAJI_NAME = ROMAJI + r'+\s+' + ROMAJI + '+'
 
+# TODO what if the 3rd arg is missing? 1st arg is usually romaji also, just in reverse order
 NIHONGO_TEMPLATE_PAT = r'\{\{' + \
     fr"[Nn]ihongo\|'''{ROMAJI_NAME}'''\|({name_pat})\|({ROMAJI_NAME})(?:\|(.*?))?" + \
     r'\}\}(.{1,5000})'
@@ -81,11 +83,23 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
         # Clean doesn't remove '' ... '' (??)
         romaji = regex.sub(r"^''(.*?)''$", r"\1", romaji)
 
-        kana = romaji_to_hiragana_messy(clean(romaji), kanji)
+        # HACK: Use researchmap code.
+        namedata = None
+        try:
+            namedata = _parse_researchmap_inner(
+                romaji, kanji, '', swap_names=True)
+        except NotImplementedError:
+            pass
 
-        kanji = split_kanji_name(kanji, kana)
+        if not namedata:
+            # Fall back to messy code
+            kana = romaji_to_hiragana_messy(clean(romaji), kanji)
+            kanji = split_kanji_name(kanji, kana)
+            namedata = NameData(kanji, kana).add_tag('xx-romaji')
 
-        namedata = NameData(kaki=kanji, yomi=kana, tags={'xx-romaji'})
+        # XXX remove after migrating.
+        namedata.add_tag('xx-romaji')
+
         gender = Gender.unknown
 
         if regex.search(r'\bfictional\b', rest_of_line):

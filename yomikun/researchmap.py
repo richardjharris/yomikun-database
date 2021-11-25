@@ -42,7 +42,7 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:
     return data
 
 
-def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | None:
+def _parse_researchmap_inner(kana: str, kanji: str, english: str, swap_names: bool = True) -> NameData | None:
     """
     This code does the hard work of figuring out what fields correspond to what name
     parts (if out of order), mapping romaji to kana, splitting kanji names that aren't
@@ -55,6 +55,12 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | 
     We handle this by producing a RomajiDB that maps normalised romaji (e.g. all long
     vowels removed) and kanji to a list of possible kana names. This data is produced
     from reliable sources such as ja-wikipedia.
+
+    If `swap_names` is True and we are using a romaji name where we don't know either
+    of the parts, we try to swap the parts around. This is useful for cases where the
+    romaji could either be 'Surname Forename' or 'Forename Surname'. However, we might
+    generate a name in the wrong order. For sites like wikipedia where the romaji is
+    usually in the correct order, `swap_names` should be set to False.
     """
     raw_data = (kana, kanji, english)
     logging.debug(f"Parsing {raw_data}")
@@ -120,11 +126,23 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | 
     # If both fields are romaji then the 'kana' entry tends to be
     # in Japanese name order while the 'english' entry tends to be
     # in Western order.
+    # Candidates are ordered most important to least.
+    if swap_names:
+        romaji_candidates = [
+            kana,
+            reverse_parts(english),
+            reverse_parts(kana),
+            english,
+        ]
+    else:
+        romaji_candidates = [kana, english]
+
     romajis = []
-    for r in [kana, reverse_parts(english), reverse_parts(kana), english]:
-        if regex.match(r'^[a-z\-]+\s+[a-z\-]+', r) and \
-                r not in romajis:
-            romajis.append(r)
+    for romaji in romaji_candidates:
+        if regex.match(r'^[a-zāâīīîūûêēōôô\-]+\s+[a-zāâīīîūûêēōôô\-]+$', romaji) and \
+                romaji not in romajis:
+            romajis.append(romaji)
+
     logging.info(f"Got romajis: {romajis}")
 
     # Try with intelligent romaji to hiragana conversion
@@ -139,7 +157,7 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | 
 
         # May need to split the kanji (rare)
         new_kanji = split_kanji_name_romaji(kanji, romaji)
-        logging.debug(f"Kanji is '{new_kanji}' After split")
+        logging.debug(f"Kanji is '{new_kanji}' after split")
 
         if new_kana := romaji_to_hiragana_fullname(romaji, new_kanji):
             return NameData(new_kanji, new_kana)
@@ -150,12 +168,12 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | 
     attempts = []
     for romaji in romajis:
         warnings = []
-        score = 0
-        logging.info(f"Trying dumb '{romaji}' for {kanji}")
+        logging.info(f"Trying dumb '{romaji}' for {kanji})")
+        bad = 0
 
         # May need to split the kanji (rare)
         kanji = split_kanji_name_romaji(kanji, romaji)
-        logging.debug(f"Kanji is '{kanji}' After split")
+        logging.debug(f"Kanji is '{kanji}' after split")
 
         if len(kanji.split()) == 2:
             assert len(romaji.split()) == 2
@@ -168,23 +186,30 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str) -> NameData | 
                 warnings.append(
                     f"[{raw_data}] SEI ({sei_roma}, {sei_kaki}) was not in romajidb, doing messy conversion")
                 sei_kana = romaji_to_hiragana_messy(sei_roma, sei_kaki)
-                score -= 1
+                bad += 1
             if mei_kana is None:
                 warnings.append(
                     f"[{raw_data}] MEI ({mei_roma}, {mei_kaki}) was not in romajidb, doing messy conversion")
                 mei_kana = romaji_to_hiragana_messy(mei_roma, mei_kaki)
-                score -= 1
+                bad += 1
 
             kana = f"{sei_kana} {mei_kana}"
-            attempts.append((kana, score, warnings))
+            attempts.append((kana, bad, warnings))
         else:
             warnings.append(
                 f"[{raw_data}] Entry ({romaji}, {kanji}) was not in romajidb (and unable to split), doing messy conversion")
             kana = romaji_to_hiragana_messy(romaji, kanji)
-            attempts.append((kana, -10, warnings))
+            attempts.append((kana, 10, warnings))
 
-    attempts.sort(key=itemgetter(1), reverse=True)
+    # Sort by 'bad'. As the sort is stable, the first item will be the earliest-ordered
+    # candidate with the lowest 'bad' score.
+    attempts.sort(key=itemgetter(1))
     if attempts:
+        # if log level is DEBUG, print all attempts
+        if logging.getLogger().getEffectiveLevel() >= logging.DEBUG:
+            for attempt in attempts:
+                logging.debug(f"Attempt: {attempt}")
+
         kana, _, warnings = attempts[0]
         for warning in warnings:
             logging.warning(warning)
