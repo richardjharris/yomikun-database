@@ -39,7 +39,7 @@ def parse_row(row: dict):
                 namedata.set_gender('surname')
             elif tag == 'pseudo':
                 namedata.authenticity = NameAuthenticity.PSEUDO
-            elif tag == 'fictional':
+            elif tag in ('fictional', 'fict'):
                 namedata.authenticity = NameAuthenticity.FICTIONAL
             else:
                 namedata.add_tag(tag)
