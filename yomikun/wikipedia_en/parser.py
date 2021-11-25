@@ -97,9 +97,6 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
             kanji = split_kanji_name(kanji, kana)
             namedata = NameData(kanji, kana).add_tag('xx-romaji')
 
-        # XXX remove after migrating.
-        namedata.add_tag('xx-romaji')
-
         gender = Gender.unknown
 
         if regex.search(r'\bfictional\b', rest_of_line):

@@ -2,7 +2,7 @@
 
 Add people back to the database!
 
- - remove top5k
+ - remove top5k, make top5k table instead
  - add back birth years etc.
  - make_final_db should output data which has the format [table, {column: value, ...}]
    then the data loader can split stuff by table and load them seperately
@@ -19,28 +19,40 @@ anyway.
 
 ## Also
 
-Testing wikipedia_en using researchamp
- - add back the xx-romaji tag to make the diff smaller
- - find a way to disable swapping names, or at least discourage it?
-   quite a few results are the wrong way around
+### Romaji key
 
-This is wrong:
+>>> romaji_key('ōue')
+'oe'
+>>> romaji_key('ooue')
+'oue'
+
+...so perhaps we should change a ōu sequence to oou.
+
+
+There are a handful of counter cases where we guessed
+incorrectly:
+
 {"kaki": "周防 正行", "yomi": [-"すお-]{+"すおう+} まさゆき", "authenticity": "real", "lifetime": {"birth_year": 1956, "death_year": null}, "source": "wikipedia_en:Masayuki Suo", }
 
-This one is actually すおう
-{"kaki": "周防 義和", "yomi": [-"すお-]{+"すおう+} よしかず", "authenticity": "real", "lifetime": {"birth_year": 1953, "death_year": null}, "source": "wikipedia_en:Yoshikazu Suo", , "notes": "Musician from Tokyo, Japan"}
-
-姓:周防（すおう、すお、すほう）は日本人の姓の一つ。
-
-We could detect this at dedupe perhaps. Would be a little tricky. But otherwise we may overcount a bit.
-
+すお is a valid reading for the surname, but rare enough that we assumed
+the longer one. The Wikipedia JA fixes this so one valid solution would
+be to ignore entries where we have a JA article
 
 {"kaki": "大植 英次", "yomi": [-"おおうえ-]{+"おおえ+} えいじ", "authenticity": "real", "lifetime": {"birth_year": 1957, "death_year": null}, "source": "wikipedia_en:Eiji Oue", , "notes": "Conductor"}
 
-The majority (90%+) are an improvement!
+姓:周防（すおう、すお、すほう）は日本人の姓の一つ。
 
+For this one, the romajidb shows:
 
-# Also
+大植    oue     sei     おおうえ        おおうえ
+大植    oe      sei     おおえ  おおえ
+
+The written name is actually 'Ōue Eiji' so expanding the macron
+into 'oo' might help.
+
+We could detect this at dedupe perhaps. Would be a little tricky. But otherwise we may overcount a bit.
+
+# Also (app)
  - kanji with most kana
  - kana with most kanji
  - relative to total (e.g. names with readings/kanji that account for 50% or something)

@@ -40,6 +40,10 @@ def remove_accents(s: str) -> str:
     Remove circumflex and macron-based vowel accents from a string,
     replacing them with unaccented versions.
     """
+    # Treat ōu specially, so that 'ōue' and 'ooue' both resolve to 'oue'
+    # as one would expect. Otherwise 'ōue' becomes 'oe'.
+    s = s.replace('ōu', 'oou')
+
     for letter in accents:
         for accent in accents[letter]:
             s = s.replace(accent, letter)
@@ -149,3 +153,9 @@ def test_romaji_key_h_vowel():
     assert romaji_key('ohoka') == romaji_key('oooka')
     assert romaji_key('ohoka') == romaji_key('ōoka')
     assert romaji_key('ohori') == romaji_key('oori')
+
+
+def test_romaji_key_ooue():
+    # These names should compare equal as they are two ways of writing
+    # the same thing.
+    assert romaji_key('ōue') == romaji_key('ooue')
