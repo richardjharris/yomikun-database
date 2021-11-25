@@ -104,6 +104,10 @@ class PersonDedupe():
                 'wikipedia_en:'), reverse=True)
             merged.notes = all_notes[0][1]
 
+        # Remove xx-romaji if at least one record does not have it
+        if any(not p.has_tag('xx-romaji') for p in people):
+            merged.remove_tag('xx-romaji')
+
         # Return the deduplicated record
         logging.info("Merged into 1 record")
         return [merged]

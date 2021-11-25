@@ -50,6 +50,22 @@ def get_categories(content: str) -> list[str]:
     return regex.findall(CATEGORY_PAT, content)
 
 
+PROFESSIONS = [
+    'writer',
+    'philosopher',
+    'artist',
+    'singer',
+    'baseball player',
+    'professional wrestler',
+    'television actor',
+    'voice actor',
+    'footballer',
+    'lawyer',
+]
+PROF_REGEX = regex.compile(
+    r"^Japanese (?:male |female )?(\L<professions>)", professions=PROFESSIONS)
+
+
 def notes_from_categories(categories: list[str]) -> str | None:
     """
     Returns a short summary of this person (occupation etc.) based on
@@ -57,8 +73,8 @@ def notes_from_categories(categories: list[str]) -> str | None:
     """
     for category in categories:
         if category == 'Manga artists':
-            return 'manga artist'
-        if m := regex.match(r'^Japanese (?:male |female )?(writer|philosopher|artist|singer)s', category):
+            return 'Manga artist'
+        if m := regex.match(PROF_REGEX, category):
             return m[1].capitalize()
 
     return
@@ -136,20 +152,26 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
         elif gender == Gender.female:
             namedata.add_tag('fem')
 
-        # Figure out what kind of person this is
-        if not namedata.notes:
+        # Find out what kind of person this is
+        # Prefer a simple description from the categories
+        if notes := notes_from_categories(categories):
+            namedata.notes = notes
+        else:
+            # Remove <ref>, as clean() will keep the tag contents by default
+            rest_of_line = regex.sub(r'<ref>.*?</ref>', '', rest_of_line)
+
             cleaned_first_sentence = clean(rest_of_line)
+
             if m := regex.match(r'(?:.*?[,\)])?\s*(?:is|was) (?:the|a|an) (.+?)[.]', cleaned_first_sentence):
                 desc = m[1]
                 namedata.notes = desc[0].upper() + desc[1:]
             elif m := regex.match(r'^\{\{Infobox (.*?)', content):
                 namedata.notes = m[1]
-            elif notes := notes_from_categories(categories):
-                namedata.notes = notes
 
         # 'Japanese' is usually implied
         namedata.notes = regex.sub(
             r'^Japanese (\w)(.*)$', lambda m: m[1].upper() + m[2], namedata.notes)
+
         # Remove italic
         namedata.notes = regex.sub(r"'{2,}", '', namedata.notes)
     else:

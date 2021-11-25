@@ -11,6 +11,15 @@ https://namegen.jp/jinmei_moji.html
  - small wa is allowed
  - ゝゞ are allowed
 
+## Fixing suo
+
+{"kaki": "周防 正行", "yomi": [-"すお-]{+"すおう+} まさゆき", "authenticity": "real", "lifetime": {"birth_year": 1956, "death_year": null}, "source": "wikipedia_en:Masayuki Suo", }
+
+すお is a valid reading for the surname, but rare enough that we assumed
+the longer one. The Wikipedia JA fixes this so one valid solution would
+be to ignore entries where we have a JA article. We could also detect this
+at dedupe perhaps.
+
 ## More robust handling of 'yuhya'-type names
 
 Currently we use a manual dictionary to correct these.
@@ -58,6 +67,8 @@ For example ochi/大内 has two readings おおち、おうち, clearly either o
 than returning おち!
  - I think we currently do this (only messy romajise one part, not both) but
    need to check
+
+ - How much effort do we want to expend? How much of the database is xx-romaji?
 
 ## Importer module
 
