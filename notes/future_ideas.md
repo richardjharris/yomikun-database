@@ -210,6 +210,13 @@ From wikipedia and also researchmap:
 jsonl/researchmap.jsonl:{"kaki": "吉田 亮", "yomi": "よしだ りよう", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "researchmap", "tags": ["person"]}
 For 'ryou', 274 of these vs. 8830 total. So not too bad. But annoying.
 
+### 井
+
+There are a few results of 'ii' for these names, possibly because websites
+reject names of 1 char in length. Maybe we should override these as ii
+is not a regular reading. 伊 doesn't have this problem (although 'ihn' is
+occasionally seen).
+
 ### All or nothing
 
 Could tag individual parts of the name with xx-romaji if we had dictionary
