@@ -221,6 +221,7 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     return namedata
 
 
+# TODO: xx-romaji could be omitted here due to the long o.
 def test_basic():
     content = """
 {{nihongo|'''Akifumi Endō'''|遠藤 章史|Endō Akifumi|born December 10, 1964}} is a Japanese [[Seiyū|voice actor]] who is affiliated with [[Troubadour Musique Office]].
@@ -233,7 +234,7 @@ def test_basic():
         lifetime=Lifetime(1964),
         tags={'xx-romaji', 'masc', 'person'},
         source='wikipedia_en:Akifumi Endo',
-        notes='Voice actor who is affiliated with Troubadour Musique Office',
+        notes='Voice actor',
     ), 'extracts gender from category'
 
 
@@ -255,7 +256,7 @@ Murata was born on July 14, 1986, in [[Uozu, Toyama]].<ref>{{cite web|url=https:
         kaki='村田 顕弘',
         yomi='むらた あきひろ',
         lifetime=Lifetime(1986),
-        tags={'xx-romaji', 'masc', 'person'},
+        tags={'masc', 'person'},
         source='wikipedia_en:Akihiro Murata',
         notes='Professional shogi player ranked 6-dan',
     ), 'extracts gender from text'
@@ -296,7 +297,7 @@ In 2000, a 21-year-old campaign volunteer accused Yokoyama of [[sexual harassmen
         yomi='よこやま のっく',
         lifetime=Lifetime(1932, 2007),
         authenticity=NameAuthenticity.PSEUDO,
-        tags={'xx-romaji', 'masc', 'person'},
+        tags={'masc', 'person'},
         source='wikipedia_en:Knock Yokoyama',
         notes='Politician and comedian',
     )
@@ -311,6 +312,6 @@ def test_allow_fictional_character_with_no_lifetime():
         yomi='しらぬい まい',
         authenticity=NameAuthenticity.FICTIONAL,
         source='wikipedia_en:foo',
-        tags={'xx-romaji', 'fem'},
+        tags={'person', 'fem'},
         notes='Fictional character in the Fatal Fury and The King of Fighters series of fighting games by SNK'
     )
