@@ -11,7 +11,8 @@ import logging
 from yomikun.models import NameData
 from yomikun.utils.patterns import name_pat
 from yomikun.utils.split import split_kana_name, split_kanji_name, split_kanji_name_romaji, try_to_swap_names
-from yomikun.utils.romaji import romaji_to_hiragana_fullname, romaji_to_hiragana_messy, romaji_to_hiragana_fullname_parts
+from yomikun.utils.romaji import romaji_to_hiragana_fullname, romaji_to_hiragana_fullname_parts
+from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 
 def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:

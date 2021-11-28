@@ -17,21 +17,19 @@ TODO: Natsume Soseki
 
  ^ no extra argument here! oops... what a pain...
 """
-
-
 from __future__ import annotations
 import logging
 import enum
-from yomikun.researchmap import _parse_researchmap_inner
-from yomikun.wikipedia_ja.ignore import should_ignore_name
 
 import regex
 from mediawiki_dump.tokenizer import clean
 
+from yomikun.researchmap import _parse_researchmap_inner
+from yomikun.wikipedia_ja.ignore import should_ignore_name
 from yomikun.models import NameData, NameAuthenticity, Lifetime
-from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
+from yomikun.utils.patterns import name_pat
 from yomikun.utils.split import split_kanji_name
-from yomikun.utils.romaji import romaji_to_hiragana_messy
+from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 
 class Gender(enum.Enum):

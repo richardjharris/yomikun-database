@@ -1,20 +1,26 @@
-# Wikipedia articles are stored in a test directory (test_pages)
-# with metadata (including expected results) at the top of each
-# article.
+"""
+Runs Wikipedia (EN+JA) article parse tests.
+
+Wikipedia articles are stored in a test directory (test_pages)
+with metadata (including expected results) at the top of each
+article.
+"""
 
 from __future__ import annotations
 import itertools
 from pathlib import Path
-from yomikun.models.lifetime import Lifetime
-
 import yaml
 
+from yomikun.models.lifetime import Lifetime
 from yomikun.models import NameAuthenticity, NameData
 import yomikun.wikipedia_en.parser
 import yomikun.wikipedia_ja.parser
 
 
 def load_test(file: Path) -> tuple[str, dict]:
+    """
+    Load test from [file] and return article content and parsed metadata.
+    """
     content = []
     header = []
     in_header = True
@@ -29,7 +35,7 @@ def load_test(file: Path) -> tuple[str, dict]:
         else:
             content.append(line)
 
-    assert len(content)
+    assert content
 
     metadata = yaml.load(''.join(header), Loader=yaml.BaseLoader) or {}
     assert isinstance(metadata, dict)
@@ -38,6 +44,9 @@ def load_test(file: Path) -> tuple[str, dict]:
 
 
 def pytest_generate_tests(metafunc):
+    """
+    Generates a pytest test case for every article in the test directories.
+    """
     def get_id(test_page: tuple[Path, str]):
         path, lang = test_page
         return f"{lang}_{path.name}"
@@ -54,6 +63,10 @@ def pytest_generate_tests(metafunc):
 
 
 def test_parser(test_page: tuple[Path, str]):
+    """
+    Tests parsing of [test_page] (a tuple of the testcase filename
+    and the language ('en' or 'ja').
+    """
     path, lang = test_page
     content, metadata = load_test(path)
 
@@ -78,6 +91,10 @@ def test_parser(test_page: tuple[Path, str]):
 
 
 def build_namedata_from_test_header(metadata: dict) -> NameData | None:
+    """
+    Returns the NameData that we expect to parse from a test case, using
+    the test metadata.
+    """
     # TODO this should probably go in NameData.from_yaml or similar
     namedata = NameData()
     for key, value in metadata.items():

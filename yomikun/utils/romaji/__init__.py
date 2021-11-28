@@ -1,19 +1,24 @@
+"""
+Utilities for converting romaji names to hiragana, using an external
+dictionary to handle ambiguous romaji.
+"""
 from __future__ import annotations
 import logging
 
 import regex
 import romkan
 
-#from yomikun.utils.name_dict import NameDict
-from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.romaji.helpers import romaji_key
 from yomikun.romajidb.db import romajidb
 
 
 def romaji_to_hiragana_strict(romaji: str) -> str:
     """
-    Converts romaji to hiragana. Romaji must be normalised - no ambiguous
-    vowels, apostrophe where needed, etc, no macrons.
+    Converts romaji to hiragana strictly, i.e. it is assumed that the romaji
+    will correctly use long and short vowels to match the kana equivalent,
+    apostrophes if needed, and no macrons.
+
+    Returns the hiragana form of the name.
     """
     romaji = romaji.lower()
     if not regex.match(r"^[a-z' ]*$", romaji):
@@ -46,6 +51,11 @@ def romaji_to_hiragana_fullname(romaji: str, kanji: str) -> str | None:
 
 
 def romaji_to_hiragana_fullname_parts(romaji: str, kanji: str) -> tuple[str | None, str | None]:
+    """
+    Converts ambiguous romaji full name to hiragana, using kanji as a guide. Both [romaji]
+    and [kanji] must have two name components. Returns the hiragana form of the name as
+    a tuple of two name components.
+    """
     new_sei = romaji_to_hiragana_part(
         romaji.split()[0], kanji.split()[0], sei=True)
     new_mei = romaji_to_hiragana_part(
@@ -69,18 +79,8 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
         # We are done
         return kana
     else:
-        # Vowel + h is ambigous: may be part of a vowel (ohishi = おおいし)
-        # or not (ohashi = おはし). Try removing it. We only try this once.
-        # TODO this should only be done when the result is MISSING, not
-        # AMBIGUOUS. RomajiDB should hold all the readings...
-        # XXX this is skipped atm, as romaji_key() does the removal for us
-        #romaji2 = regex.sub(r'[aieou]h(?=[aieouy])', '', romaji)
-        # if romaji2 != romaji:
-        #    return romaji_to_hiragana_part(romaji2, kanji, sei, False)
-        pass
-
-    # Otherwise give up, as the reading is ambiguous.
-    return
+        # Give up, as the name as ambiguous.
+        return
 
 
 def test_hiragana_part():

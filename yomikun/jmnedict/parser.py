@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass, field
 from typing import cast
 from yomikun.models.namedata import NameData
-from yomikun.utils.romaji import romaji_to_hiragana_messy
+from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 from yomikun.models import Lifetime
 from yomikun.utils.split import split_kanji_name

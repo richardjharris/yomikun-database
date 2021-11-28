@@ -21,7 +21,7 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test prep prep-perl deadcode cover
+.PHONY: all clean test prep prep-perl deadcode cover lint
 
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
@@ -54,14 +54,17 @@ prep:
 	# Optional
 	pip install coverage vulture
 
+prep-perl:
+	cpanm MediaWiki::DumpFile::FastPages JSON::XS
+
 deadcode: vulture-whitelist
 	vulture vulture-whitelist
 
 vulture-whitelist:
 	-vulture --make-whitelist > $@
 
-prep-perl:
-	cpanm MediaWiki::DumpFile::FastPages JSON::XS
+lint:
+	-pylint scripts yomikun tests/*.py
 
 db/deduped.jsonl: ${JSONLFILES}
 	${CAT} $^ | python scripts/person_dedupe.py > $@

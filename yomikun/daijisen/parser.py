@@ -4,11 +4,10 @@
 # format dictionary. Returns names as JSONL.
 
 from __future__ import annotations
-import sys
-import regex
-import json
 
-from yomikun.models import NameAuthenticity, NameData, Lifetime
+import regex
+
+from yomikun.models import NameData, Lifetime
 from yomikun.utils.split import split_kanji_name
 from yomikun.daijisen.year import parse_birth_and_death_year
 

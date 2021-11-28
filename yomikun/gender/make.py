@@ -15,7 +15,7 @@ from yomikun.gender.ml import GenderML
 from yomikun.loader.aggregator import Aggregator, NamePart
 from yomikun.loader.models import Gender, NamePosition
 from yomikun.models import NameData
-from yomikun.utils.romaji import romaji_to_hiragana_messy
+from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 
 NameLists = dict[str, dict[str, str]]
