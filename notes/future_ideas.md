@@ -3,7 +3,7 @@ the future.
 
 ## Names allowed in kanji
 
-https://namegen.jp/jinmei_moji.html
+ data/chars_allowed_in_names
 
  - would be interesting to generate a gender graph of these
  - small kana are allowed
@@ -19,6 +19,9 @@ https://namegen.jp/jinmei_moji.html
 the longer one. The Wikipedia JA fixes this so one valid solution would
 be to ignore entries where we have a JA article. We could also detect this
 at dedupe perhaps.
+
+Could check how many new names we're actually getting from EN, it's possible
+most of the EN articles (after dedupe) are just erroneous forms of JA articles.
 
 ## More robust handling of 'yuhya'-type names
 
@@ -51,9 +54,6 @@ in the original romaji, e.g. if macrons are used they'll be respected.
    to handle this.
 
 ## seijiyama improvements
-
-  - maybe go back and add names with kana-only surnames, as we can still
-    use the forename data.
 
   - go back and scrape missing cards (currently we ignore things we have
     \> 5 hits for)
@@ -105,7 +105,6 @@ Could develop a crawler + extractor for these.
 * https://oneosaka.jp/member/
 * https://www.wasedarugby.com/member_list/
 * http://kazina.com/dummy/
- 
 
 ## Other name data (?)
 
@@ -153,7 +152,7 @@ the majority.
 
 ## Refactor
 
- - Remove subreadings system, replace with `list[NameData]`
+ - Should probably ensure only one set of subreadings exists.
  - Map names back to sources?
 
 ## Bugs
@@ -184,9 +183,7 @@ handle this by making duplicate records, but it would be better to tolerate comm
 pairings like 高・髙 (for 髙木). OTOH alt forms seem to be collocated with particular
 kanji most of the time (木 in this case), so not a priority.
 
-## MeCab data
-
- - Not sure how to use. Probably overlaps with jmnedict
+Could be done by the app itself.
 
 ### Weird missing 'いち', and 'りよう' entries
 
@@ -222,6 +219,30 @@ occasionally seen).
 Could tag individual parts of the name with xx-romaji if we had dictionary
 data for some but not all?
  e.g. xx-romaji-sei, xx-romaji-mei
+
+## Other dictionaries
+
+These are less important as wikipedia_ja accounts for 90% of all
+name records among the wiki/dictionary sources.
+
+### Use the Researchmap code in all importers
+
+Wikidata etc. should use the same researchmap code that already
+handles clever stuff.
+
+ namedata, err = intuit_name_data(kana, kanji, romaji)
+
+{"kaki": "奥田 教介", "yomi": "おくだ きょすけ", "authenticity": "real", "lifetime": {"birth_year": 1994, "death_year": null}, "source": "wikidata:http://www.wikidata.org/entity/Q106392717", "tags": ["xx-romaji", "masc", "person"]}
+
+^ this for example.
+
+### Related: make romaji_to_hiragana_fullname swap names for you
+
+This would simplify logic in both researchmap and wikidata_nokana.
+
+### koujien
+
+Fails to split in some places, could be fixed by using RomajiDB
 
 ## wikidata: de-dupe variant records
 

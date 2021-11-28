@@ -1,11 +1,11 @@
 ## Current task
 
-Add people back to the database!
+Expand the sqlite database, adding:
+ - first and last year seen for names
+ - people table (list of notable people) maybe. might be too big.
+ - myoji_yurai table for top5k names, ranks and popcounts
 
- - remove top5k, make top5k table instead
- - add back birth years etc.
- - make_final_db should output data which has the format [table, {column: value, ...}]
-   then the data loader can split stuff by table and load them seperately
+ - Loader needs to support all of this.
 
 # Also (app)
 
