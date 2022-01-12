@@ -9,7 +9,14 @@
 左衛門三郎,さえもんさぶろう,s+dict
 勘解由小路光宙,かでのこうじみつおき,s+dict
 勘解由小路,かでのこうじ,s+dict
-# 2012 name ranking
+見梨,みり,f
+未有,みゆう,f
+有海,ゆうみ,f
+志海,もとみ,f
+加朱紗,かずさ,f
+憧れ,あこがれ,f
+
+# 2012 Top 10 name ranking
 蓮,れん,m+dict,2012-
 颯太,そうた,m+dict,2012-
 大翔,ひろと,m+dict,2012-
@@ -21,7 +28,22 @@
 大輝,だいき,m+dict,2012-
 蒼空,そら,m+dict,2012-
 龍生,りゅうせい,2012-
-# Other readings
+
+結衣,ゆい,f+dict,2012-
+陽菜,ひな,f+dict,2012-
+結菜,ゆな,f+dict,2012-
+結愛,ゆあ,f+dict,2012-
+ひなた,ひなた,f+dict,2012-
+心春,こはる,f+dict,2012-
+心愛,ここあ,f+dict,2012-
+凛,りん,f+dict,2012-
+美桜,みお,f+dict,2012-
+芽依,めい,f+dict,2012-
+優菜,ゆうな,f+dict,2012-
+美結,みゆ,f+dict,2012-
+心咲,みさき,f+dict,2012-
+
+# 大翔 has many readings
 大翔,おうか,m+dict
 大翔,おうしょう,m+dict
 大翔,おうと,m+dict
@@ -36,7 +58,17 @@
 大翔,ひろし,m+dict
 大翔,やまと,m+dict
 大輝,だいや,m+dict
-# Names found in newspaper birthday section
+
+# ゆい has many kanji
+友彩,ゆい,f+dict,2010-
+結心,ゆい,f+dict,2010-
+友結,ゆい,f+dict,2010-
+夢衣,ゆい,f+dict,2010-
+夢苺,ゆい,f+dict,2010-
+優生,ゆい,f+dict,2010-
+唯愛,ゆい,f+dict,2010-
+
+# Names found in Akita newspaper birthday section
 凌真,りょうま,m+dict
 遥斗,はると,m+dict 
 尋,ひろ,m+dict 
