@@ -11,6 +11,7 @@ import os
 
 import sqlite3
 import json
+import romkan
 
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
@@ -27,29 +28,44 @@ cur = con.cursor()
 
 cur.executescript("""
     CREATE TABLE names(
-    kaki TEXT,
-    yomi TEXT,
-    part TEXT,
-    hits_total INT,
-    hits_male INT,
-    hits_female INT,
-    hits_unknown INT,
-    hits_pseudo INT,
-    ml_score INT,
-    PRIMARY KEY (kaki, yomi, part)
+        kaki TEXT,
+        yomi TEXT, -- in romaji (saves 15% db size over kana)
+        part INT,  -- 0=unknown 1=sei 2=mei (saves 15% over string)
+        hits_total INT,
+        hits_male INT,
+        hits_female INT,
+        hits_pseudo INT,
+        ml_score INT,
+        PRIMARY KEY (kaki, yomi, part, hits_total DESC)
     );
-    CREATE INDEX names_yomi ON names (yomi);
+    CREATE INDEX names_yomi ON names (yomi, part, hits_total DESC);
 """)
 
+PART_ID = {
+    'unknown': 0,
+    'sei': 1,
+    'mei': 2,
+}
 
 def queries():
     for line in sys.stdin:
         row = json.loads(line)
+
+        values = (
+            row['kaki'],
+            romkan.to_roma(row['yomi']),
+            PART_ID[row['part']],
+            row['hits_total'],
+            row['hits_male'],
+            row['hits_female'],
+            row['hits_pseudo'],
+            row.get('ml_score', 0),
+        );
+
         yield [f"""
-            INSERT INTO names(kaki,yomi,part,hits_total,hits_male,hits_female,hits_unknown,hits_pseudo,ml_score)
-            VALUES (?, ?, ?, ?, ?, ?, ?,?,?)
-        """, (row['kaki'], row['yomi'], row['part'], row['hits_total'], row['hits_male'], row['hits_female'], row['hits_unknown'],
-              row['hits_pseudo'], row.get('ml_score', 0))]
+            INSERT INTO names(kaki,yomi,part,hits_total,hits_male,hits_female,hits_pseudo,ml_score)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, values]
 
 
 def grouper(iterable, n, fillvalue=None):
