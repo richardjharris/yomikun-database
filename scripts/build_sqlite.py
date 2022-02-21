@@ -4,6 +4,7 @@ Loads final database (db/final.py=stdin) into an sqlite file (first argument)
 
 from __future__ import annotations
 from collections import defaultdict
+from datetime import datetime
 from itertools import zip_longest
 import logging
 import argparse
@@ -12,9 +13,11 @@ import os
 
 import sqlite3
 import json
+import time
 from xml.etree.ElementInclude import default_loader
 import regex
 import romkan
+from sqlalchemy import desc
 
 
 class KanjiCounts:
@@ -69,15 +72,20 @@ parser = argparse.ArgumentParser(
     allow_abbrev=False,
 )
 parser.add_argument("dbfile", help="SQLite database filename")
+parser.add_argument("--trace", action='store_true', help="Print all SQL statements to stderr")
 args = parser.parse_args()
 
 kanji_counts = KanjiCounts()
 
 con = sqlite3.connect(args.dbfile)
+if args.trace:
+    con.set_trace_callback(lambda s: print(s, file=sys.stderr))
+
 cur = con.cursor()
 
 cur.executescript(
     """
+    CREATE TABLE ver(ver INT);
     CREATE TABLE names(
         kaki TEXT,
         yomi TEXT, -- in romaji (saves 15% db size over kana)
@@ -94,12 +102,16 @@ cur.executescript(
 )
 cur.executescript(kanji_counts.create_statement())
 
+# Autogenerate DB revision based on current time
+version = int(datetime.now().timestamp() * 100)
+cur.execute("INSERT INTO ver(ver) VALUES(?);", (version,));
+con.commit();
+
 PART_ID = {
     "unknown": 0,
     "sei": 1,
     "mei": 2,
 }
-
 
 def queries(kanji_counts: KanjiCounts):
     for line in sys.stdin:
@@ -134,17 +146,15 @@ def grouper(iterable, n, fillvalue=None):
 
 kanji_counts = KanjiCounts()
 for chunk in grouper(queries(kanji_counts), 10000):
-    cur.execute("BEGIN TRANSACTION")
     for query in chunk:
         if query:
             cur.execute(*query)
-    cur.execute("COMMIT")
+    con.commit()
 
 for chunk in grouper(kanji_counts.insert_statements(), 10000):
-    cur.execute("BEGIN TRANSACTION")
     for query in chunk:
         if query:
             cur.execute(*query)
-    cur.execute("COMMIT")
+    con.commit()
 
 cur.execute("VACUUM")
