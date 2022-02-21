@@ -8,3 +8,7 @@ disable_test_id_escaping_and_forfeit_all_rights_to_community_support = true
 # Search for module-inline tests
 python_files = "*.py"
 addopts = "--ignore=setup.py --ignore=scripts"
+
+[tool.pyright]
+venv = true
+venvPath = ".env"
