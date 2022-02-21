@@ -1,3 +1,4 @@
+wheel==0.37.0
 jamdict-data>=1.5
 jamdict==0.1a11.post2
 jcconv3==1.2.3
@@ -5,9 +6,9 @@ mediawiki-dump==0.8.0
 mwclient==0.10.1
 pytest==6.2.3
 PyYAML==5.4.1
-regex==2021.7.6
+regex==2021.11.10
+types-regex==2021.11.10
 romkan==0.2.1
 sparqlwrapper==1.8.5
 sqlalchemy==1.4.23
-vowpalwabbit==8.11.0
-wheel==0.37.0
+vowpalwabbit==9.0.1
