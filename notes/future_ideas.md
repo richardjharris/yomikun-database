@@ -101,10 +101,15 @@ Could develop a crawler + extractor for these.
 * https://48pedia.org/%E5%85%A8%E3%83%A1%E3%83%B3%E3%83%90%E3%83%BC%E3%81%AE%E4%B8%80%E8%A6%A7#AKB48
 * http://keirin.jp/pc/racerprofile?snum=015518
 
-* http://sakurashigikai.gijiroku.com/g07_giinlistP.asp - lots of these, doing some
 * https://oneosaka.jp/member/
 * https://www.wasedarugby.com/member_list/
 * http://kazina.com/dummy/
+
+* https://www.tus.ac.jp/today/archive/20210705_2485.html - 大翔 readings split (and 結愛)
+* https://www.j-clip.co.jp/narrator/
+* https://gendai.ismedia.jp/articles/-/63867?page=3
+
+* (main dict) http://www.practical-japanese.com/
 
 ## Other name data (?)
 
