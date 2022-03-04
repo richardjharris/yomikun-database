@@ -2,8 +2,9 @@
 ML-based model for guessing first name genders
 """
 import json
+from typing import cast
 
-from vowpalwabbit import pyvw
+import vowpalwabbit
 
 # --nn didn't help
 # -q kk or other values didn't help (as expected)
@@ -16,9 +17,9 @@ class GenderML():
         self.cache_file = cache_file
         self.weights_file = weights_file
         if weights_file:
-            self.model = pyvw.vw(initial_regressor=weights_file, quiet=quiet)
+            self.model = vowpalwabbit.Workspace(initial_regressor=weights_file, quiet=quiet)
         else:
-            self.model = pyvw.vw(
+            self.model = vowpalwabbit.Workspace(
                 f'{vw_args} --cache_file={cache_file}', quiet=quiet)
 
     def train_str(self, data):
@@ -32,9 +33,11 @@ class GenderML():
         self.model.save(weights_file)
         self.weights_file = weights_file
 
-    def predict(self, kaki, yomi):
+    def predict(self, kaki, yomi) -> float:
         test = vw_features(kaki, yomi)
-        prediction = self.model.predict(test)
+        # `predict` function can return many types based on input, but in our case
+        # it is a float.
+        prediction = cast(float, self.model.predict(test))
         return prediction
 
 
