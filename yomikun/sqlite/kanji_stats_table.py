@@ -39,6 +39,7 @@ class KanjiStatsTable:
             CREATE TABLE kanji_stats(
                 kanji TEXT,
                 part INT,
+                gender TEXT,
                 hits_total INT,
                 female_ratio INT
             );
@@ -55,10 +56,21 @@ class KanjiStatsTable:
             key, mf = entry
             ji, part = key
             m, f = mf
+            # All genders combined
             yield (
-                f"INSERT INTO kanji_stats VALUES(?, ?, ?, ?)",
+                f"INSERT INTO kanji_stats VALUES(?, ?, 'A', ?, ?)",
                 (ji, PART_ID[part], m + f, self._score(mf)),
             )
+            if part == 'mei':
+                # Add male and female-only counts
+                yield (
+                    f"INSERT INTO kanji_stats VALUES(?, ?, 'M', ?, 0)",
+                    (ji, PART_ID[part], m),
+                )
+                yield (
+                    f"INSERT INTO kanji_stats VALUES(?, ?, 'F', ?, 0)",
+                    (ji, PART_ID[part], f),
+                )
 
     def _score(self, mf: tuple[int, int]) -> int:
         m, f = mf
