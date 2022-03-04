@@ -1,6 +1,4 @@
-from typing import Any, Iterable
 import romkan
-
 from yomikun.sqlite.constants import PART_ID, SqliteQuery
 
 
@@ -10,7 +8,7 @@ class NamesTable:
     for all name reading and hit count data.
     """
 
-    def handle(self, row: dict) -> SqliteQuery:
+    def make_query(self, row: dict) -> SqliteQuery:
         values = (
             row["kaki"],
             romkan.to_roma(row["yomi"]),

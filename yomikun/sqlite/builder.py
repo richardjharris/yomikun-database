@@ -4,8 +4,7 @@ import json
 import sqlite3
 import sys
 from typing import IO, Generator, Iterable
-import romkan
-from yomikun.sqlite.constants import PART_ID, SqliteQuery
+from yomikun.sqlite.constants import SqliteQuery
 
 from yomikun.sqlite.kanji_stats_table import KanjiStatsTable
 from yomikun.sqlite.names_table import NamesTable
@@ -36,7 +35,7 @@ def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> 
             row = json.loads(line)
             kanji_stats_table.handle(row)
 
-            yield names_table.handle(row)
+            yield names_table.make_query(row)
 
     def batch_execute(stream: Iterable[SqliteQuery], batch_size: int = 10000):
         for batch in _split_into_batches(stream, batch_size):
