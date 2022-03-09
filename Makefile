@@ -29,7 +29,7 @@ JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 # Installs to the app assets folder for distribution
 install: db/final.db
 	cp $< ../app/assets/namesdb.sqlite3
-	sqlite3 -ascii -noheader $< 'pragma user_version' > ../app/assets/namesdb.version.txt 2>/dev/null
+	sqlite3 --csv --noheader $< 'pragma user_version' > ../app/assets/namesdb.version.txt 2>/dev/null
 
 db/final.db: db/final.jsonl
 	rm -f $@ && python scripts/build_sqlite.py $@ < $<
