@@ -19,8 +19,9 @@ def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> 
     cur = connection.cursor()
 
     # Autogenerate DB revision based on current time
-    version = int(datetime.now().timestamp() * 100)
+    version = int(datetime.now().timestamp())
     cur.execute("PRAGMA user_version = " + str(version))
+    print("Generated DB version {}".format(version), file=sys.stderr)
 
     names_table = NamesTable()
     cur.executescript(names_table.create_statement())
