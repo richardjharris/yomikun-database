@@ -5,7 +5,6 @@ the future.
 
  data/chars_allowed_in_names
 
- - would be interesting to generate a gender graph of these
  - small kana are allowed
  - other old kana (wo, we, wi) are allowed
  - small wa is allowed
@@ -77,7 +76,7 @@ etc. would be useful here.
 
 ## Okinawan names
 
-https://www.shurei.com/
+https://www.shurei.com/ - mostly already in
 
 ## Nagoya who's-who database
 
