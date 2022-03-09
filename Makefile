@@ -21,10 +21,15 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test prep prep-perl deadcode cover lint
+.PHONY: all clean test prep prep-perl deadcode cover lint install
 
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
+
+# Installs to the app assets folder for distribution
+install: db/final.db
+	cp $< ../app/assets/namesdb.sqlite3
+	sqlite3 -ascii -noheader $< 'pragma user_version' > ../app/assets/namesdb.version.txt 2>/dev/null
 
 db/final.db: db/final.jsonl
 	rm -f $@ && python scripts/build_sqlite.py $@ < $<
