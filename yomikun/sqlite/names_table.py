@@ -9,9 +9,15 @@ class NamesTable:
     """
 
     def make_query(self, row: dict) -> SqliteQuery:
+        # Convert yomi to romaji so it takes up less space
+        yomi = romkan.to_roma(row["yomi"])
+        # romkan eagerly adds apostrophes in places where we don't really need them,
+        # e.g. "anna" does not need to be "an'na".
+        yomi = yomi.replace("n'n", "nn")
+
         values = (
             row["kaki"],
-            romkan.to_roma(row["yomi"]),
+            yomi,
             PART_ID[row["part"]],
             row["hits_total"],
             row["hits_male"],
