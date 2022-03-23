@@ -4,7 +4,7 @@
     {kaki, yomi, authenticity, lifetime, source, tags} for people + non-people
 
  - db/gender.json genderated from above
-    {kaki, yomi, ml_Score, ct_score, hits_male etc}
+    {kaki, yomi, ml_score, ct_score, hits_male etc}
 
 - db/final.json takes deduped and converts to sqlite schema
     {kaki, yomi, part, ml_score, hits_*}   - no people

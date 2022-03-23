@@ -22,7 +22,7 @@ class NamesTable:
 
         return (
             f"""
-                INSERT INTO names(kaki,yomi,part,hits_total,hits_male,hits_female,hits_pseudo,ml_score)
+                INSERT INTO names(kaki,yomi,part,hits_total,hits_male,hits_female,hits_pseudo,female_ratio)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             values,
@@ -39,7 +39,7 @@ class NamesTable:
                 hits_male INT,
                 hits_female INT,
                 hits_pseudo INT,
-                ml_score INT,
+                female_ratio INT, -- from 0=all male to 255=all female; 127=neutral
                 PRIMARY KEY (kaki, yomi, part, hits_total DESC)
             );
             CREATE INDEX names_yomi ON names (yomi, part, hits_total DESC);
