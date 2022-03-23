@@ -261,7 +261,7 @@ class NameData():
             del data['lifetime']
 
         # Use list for tags as JSON has no set operator
-        data['tags'] = list(data['tags'])
+        data['tags'] = list(sorted(data['tags']))
 
         # Does not seem to recurse via asdict()
         if not data['subreadings']:

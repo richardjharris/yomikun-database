@@ -1,28 +1,27 @@
-# 豚切り names. Tagged so the user is aware of this
-#!tag:dqn,dict
-梨愛,りあ,f
-愛菜,まな,f
-優愛,ゆうあ,f
-心美,ここみ,f
-心春,こはる,f
-彩絵,さえ,f
-結音,ゆのん,f
-智悠,ともはる,m # non-standard reading
-向日葵,ひまり,f # usually ひまわり
-月,るな,f
+# 豚切り names
+梨愛,りあ,f+dict
+愛菜,まな,f+dict
+優愛,ゆうあ,f+dict
+心美,ここみ,f+dict
+心春,こはる,f+dict
+彩絵,さえ,f+dict
+結音,ゆのん,f+dict
+智悠,ともはる,m+dict # non-standard reading
+向日葵,ひまり,f+dict # usually ひまわり
+月,るな,f+dict
 # 絶対読めないキラキラネームランキング
-男,あだむ,m
-心姫,はあと,f
-紅葉,めいぷる,f
-桃花,ぴんく,f
-夢姫,ぷりん,f
-夢姫,ゆらり,f
-天音,そぷら
-奏夢,りずむ
-愛翔,らぶは
-愛羅,てぃあら
-一心,ぴゅあ
+男,あだむ,m+dict
+心姫,はあと,f+dict
+紅葉,めいぷる,f+dict
+桃花,ぴんく,f+dict
+夢姫,ぷりん,f+dict
+夢姫,ゆらり,f+dict
+天音,そぷら,given+dict
+奏夢,りずむ,given+dict
+愛翔,らぶは,given+dict
+愛羅,てぃあら,given+dict
+一心,ぴゅあ,given+dict
 # Others
-愛心,あいす
-心愛,ここあ
-桜芽子,めいこ
+愛心,あいす,f+dict
+心愛,ここあ,f+dict
+桜芽子,めいこ,f+dict

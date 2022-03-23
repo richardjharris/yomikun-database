@@ -116,7 +116,7 @@ jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
 	${ZCAT} $< | ${PARALELL} python scripts/parse_wikidata_nokana.py > $@
 
 jsonl/custom.jsonl: data/custom.csv data/custom.d
-	cat data/custom.csv data/custom.d/* | python scripts/parse_custom_data.py > $@
+	python scripts/parse_custom_data.py > $@
 
 # Anonymise names
 jsonl/researchmap.jsonl jsonl/seijiyama.jsonl: jsonl/%.jsonl: data/%.jsonl
