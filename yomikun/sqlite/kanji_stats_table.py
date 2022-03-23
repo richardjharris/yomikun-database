@@ -41,7 +41,7 @@ class KanjiStatsTable:
                 part INT,
                 gender TEXT,
                 hits_total INT,
-                female_ratio INT
+                female_ratio INT -- from 0=all male to 255=all female; 127=neutral
             );
         """
 
@@ -50,7 +50,7 @@ class KanjiStatsTable:
         Returns a generator yielding the SQL insert statements for this table.
         """
         sorted_entries = sorted(
-            self.counts.items(), key=lambda x: self._score(x[1]), reverse=True
+            self.counts.items(), key=lambda x: self._female_ratio(x[1]), reverse=True
         )
         for entry in sorted_entries:
             key, mf = entry
@@ -59,7 +59,7 @@ class KanjiStatsTable:
             # All genders combined
             yield (
                 f"INSERT INTO kanji_stats VALUES(?, ?, 'A', ?, ?)",
-                (ji, PART_ID[part], m + f, self._score(mf)),
+                (ji, PART_ID[part], m + f, self._female_ratio(mf)),
             )
             if part == 'mei':
                 # Add male and female-only counts
@@ -72,9 +72,9 @@ class KanjiStatsTable:
                     (ji, PART_ID[part], f),
                 )
 
-    def _score(self, mf: tuple[int, int]) -> int:
+    def _female_ratio(self, mf: tuple[int, int]) -> int:
         m, f = mf
         if m + f == 0:
             return 127
         else:
-            return int(m / (m + f) * 255)
+            return int(f / (m + f) * 255)
