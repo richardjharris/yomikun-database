@@ -8,6 +8,7 @@ from yomikun.sqlite.constants import SqliteQuery
 
 from yomikun.sqlite.kanji_stats_table import KanjiStatsTable
 from yomikun.sqlite.names_table import NamesTable
+from yomikun.sqlite.quiz_table import QuizTable
 
 def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> None:
     """
@@ -51,6 +52,11 @@ def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> 
     # Now all the rows have been processed, we can generate queries for aggregate
     # data.
     batch_execute(kanji_stats_table.insert_statements())
+
+    quiz_table = QuizTable()
+    quiz_table.create(cur)
+
+    connection.commit()
 
     cur.execute("VACUUM")
 
