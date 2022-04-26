@@ -27,12 +27,13 @@ data/jawiki-articles.gz
 # wikidumps
 data/*.xml.bz2
 
-# dictionaries converted to json
-#data/pdd.json.gz
-#data/koujien.json.gz
-#data/daijisen.json.gz
-#data/researchmap.gz
-#data/researchmap.jsonl
+# private source data
+data/pdd.json.gz
+data/koujien.json.gz
+data/daijisen.json.gz
+data/researchmap.gz
+data/researchmap.jsonl
+data/giin.csv
 
 # backups
 old/
