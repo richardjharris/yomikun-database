@@ -34,6 +34,7 @@ data/daijisen.json.gz
 data/researchmap.gz
 data/researchmap.jsonl
 data/giin.csv
+data/seijiyama.jsonl
 
 # backups
 old/

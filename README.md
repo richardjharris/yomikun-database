@@ -1,6 +1,7 @@
 ### yomikun-database
 
 Scripts and modules to generate the name database used by Yomikun.
+
 This includes:
 
 - parsing Wikipedia and other dictionary data
@@ -18,6 +19,11 @@ Makefile: a Linux-compatible environment with `moreutils` (`parallel` tool),
 `pzcat` (to be added). For fast conversion of MediaWiki XML dumps to JSON,
 Perl and the `MediaWiki::DumpFile::FastPages` module is used. If you don't
 want to use Perl, you can do the conversion yourself quite easily.
+
+At present I use several personal data sources to generate the name database,
+so the makefile will not run as-is. To build a simple version, you can remove
+any data sources that won't build, and provide `enwiki.xml.bz2` and `jawiki.xml.bz2`
+from Mediawiki dumps.
 
 ## Directory structure
 
