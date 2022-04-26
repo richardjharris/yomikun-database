@@ -3,9 +3,6 @@ Loads final database (db/final.py=stdin) into an sqlite file (first argument)
 """
 
 from __future__ import annotations
-from collections import defaultdict
-from datetime import datetime
-from itertools import zip_longest
 import logging
 import argparse
 import sys
