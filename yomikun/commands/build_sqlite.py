@@ -8,7 +8,9 @@ import yomikun.sqlite.builder as builder
 @click.option('--trace/--no-trace', help='Print all SQL statements to stderr')
 def build_sqlite(dbfile, trace):
     """
-    Build the final SQLite database as a new file DBFILE, using final.json
+    Build final SQLite database
+
+    Build the final SQLite database as a new file DBFILE, using final.jsonl
     output from STDIN.
     """
     connection = sqlite3.connect(dbfile)

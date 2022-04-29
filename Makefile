@@ -36,10 +36,10 @@ db/final.db: db/final.jsonl
 	rm -f $@ && $(YOMIKUN) build-sqlite $@ < $<
 
 db/final.jsonl: db/deduped.jsonl
-	python scripts/build_final_database.py < $< > $@
+	$(YOMIKUN) build-final-database < $< > $@
 
 db/gender.jsonl: db/deduped.jsonl data/name_lists.json
-	python scripts/build_gender_db.py < $< > $@
+	$(YOMIKUN) build-gender-db < $< > $@
 
 clean:
 	rm -f ${JSONLFILES}
@@ -73,7 +73,7 @@ lint:
 	-pylint scripts yomikun tests/*.py
 
 db/deduped.jsonl: ${JSONLFILES}
-	${CAT} $^ | python scripts/person_dedupe.py > $@
+	$(YOMIKUN) person-dedupe < $^ > $@
 
 # Caution: LARGE! 36GB as of Oct 2021
 # Can be replaced with an empty file once data/enwiki-nihongo-articles.gz is built, as you are
@@ -102,7 +102,7 @@ data/jawiki-articles.gz: data/jawiki.xml.bz2
 
 # Generated from whatever JSON files are available. Should be rebuilt periodically.
 data/romajidb.tsv.gz:
-	${CAT} jsonl/* | python scripts/build_romajidb.py | gzip -9f > $@
+	${CAT} jsonl/* | $(YOMIKUN) build-romajidb | gzip -9f > $@
 
 jsonl/wikipedia_en.jsonl: data/enwiki-template-only.gz
 	${ZCAT} $< | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
@@ -127,16 +127,16 @@ data/researchmap.jsonl:
 	${ZCAT} data/researchmap.gz | ${PARALLEL} python scripts/import_researchmap.py > $@
 
 jsonl/jmnedict.jsonl:
-	python scripts/parse_jmnedict.py > $@
+	$(YOMIKUN) parse-jmnedict > $@
 
 jsonl/myoji-yurai.jsonl: data/myoji-yurai-readings.csv
 	python scripts/parse_myoji_yurai.py < $^ > $@
 
 jsonl/koujien.jsonl: data/koujien.json.gz
-	${ZCAT} $< | python scripts/parse_koujien.py > $@
+	${ZCAT} $< | $(YOMIKUN) parse-koujien > $@
 
 jsonl/daijisen.jsonl: data/daijisen.json.gz
-	${ZCAT} $< | python scripts/parse_daijisen.py > $@
+	${ZCAT} $< | $(YOMIKUN) parse-daijisen > $@
 
 jsonl/pdd.jsonl: data/pdd.json.gz
-	${ZCAT} $< | python scripts/parse_pdd.py > $@
+	${ZCAT} $< | $(YOMIKUN) parse-pdd > $@
