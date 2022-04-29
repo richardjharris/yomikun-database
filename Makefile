@@ -13,6 +13,7 @@ endif
 
 ZCAT = scripts/pzcat
 CAT = pv
+YOMIKUN = python scripts/yk.py
 
 # Much faster than bzcat
 BZCAT = lbzcat
@@ -32,7 +33,7 @@ install: db/final.db
 	sqlite3 --csv --noheader $< 'pragma user_version' > ../app/assets/namesdb.version.txt 2>/dev/null
 
 db/final.db: db/final.jsonl
-	rm -f $@ && python scripts/build_sqlite.py $@ < $<
+	rm -f $@ && $(YOMIKUN) build-sqlite $@ < $<
 
 db/final.jsonl: db/deduped.jsonl
 	python scripts/build_final_database.py < $< > $@
