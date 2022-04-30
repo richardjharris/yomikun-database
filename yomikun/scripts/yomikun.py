@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-
-# Entry point for all yomikun commands. Handles common options.
+"""
+Entry point for all yomikun CLI commands. Handles common options.
+"""
 import click
 import logging
 from yomikun.commands import add_yomikun_commands
@@ -12,5 +12,5 @@ def cli(loglevel):
 
 add_yomikun_commands(cli)
 
-if __name__ == '__main__':
+def main():
     cli(auto_envvar_prefix='YOMIKUN')
