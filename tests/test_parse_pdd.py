@@ -14,9 +14,8 @@ FIXTURE_DIR = os.path.join(
 
 def test_parse_pdd():
     input_file = FIXTURE_DIR + "/pdd-input.json"
-    expected_output = open(
-        FIXTURE_DIR + "/pdd-expected-output.jsonl", encoding='utf-8'
-    ).read()
+    with open(FIXTURE_DIR + "/pdd-expected-output.jsonl", encoding='utf-8') as fh:
+        expected_output = fh.read()
 
     runner = CliRunner()
     result = runner.invoke(cli, ['parse-pdd', input_file])
