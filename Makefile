@@ -73,7 +73,7 @@ vulture-whitelist:
 	-vulture --make-whitelist > $@
 
 lint:
-	-pylint scripts yomikun tests/*.py
+	-flake8 scripts yomikun tests/*.py
 
 db/deduped.jsonl: ${JSONLFILES}
 	$(YOMIKUN) person-dedupe < $^ > $@
