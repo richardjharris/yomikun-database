@@ -1,8 +1,6 @@
 from collections import defaultdict
 import logging
 
-from yomikun.models import Lifetime
-
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData
 
@@ -123,43 +121,3 @@ class PersonDedupe:
                     return source
         else:
             return sources[0]
-
-
-def test_preferred_sources():
-    assert (
-        PersonDedupe.best_source(
-            [
-                'daijisen:くろさわ‐あきら',
-                'wikidata:http://www.wikidata.org/entity/Q95472952',
-                'wikipedia_ja:黒沢明',
-            ]
-        )
-        == 'wikipedia_ja:黒沢明'
-    )
-
-    assert PersonDedupe.best_source(['jmnedict', 'custom']) == 'jmnedict'
-
-
-def test_akira():
-    jsonl = """
-{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "jmnedict", "tags": ["person"]}
-{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikidata:http://www.wikidata.org/entity/Q8006", "tags": ["person", "masc"], "notes": "日本の映画監督"}
-{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikipedia_en:Akira Kurosawa", "tags": ["xx-romaji", "masc", "person"], "notes": "Filmmaker and painter who directed 30 films in a career spanning 57 years"}
-{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikipedia_ja:黒澤明", "tags": ["person"]}
-    """.strip()  # noqa: E501
-
-    pd = PersonDedupe()
-    for person in jsonl.splitlines():
-        pd.ingest(NameData.from_jsonl(person))
-
-    people = list(pd.deduped_people())
-    assert len(people) == 1
-
-    assert people[0] == NameData.person(
-        '黒澤 明',
-        'くろさわ あきら',
-        lifetime=Lifetime(1910, 1998),
-        source='wikipedia_en:Akira Kurosawa',
-        tags=['person', 'masc'],
-        notes='Filmmaker and painter who directed 30 films in a career spanning 57 years',
-    )

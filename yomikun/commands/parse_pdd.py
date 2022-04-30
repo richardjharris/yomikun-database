@@ -7,15 +7,14 @@ import yomikun.pdd
 
 @click.command()
 @click.argument('input', type=click.File('r'), default='-')
-@click.argument('output', type=click.File('w'), default='-')
-def parse_pdd(input: TextIO, output: TextIO):
+def parse_pdd(input: TextIO):
     """
     Generate NameData from the Public Domain Dictionary
 
     Input must be the PDD dictionary converted to JSON format.
     Defaults to stdin.
 
-    Output is NameData in JSONL format. Defaults to stdout.
+    Output is NameData in JSONL format to stdout.
 
     \b
     Example:
@@ -35,4 +34,4 @@ def parse_pdd(input: TextIO, output: TextIO):
 
         text = entry['text']
         if reading := yomikun.pdd.name_from_entry(heading, text):
-            print(reading.to_jsonl(), file=output)
+            print(reading.to_jsonl())

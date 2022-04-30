@@ -17,12 +17,12 @@ last_raw_line_number = 0
 
 def parse_file(
     input_file: TextIO, output_file: TextIO, input_filename: Optional[str] = None
-):
+) -> bool:
     """
     Parse a CSV file and write JSONL output.
 
-    If an error is encountered, displays contextual information and exits
-    the program.
+    If an error is encountered, displays contextual information and returns False.
+    The caller should then exit the program.
     """
     reader = csv.DictReader(skip_lines_and_comments(input_file), csv_fields)
     for row in reader:
@@ -43,7 +43,9 @@ def parse_file(
                 f"Generated dict: {row}\n"
                 f"Generated namedata: {namedata}"
             )
-            sys.exit(1)
+            return False
+
+    return True
 
 
 def skip_lines_and_comments(lines):

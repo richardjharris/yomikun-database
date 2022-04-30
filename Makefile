@@ -1,5 +1,6 @@
 export PYTHONPATH := ${PYTHONPATH}:.
 export TMPDIR = ./tmp
+export PATH := ${PATH}:.env/bin
 
 SHELL = /bin/bash -o pipefail
 
@@ -13,7 +14,7 @@ endif
 
 ZCAT = scripts/pzcat
 CAT = pv
-YOMIKUN = python scripts/yk.py
+YOMIKUN = yomikun
 
 # Much faster than bzcat
 BZCAT = lbzcat
@@ -125,7 +126,7 @@ jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
 	${ZCAT} $< | ${PARALELL} $(YOMIKUN) parse-wikidata-nokana > $@
 
 jsonl/custom.jsonl: data/custom.csv data/custom.d
-	$(YOMIKUN) parse-custom-data > $@
+	$(YOMIKUN) parse-custom-data data/custom.csv data/custom.d/* > $@
 
 # Anonymise names
 jsonl/researchmap.jsonl jsonl/seijiyama.jsonl: jsonl/%.jsonl: data/%.jsonl
