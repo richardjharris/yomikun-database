@@ -15,6 +15,7 @@ scripts/topn
 # Build products
 *.jsonl
 !data/*.jsonl
+!tests/fixtures/*.jsonl
 jsonl/
 tmp/
 db/
