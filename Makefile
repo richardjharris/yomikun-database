@@ -22,7 +22,7 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test prep prep-perl deadcode cover lint install
+.PHONY: all clean test prep prep-perl prep-dev deadcode cover lint install
 
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
@@ -57,8 +57,9 @@ prep:
 	# Wheel is required for jamdict-data
 	pip install wheel
 	pip install -r requirements.txt
-	# Optional
-	pip install coverage vulture
+
+prep-dev:
+	pip install -r requirements-dev.txt
 
 prep-perl:
 	cpanm MediaWiki::DumpFile::FastPages JSON::XS
