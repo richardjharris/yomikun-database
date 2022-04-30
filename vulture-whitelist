@@ -8,3 +8,4 @@ hits_xx_romaji  # unused variable (/home/rjh/yomikun/database/yomikun/loader/fin
 hits_pseudo  # unused variable (/home/rjh/yomikun/database/yomikun/loader/finaldb.py:29)
 _.hits_xx_romaji  # unused attribute (/home/rjh/yomikun/database/yomikun/loader/finaldb.py:45)
 _.hits_pseudo  # unused attribute (/home/rjh/yomikun/database/yomikun/loader/finaldb.py:47)
+_.info_name  # unused attribute (/home/rjh/yomikun/database/yomikun/commands/help.py:17)

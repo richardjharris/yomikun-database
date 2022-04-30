@@ -64,7 +64,7 @@ prep-perl:
 	cpanm MediaWiki::DumpFile::FastPages JSON::XS
 
 deadcode: vulture-whitelist
-	vulture vulture-whitelist
+	vulture vulture-whitelist scripts yomikun tests/*.py
 
 vulture-whitelist:
 	-vulture --make-whitelist > $@
