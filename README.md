@@ -1,5 +1,7 @@
 ### yomikun-database
 
+![Unit test status](https://github.com/richardjharris/yomikun-database/actions/workflows/tests.yml/badge.svg?event=push)
+
 Scripts and modules to generate the name database used by Yomikun.
 
 This includes:
