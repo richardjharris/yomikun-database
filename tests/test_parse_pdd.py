@@ -1,14 +1,22 @@
 """
 Tests the parse-pdd subcommand.
 """
+import os
 from click.testing import CliRunner
 
 from yomikun.scripts.yomikun import cli
 
+FIXTURE_DIR = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    'fixtures',
+)
+
 
 def test_parse_pdd():
-    input_file = 'tests/fixtures/pdd-input.json'
-    expected_output = open('tests/fixtures/pdd-expected-output.jsonl').read()
+    input_file = FIXTURE_DIR + "/pdd-input.json"
+    expected_output = open(
+        FIXTURE_DIR + "/pdd-expected-output.jsonl", encoding='utf-8'
+    ).read()
 
     runner = CliRunner()
     result = runner.invoke(cli, ['parse-pdd', input_file])
