@@ -13,7 +13,8 @@ This includes:
 
 ## Prerequisites
 
-Code: Python 3.9, the modules in `requirements.txt`.
+Code: Python 3.10, the modules in `requirements.txt` (and `requirements-dev.txt`
+for development). See the `prep*` makefile targets.
 
 Makefile: a Linux-compatible environment with `moreutils` (`parallel` tool),
 `pzcat` (to be added). For fast conversion of MediaWiki XML dumps to JSON,
@@ -36,11 +37,13 @@ from Mediawiki dumps.
 - tests: global unit tests (other tests are inside each .py file)
 - tmp: tmp directory for makefile (sorts etc)
 - yomikun: python code
+ - commands - CLI subcommand logic
  - daijisen - tools for reading Daijisen's epwing data
  - gender - name to gender guesser
  - jmnedict - related to JMnedict parsing
  - loader - assembles the final database
  - models - general-purpose classes used by everything (NameData is the most important)
+ - scripts - CLI entrypoint
  - utils - code used by everything (e.g. romaji to kana conversion, regexes)
  - wikipedia\_en - code to parse EN (English) wikipedia
  - wikipedia\_ja - code to parse JA (Japanese) wikipedia
@@ -67,3 +70,5 @@ Run `make`.
 ## Running tests
 
 Run `make test`.
+
+For coverage run `make coverage`.
