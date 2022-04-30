@@ -54,7 +54,7 @@ class PersonDedupe():
         merged = people[0].clone()
 
         # Dedupe logic
-        genders = set(filter(None.__ne__, (p.gender() for p in people)))
+        genders = set(p.gender() for p in people if p.gender() is not None)
 
         if len(genders) > 1:
             logging.info('Giving up (inconsistent genders)')
@@ -66,8 +66,7 @@ class PersonDedupe():
 
         # All people have the same birth_year, but fill in death_year if
         # missing.
-        death_years = set(
-            filter(None.__ne__, (p.lifetime.death_year for p in people)))
+        death_years = set(p.lifetime.death_year for p in people if p.lifetime.death_year is not None)
         if len(death_years) > 1:
             logging.info('Giving up (inconsistent death years)')
             return people
