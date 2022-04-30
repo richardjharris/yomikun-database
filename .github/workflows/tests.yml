@@ -1,4 +1,4 @@
-name: Run pytest
+name: Unit tests
 on:
   push:
     branches: [master]
