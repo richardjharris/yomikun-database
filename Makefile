@@ -105,16 +105,16 @@ data/romajidb.tsv.gz:
 	${CAT} jsonl/* | $(YOMIKUN) build-romajidb | gzip -9f > $@
 
 jsonl/wikipedia_en.jsonl: data/enwiki-template-only.gz
-	${ZCAT} $< | $(PARALLEL) python scripts/parse_wikipedia_en.py > $@
+	${ZCAT} $< | $(PARALLEL) $(YOMIKUN) parse-wikipedia-en > $@
 
 jsonl/wikipedia_ja.jsonl: data/jawiki-articles.gz
-	${ZCAT} data/jawiki-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_ja.py > $@
+	${ZCAT} data/jawiki-articles.gz | $(PARALLEL) $(YOMIKUN) parse-wikipedia-ja > $@
 
 jsonl/wikidata.jsonl: data/wikidata.jsonl.gz
 	${ZCAT} $< | ${PARALLEL} $(YOMIKUN) parse-wikidata > $@ 2>/dev/null
 
 jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
-	${ZCAT} $< | ${PARALELL} python scripts/parse_wikidata_nokana.py > $@
+	${ZCAT} $< | ${PARALELL} $(YOMIKUN) parse-wikidata-nokana > $@
 
 jsonl/custom.jsonl: data/custom.csv data/custom.d
 	$(YOMIKUN) parse-custom-data > $@

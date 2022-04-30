@@ -6,7 +6,7 @@ def make_help_command(cli):
     @click.pass_context
     def help(ctx, subcommand):
         """
-        Returns help for any subcommand
+        Return help for any subcommand
 
         This is an alternative to calling 'yomikun <subcommand> --help'
         """

@@ -8,7 +8,7 @@ from yomikun.loader.person_dedupe import PersonDedupe
 @click.command()
 def person_dedupe():
     """
-    De-deduplicates person records
+    De-deduplicate person records
 
     Accepts JSONL input, filters people records and de-duplicates them
     (based on birth_year, kaki and yomi). Resolves missing or conflicting
