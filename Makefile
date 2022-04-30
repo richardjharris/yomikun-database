@@ -62,7 +62,7 @@ prep:
 	# Makes 'yomikun' script available without modifying PATH
 	pip install --editable .
 
-prep-dev:
+prep-dev: prep
 	pip install -r requirements-dev.txt
 
 prep-perl:
