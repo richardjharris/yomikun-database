@@ -38,7 +38,7 @@ class AggregatedData:
     def hits_total(self):
         return self.hits_male + self.hits_female + self.hits_unknown
 
-    def record_hit(self, part: NamePart, gender: Gender, name: NameData):
+    def record_hit(self, gender: Gender, name: NameData):
         if name.has_tag('dict'):
             # Does not count as a hit
             return
@@ -102,7 +102,7 @@ def make_final_db(names: Iterable[NameData], db_out: TextIO):
 
             key = (kaki, kana, pos)
 
-            aggregated_data[key].record_hit(part, gender, name)
+            aggregated_data[key].record_hit(gender, name)
 
             if name.has_tag('top5k'):
                 population = 0
@@ -111,10 +111,12 @@ def make_final_db(names: Iterable[NameData], db_out: TextIO):
 
                 aggregated_data[key].mark_top5k(population)
 
-    _output_aggregated_data(aggregated_data)
+    _output_aggregated_data(aggregated_data, db_out)
 
 
-def _output_aggregated_data(aggregated_data: dict[DictKey, AggregatedData]):
+def _output_aggregated_data(
+    aggregated_data: dict[DictKey, AggregatedData], db_out: TextIO
+):
     genderdb = GenderDict()
 
     # Output aggregated data
@@ -131,7 +133,7 @@ def _output_aggregated_data(aggregated_data: dict[DictKey, AggregatedData]):
             # Convert ml_score to sqlite int 0-255
             row['ml_score'] = ml_score_float_to_int(row.get('ml_score', 0))
 
-        print(json.dumps(row, ensure_ascii=False))
+        print(json.dumps(row, ensure_ascii=False), file=db_out)
 
 
 def ml_score_float_to_int(score: float) -> int:
