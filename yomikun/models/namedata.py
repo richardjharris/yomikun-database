@@ -6,7 +6,7 @@ import regex
 
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.lifetime import Lifetime
-import yomikun.utils.patterns as patterns
+from yomikun.utils import patterns
 
 
 def normalise(s: str) -> str:
@@ -294,9 +294,7 @@ class NameData:
         if 'lifetime' in data:
             data['lifetime'] = Lifetime(**data['lifetime'])
         if 'subreadings' in data:
-            data['subreadings'] = list(
-                map(lambda x: NameData.from_dict(x), data['subreadings'])
-            )
+            data['subreadings'] = list(map(NameData.from_dict, data['subreadings']))
         if 'orig' in data:
             del data['orig']
         if 'tags' in data and isinstance(data['tags'], list):

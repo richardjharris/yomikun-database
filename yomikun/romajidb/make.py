@@ -52,8 +52,7 @@ def make_romajidb(names: Iterable[NameData], db_out: TextIO):
 
     # Try to pick one unique reading for the given kanji/romaji_key/part
     # This will be used for romaji conversion.
-    for key in data.keys():
-        values = data[key]
+    for key, values in data.items():
         counts = collections.Counter(values)
         unique = _find_unique_reading(key, counts, values)
         print(

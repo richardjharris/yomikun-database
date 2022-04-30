@@ -1,12 +1,12 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
-import os
 from typing import cast, Optional
+import gzip
+import os
 
 import regex
 import romkan
 import jcconv3
-import gzip
 
 from yomikun.utils.romaji import romaji_key
 

@@ -1,6 +1,6 @@
 import sqlite3
 import click
-import yomikun.sqlite.builder as builder
+from yomikun.sqlite import builder
 
 
 @click.command()

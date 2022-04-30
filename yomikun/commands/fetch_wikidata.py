@@ -7,12 +7,12 @@ import click
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 
-endpoint_url = "https://query.wikidata.org/sparql"
+ENDPOINT_URL = "https://query.wikidata.org/sparql"
 
-user_agent = "rjh-fetch-japanese-name-data/0.1 (richardjharris@gmail.com)"
+USER_AGENT = "rjh-fetch-japanese-name-data/0.1 (richardjharris@gmail.com)"
 
 # List of all kana, used to make per-kana queries of the dataset
-kanatab = """
+KANATAB = """
 あいうえお
 かきくけこ
 さしすせそ
@@ -31,7 +31,7 @@ kanatab = """
 ぱぴぷぺぽ
 """
 
-base_query = """
+BASE_QUERY = """
 SELECT DISTINCT
   ?item ?itemLabel ?itemDescription ?kana ?genderLabel ?dob ?dod ?countryLabel ?nativeName
   ?ethnicGroupLabel ?birthName ?birthNameKana
@@ -56,14 +56,14 @@ def fetch_wikidata():
     """
     Fetch name data from the WikiData project
     """
-    kanas = reduce(list.__add__, (list(s) for s in kanatab.split()))
+    kanas = reduce(list.__add__, (list(s) for s in KANATAB.split()))
     for kana in kanas:
         _fetch_wikidata(prefix=kana)
         time.sleep(5)
 
 
 def get_results(endpoint_url, query) -> dict:
-    sparql = SPARQLWrapper(endpoint_url, agent=user_agent)
+    sparql = SPARQLWrapper(endpoint_url, agent=USER_AGENT)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     result = sparql.query().convert()
@@ -72,9 +72,9 @@ def get_results(endpoint_url, query) -> dict:
 
 
 def _fetch_wikidata(prefix: str):
-    query = base_query.replace('$PREFIX', prefix)
+    query = BASE_QUERY.replace('$PREFIX', prefix)
     try:
-        result = get_results(endpoint_url, query)
+        result = get_results(ENDPOINT_URL, query)
         bindings = result['results']['bindings']
         for binding in bindings:
             print(json.dumps(binding, ensure_ascii=True))

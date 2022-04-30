@@ -1,6 +1,6 @@
 import json
-import click
 import sys
+import click
 from yomikun.models import NameData
 from yomikun.gender.make import make_gender_dict
 
@@ -24,7 +24,9 @@ def build_gender_db():
       db/gender.jsonl (stdout)
       db/gender.weights (ML model)
     """
-    name_lists = json.load(open(NAME_LISTS_JSON))
+    with open(NAME_LISTS_JSON, encoding='utf-8') as fh:
+        name_lists = json.load(fh)
+
     names = (NameData.from_dict(json.loads(line)) for line in sys.stdin)
 
     make_gender_dict(names, name_lists, dict_out=sys.stdout, weights=GENDER_WEIGHTS_OUT)

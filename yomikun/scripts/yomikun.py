@@ -1,8 +1,8 @@
 """
 Entry point for all yomikun CLI commands. Handles common options.
 """
-import click
 import logging
+import click
 from yomikun.commands import add_yomikun_commands
 
 

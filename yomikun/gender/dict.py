@@ -19,7 +19,7 @@ class GenderInfo:
 class GenderDict:
     def __init__(self, file: str = DEFAULT_JSONL_PATH):
         self.dict = {}
-        with open(file) as fh:
+        with open(file, encoding='utf-8') as fh:
             for line in fh:
                 row = json.loads(line)
                 key = (row['kaki'], row['yomi'])

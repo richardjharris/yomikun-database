@@ -1,7 +1,8 @@
-import click
 import sys
 import logging
 from glob import glob
+import click
+
 
 from yomikun.custom_data.csv import parse_file
 
@@ -19,5 +20,5 @@ def parse_custom_data():
     """
     for filename in ['data/custom.csv'] + glob('data/custom.d/*'):
         logging.info(f"Parsing {filename}")
-        with open(filename) as input_file:
+        with open(filename, encoding='utf-8') as input_file:
             parse_file(input_file, sys.stdout, input_filename=filename)

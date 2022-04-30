@@ -85,10 +85,7 @@ def adjusted_wald_moe(female, male, z=1.96):
     return margin_of_error
 
 
-def score_from_counts(
-    by_kanji: dict[Gender, int],
-    by_kana: dict[Gender, int],
-) -> tuple[float, float]:
+def score_from_counts(by_kanji: dict[Gender, int]) -> tuple[float, float]:
     """
     Given a map of gender -> person count (by kanji+yomi, and then by yomi
     alone) return two values:
@@ -100,9 +97,6 @@ def score_from_counts(
      2) Confidence [0,1]
         From 0 (no data, no idea) -> 1 (very very sure)
     """
-    # TODO note on by_kana: this is only useful in cases where every
-    # use of a given kana is male/female regardless of kanji. Such cases
-    # will be picked up by the ML algorithm anyway.
     male = by_kanji[Gender.male]
     female = by_kanji[Gender.female]
     total = male + female
@@ -133,7 +127,6 @@ def make_gender_dict(
     Output dictionary to `dict_out` (JSON format)
     Save ML model weights to file `weights` is specified.
     """
-    counts_kana = defaultdict(Counter)
     counts_kanji = defaultdict(Counter)
     model = GenderML(quiet=True)
 
@@ -146,7 +139,6 @@ def make_gender_dict(
             # A gendered 'dict' entry is intended to gender-tag a non-
             # gender-tagged entry elsewhere.
             part = NamePart(name.kaki, name.yomi, NamePosition.mei)
-            counts_kana[part.yomi][Gender.unknown] -= 1
             counts_kanji[part][Gender.unknown] -= 1
             # TODO potentially force use of hits-based gender determination
             # in this case.
@@ -156,17 +148,14 @@ def make_gender_dict(
             if part.position != NamePosition.mei:
                 continue
 
-            counts_kana[part.yomi][gender] += 1
             counts_kanji[part][gender] += 1
 
             if gender and gender != Gender.unknown:
                 model.train(part.kaki, part.yomi, gender == Gender.female)
 
     # Now do testing
-    # As for Sep 11 Sep, about 8.7k names fail testing (!!)
-    for test in counts_kanji.keys():
-        by_kana = counts_kana[test.yomi]
-        by_kanji = counts_kanji[test]
+    # As of Sep 11 Sep, about 8.7k names fail testing (!)
+    for test, by_kanji in counts_kanji.items():
         tags = tags_for_name[test.yomi]
 
         # ML score is -1 (male) to 1 (female)
@@ -175,7 +164,7 @@ def make_gender_dict(
         # Count score is the same. Confidence is 0~1.
         # A confidence of 0 means 'no data'
         # A confidence of 1 means 'a lot of data'
-        ct_score, ct_confidence = score_from_counts(by_kana, by_kanji)
+        ct_score, ct_confidence = score_from_counts(by_kanji)
 
         # Test locally, picking a suitable score
         gender_score = ct_score if ct_confidence > 0.5 else ml_score

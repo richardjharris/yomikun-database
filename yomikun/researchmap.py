@@ -1,12 +1,12 @@
 from __future__ import annotations
 from operator import itemgetter
 from typing import cast
+import logging
 
 import regex
 import jcconv3
 import pytest
 import romkan
-import logging
 
 from yomikun.models import NameData
 from yomikun.utils.patterns import name_pat
@@ -101,7 +101,7 @@ def _parse_researchmap_inner(
     kana = kana.replace('ス゛', 'ズ').replace('タ゛', 'ダ').replace('シ゛', 'ジ')
     kana = kana.replace('カ゛', 'ガ').replace('ウ゛', 'ヴ')
 
-    if kana == 'no data' or kana == 'no date':
+    if kana in ('no data', 'no date'):
         # These records never contain any readings.
         logging.debug("Rejecting (no data)")
         return

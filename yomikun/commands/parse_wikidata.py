@@ -22,9 +22,10 @@ def parse_wikidata():
     # Load birth-name data, which we did in a separate query
     birth_name = {}
     seen = set()
-    for line in open('data/birth-names.jsonl').readlines():
-        data = json.loads(line)
-        birth_name[data['item']] = data
+    with open('data/birth_name.jsonl', encoding='utf-8') as fh:
+        for line in fh:
+            data = json.loads(line)
+            birth_name[data['item']] = data
 
     for line in sys.stdin:
         data: dict = json.loads(line)

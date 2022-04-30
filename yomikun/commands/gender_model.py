@@ -15,10 +15,8 @@
 # TO TEST
 # 雅 - Masa (male name) or Miyabi (female name)
 # 幸 - Kou (male name) or Miyuki (female name)
-
-import click
 import sys
-
+import click
 from yomikun.gender.ml import GenderML, generate_examples
 
 
@@ -50,10 +48,10 @@ def model(ctx):
     Build and train a model using NameData JSONL input on stdin, and save
     the model.
     """
-    model = GenderML(ctx.obj['CACHE_FILE'])
+    genderml = GenderML(ctx.obj['CACHE_FILE'])
     for example in generate_examples(sys.stdin):
-        model.train_str(example)
-    model.save(ctx.obj['WEIGHTS_FILE'])
+        genderml.train_str(example)
+    genderml.save(ctx.obj['WEIGHTS_FILE'])
 
 
 @gender_model.command()
@@ -68,8 +66,8 @@ def query(ctx, kaki, yomi):
     form of a given name and returns the estimated gender score. Reading
     should be in full-width kana.
     """
-    model = GenderML(ctx.obj['CACHE_FILE'], ctx.obj['WEIGHTS_FILE'])
-    print(model.predict(kaki, yomi))
+    genderml = GenderML(ctx.obj['CACHE_FILE'], ctx.obj['WEIGHTS_FILE'])
+    print(genderml.predict(kaki, yomi))
 
 
 @gender_model.command()

@@ -4,3 +4,4 @@ flake8==4.0.1
 coverage==6.3.2
 vulture==2.3
 black==22.3.0
+pylint==2.13.7
