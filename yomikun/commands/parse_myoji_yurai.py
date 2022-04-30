@@ -1,16 +1,18 @@
-"""
-Parses myoji-yurai-readings.csv data to get top 5000
-Japanese surnames and their 'typical' readings.
-"""
-from __future__ import annotations
-from typing import Iterable
 import sys
+import click
 
 from yomikun.models import NameData
 
+@click.command()
+def parse_myoji_yurai():
+    """
+    Parse MyojiYurai reading data
 
-def parse_myoji_yurai(lines: Iterable[str]):
-    for line in lines:
+    Parses myoji-yurai-readings.csv data (stdin) to get the top 5000
+    Japanese surnames and their 'typical' readings. Outputs NameData in
+    JSONL format.
+    """
+    for line in sys.stdin:
         line = line.rstrip()
         # population = e.g. 1894000 for 佐藤
         # difficulty = ranging from 0.5ish (easy) to 1000+, although it is
@@ -27,6 +29,3 @@ def parse_myoji_yurai(lines: Iterable[str]):
             data.notes = f"population:{population}"
             data.clean_and_validate()
             print(data.to_jsonl())
-
-
-parse_myoji_yurai(sys.stdin.readlines())

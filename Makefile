@@ -111,26 +111,26 @@ jsonl/wikipedia_ja.jsonl: data/jawiki-articles.gz
 	${ZCAT} data/jawiki-articles.gz | $(PARALLEL) python scripts/parse_wikipedia_ja.py > $@
 
 jsonl/wikidata.jsonl: data/wikidata.jsonl.gz
-	${ZCAT} $< | ${PARALLEL} python scripts/parse_wikidata.py > $@ 2>/dev/null
+	${ZCAT} $< | ${PARALLEL} $(YOMIKUN) parse-wikidata > $@ 2>/dev/null
 
 jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
 	${ZCAT} $< | ${PARALELL} python scripts/parse_wikidata_nokana.py > $@
 
 jsonl/custom.jsonl: data/custom.csv data/custom.d
-	python scripts/parse_custom_data.py > $@
+	$(YOMIKUN) parse-custom-data > $@
 
 # Anonymise names
 jsonl/researchmap.jsonl jsonl/seijiyama.jsonl: jsonl/%.jsonl: data/%.jsonl
-	python scripts/split_names.py < $< | sort > $@
+	$(YOMIKUN) split-names < $< | sort > $@
 
 data/researchmap.jsonl:
-	${ZCAT} data/researchmap.gz | ${PARALLEL} python scripts/import_researchmap.py > $@
+	${ZCAT} data/researchmap.gz | ${PARALLEL} $(YOMIKUN) import-researchmap > $@
 
 jsonl/jmnedict.jsonl:
 	$(YOMIKUN) parse-jmnedict > $@
 
 jsonl/myoji-yurai.jsonl: data/myoji-yurai-readings.csv
-	python scripts/parse_myoji_yurai.py < $^ > $@
+	$(YOMIKUN) parse-myoji-yurai < $^ > $@
 
 jsonl/koujien.jsonl: data/koujien.json.gz
 	${ZCAT} $< | $(YOMIKUN) parse-koujien > $@
