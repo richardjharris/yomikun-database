@@ -22,9 +22,11 @@ def parse_article_text(title: str, content: str) -> NameData:
     Parses the name/years out of the article text. This is fairly consistent across
     articles, e.g.
 
-    '''山藤 一郎'''（ふじやま いちろう、[[1911年]]（[[明治]]44年）[[4月8日]] - [[1993年]]（[[平成]]5年）[[8月21日]]）は、[[日本]]の[[歌手]]・[[声楽#西洋音楽における声楽|声楽家]]・[[作曲家]]・[[指揮者]]。本名、増永 丈夫（ますなが たけお）。[[位階]]は[[従四位]]。本名では[[クラシック音楽]]の声楽家・[[バリトン]]歌手として活躍した。
+    '''山藤 一郎'''（ふじやま いちろう、[[1911年]]（[[明治]]44年）[[4月8日]] - [[1993年]]（[[平成]]5年）[[8月21日]]）は、
+    [[日本]]の[[歌手]]・[[声楽#西洋音楽における声楽|声楽家]]・[[作曲家]]・[[指揮者]]。本名、増永 丈夫（ますなが たけお）。
+    [[位階]]は[[従四位]]。本名では[[クラシック音楽]]の声楽家・[[バリトン]]歌手として活躍した。
 
-    There are some irregularities, for example date may contain 元号 years.
+    There are some irregularities, for example, date may contain 元号 years.
 
     `title` is used for logging.
     """
@@ -40,7 +42,10 @@ def parse_article_text(title: str, content: str) -> NameData:
 
     # Get name and following paragraph of text from the article heading.
     m = regex.search(
-        fr"^'''({name_pat})'''{name_paren_start}({reading_pat})(.*?)(?:\n\n|\Z)", excerpt, regex.M | regex.S)
+        fr"^'''({name_pat})'''{name_paren_start}({reading_pat})(.*?)(?:\n\n|\Z)",
+        excerpt,
+        regex.M | regex.S,
+    )
 
     if m:
         kaki, yomi, extra_raw = m.groups()
@@ -50,12 +55,13 @@ def parse_article_text(title: str, content: str) -> NameData:
         # Handle names like 'みなもと の よりいえ'
         if yomi.endswith(' の'):
             logging.debug(
-                f'{kaki=} {yomi=} Looks like middle name? Removing and retrying...')
+                f'{kaki=} {yomi=} Looks like middle name? Removing and retrying...'
+            )
             if m := regex.search(fr'^({reading_pat})', yomi[:-2] + extra_raw):
                 yomi = m[1]
                 logging.debug(f'New yomi is {yomi}')
             else:
-                logging.debug(f'Did not match after removing の, leaving as is')
+                logging.debug('Did not match after removing の, leaving as is')
 
         kaki = split_kanji_name(kaki, yomi)
         reading = NameData(kaki, yomi)
@@ -68,7 +74,8 @@ def parse_article_text(title: str, content: str) -> NameData:
         # Quite often the name is Latin/Katakana and has no furigana reading,
         # so include the reading in the extra_raw.
         m = regex.search(
-            fr"^'''.*?'''（(.*?)(?:\n\n|\Z)", excerpt, flags=regex.M | regex.S)
+            r"^'''.*?'''（(.*?)(?:\n\n|\Z)", excerpt, flags=regex.M | regex.S
+        )
         extra_raw = m.group(1) if m else ''
     else:
         logging.info(f"[{title}] Could not find a reading, giving up")
@@ -95,8 +102,7 @@ def parse_article_text(title: str, content: str) -> NameData:
         if m := regex.search(r'(\d{4})年[）)]?[^）)。]+?(\d{4})年', extra):
             birth = int(m[1])
             death = int(m[2])
-            if 15 <= (death - birth) <= 100 and \
-                    1000 <= birth <= 2500:
+            if 15 <= (death - birth) <= 100 and 1000 <= birth <= 2500:
                 reading.lifetime = Lifetime(birth, death)
 
     # Look for gender declaration in the opening sentence.
@@ -109,9 +115,11 @@ def parse_article_text(title: str, content: str) -> NameData:
     # FPs: [[多摩美術大学]][[教授]]。妻は女優の[[とよた真帆]]
     #      [[奈良女子大学]][[名誉教授]]。
     #      長女は女優の[[長澤まさみ]]<ref>。
-    #      向井 万起男（むかい まきお、1947年（昭和22年）6月24日 - ）は、日本の医学者（医学博士）、エッセイスト。専門は病理学。日本人初の女性飛行士、向井千秋の夫として知られる。
-    if (m := regex.search(r'(女学校出身|日本の女性|、女優|、女性|女性\d{4}年)', extra)) and \
-            not regex.search(r'教授', extra_raw):
+    #      向井 万起男（むかい まきお、1947年（昭和22年）6月24日 - ）は、日本の医学者（医学博士）、
+    #        エッセイスト。専門は病理学。日本人初の女性飛行士、向井千秋の夫として知られる。
+    if (
+        m := regex.search(r'(女学校出身|日本の女性|、女優|、女性|女性\d{4}年)', extra)
+    ) and not regex.search(r'教授', extra_raw):
         reading.add_tag('fem')
 
     # Look for 'fictional character' declarations
@@ -148,9 +156,13 @@ def add_category_data(reading: NameData, content: str):
     for category in get_categories(content):
         # A blanket search for '女性' might cause false positives
         # Even 日本の女子 can be an FP e.g. if person is a coach
-        if regex.search(r'(ソプラノ歌手|日本の女性|日本の女子|女性(騎手|競輪選手)|女優$|中国の女性|女流棋士$|の女性$)', category) or \
-                category in ('グラビアアイドル', 'レースクイーン', '女院', '日本の尼僧', '女房名') or \
-                regex.search(r'^日本の女子.*選手$‎', category):
+        if (
+            regex.search(
+                r'(ソプラノ歌手|日本の女性|日本の女子|女性(騎手|競輪選手)|女優$|中国の女性|女流棋士$|の女性$)', category
+            )
+            or category in ('グラビアアイドル', 'レースクイーン', '女院', '日本の尼僧', '女房名')
+            or regex.search(r'^日本の女子.*選手$‎', category)
+        ):
             if category != '日本の女子サッカー':
                 reading.add_tag('fem')
         elif regex.search(r'(日本の男性|日本の男子)', category):
@@ -202,7 +214,9 @@ def merge_namedata(box_data: NameData, article_data: NameData) -> NameData:
     return result
 
 
-def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData | None:
+def parse_wikipedia_article(
+    title: str, content: str, add_source: bool = True
+) -> NameData | None:
     """
     Parse ja.wikipedia article for names/readings and return the primary one.
     (At some point, other extracted names may also be returned)
@@ -233,8 +247,7 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     # Exclude certain names which are likely to not be people
     # Also exclude cases where we were unable to split the kanji
     if len(namedata.kaki.split()) == 1 or should_ignore_name(namedata.kaki):
-        logging.info(
-            f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
+        logging.info(f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
         return
 
     if add_source:
@@ -255,7 +268,7 @@ def test_basic():
 | 生年 = 1964
 }}
 '''阿部 寛'''（あべ ひろし、[[1964年]]〈昭和39年〉[[6月22日]]<ref name="rirekisho" /> - ）は、[[日本]]の[[俳優]]。[[茂田オフィス]]所属。
-""".strip()
+""".strip()  # noqa
     assert parse_wikipedia_article('foo', content) == NameData.person(
         kaki='阿部 寛',
         yomi='あべ ひろし',
@@ -267,7 +280,7 @@ def test_basic():
 def test_ref_in_first_line():
     content = """
 '''鈴置 洋孝'''（すずおき ひろたか、[[1950年]][[3月6日]]<ref name="kenproduction">{{Cite web|date=|url=blah}}</ref>
-"""
+"""  # noqa
     assert parse_wikipedia_article('bar', content) == NameData.person(
         kaki='鈴置 洋孝',
         yomi='すずおき ひろたか',

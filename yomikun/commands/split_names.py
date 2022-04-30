@@ -6,6 +6,7 @@ import click
 from yomikun.models.namedata import NameData
 from yomikun.utils.timer import Timer
 
+
 @click.command()
 def split_names():
     """
@@ -30,5 +31,4 @@ def split_names():
             logging.error(f"Unable to split {name}: {e}")
             error += 1
 
-    logging.info(
-        f"Processed {ok+error} records ({error} errors) in {timer.elapsed}s")
+    logging.info(f"Processed {ok+error} records ({error} errors) in {timer.elapsed}s")

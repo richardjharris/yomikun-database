@@ -6,7 +6,8 @@ import pytest
 kanji_numbers = '〇一二三四五六七八九'
 knum_char_class = '[' + kanji_numbers + ']'
 year_matcher = re.compile(
-    '^［(' + knum_char_class + '{3,4}|)〜(' + knum_char_class + '{3,4}|)］')
+    '^［(' + knum_char_class + '{3,4}|)〜(' + knum_char_class + '{3,4}|)］'
+)
 
 
 @dataclass
@@ -110,6 +111,6 @@ def test_parse_birth_and_death_year():
         "エリウゲナ【Johannes Scotus Eriugena】\n［八一〇ころ〜八七七ころ］アイルランド生まれの神学者・哲学者。"
     ) == BirthDeathYear(810, 877), '--koro'
 
-    assert parse_birth_and_death_year(
-        "かんざんらくぼく【寒山落木】\n正岡子規の句集。"
-    ) == BirthDeathYear(None, None), 'no dates - not a name'
+    assert parse_birth_and_death_year("かんざんらくぼく【寒山落木】\n正岡子規の句集。") == BirthDeathYear(
+        None, None
+    ), 'no dates - not a name'

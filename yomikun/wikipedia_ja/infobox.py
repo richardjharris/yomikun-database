@@ -68,7 +68,7 @@ def extract_infoboxes(wikitext: str) -> list[Infobox]:
     for line in wikitext.splitlines():
         # Match start of new template. Would check if line contains }} but there is
         # one counter-example: '{{Anchors|坪田愛華}}{{Infobox 人物'
-        if (m := regex.search(r'^\{\{\s*(\S+.*?)$', line)):
+        if m := regex.search(r'^\{\{\s*(\S+.*?)$', line):
             if cur is None:
                 cur = Infobox(name=m[1])
         elif m := regex.search(r'^\s*\|\s*(\S+)\s*=\s*(.*)$', line):
@@ -98,7 +98,9 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
     for box in boxes:
         if not name_set:
             if key := box.first_set('人名', '名前', '芸名', '氏名', 'name'):
-                if m := regex.search(r'^[\p{Han}]+\s+[\p{Han}\p{Hiragana}\p{Katakana}]+$', box[key]):
+                if m := regex.search(
+                    r'^[\p{Han}]+\s+[\p{Han}\p{Hiragana}\p{Katakana}]+$', box[key]
+                ):
                     result.kaki = box[key]
                     name_set = True
 
@@ -107,10 +109,16 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
                     result.yomi = box[key]
                     name_set = True
 
-        if (key := box.first_set('生年月日', '生年', '生誕', 'birth_date', 'Born', 'birthdate')) and not lifetime.birth_year:
+        if (
+            key := box.first_set('生年月日', '生年', '生誕', 'birth_date', 'Born', 'birthdate')
+        ) and not lifetime.birth_year:
             lifetime.birth_year = extract_year(box[key])
 
-        if (key := box.first_set('没年月日', '没年', '死没', 'death_date', '失踪年月日', 'Died', 'deathdate')) and not lifetime.death_year:
+        if (
+            key := box.first_set(
+                '没年月日', '没年', '死没', 'death_date', '失踪年月日', 'Died', 'deathdate'
+            )
+        ) and not lifetime.death_year:
             lifetime.death_year = extract_year(box[key])
 
         if key := box.first_set('性別'):
@@ -129,7 +137,9 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
 
         if key := box.first_set('本名'):
             value = clean(box[key])
-            if m := regex.search(fr'^({name_pat})\s*{name_paren_start}({reading_pat})', value):
+            if m := regex.search(
+                fr'^({name_pat})\s*{name_paren_start}({reading_pat})', value
+            ):
                 kaki, yomi = m.groups()
                 kaki = split_kanji_name(kaki, yomi)
                 subreading = NameData(kaki, yomi)

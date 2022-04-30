@@ -6,6 +6,7 @@ from yomikun.models import NameData
 from yomikun.romajidb import make_romajidb
 from yomikun.utils.timer import Timer
 
+
 @click.command()
 def build_romaji_db():
     """

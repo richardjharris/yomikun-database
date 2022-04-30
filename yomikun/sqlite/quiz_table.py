@@ -1,6 +1,7 @@
 import sqlite3
 import regex
 
+
 class QuizTable:
     @staticmethod
     def create(cur: sqlite3.Cursor):
@@ -17,22 +18,36 @@ class QuizTable:
         return """
             CREATE TABLE quiz AS
             WITH most_common AS (
-                SELECT kaki, part, SUM(hits_total) total
+                SELECT
+                    kaki,
+                    part,
+                    SUM(hits_total) total
                 FROM names
                 GROUP BY kaki, part
                 ORDER BY total DESC
             ),
             -- For top N kaki, get all readings and filter to those with >20% share.
             ungrouped AS (
-                SELECT names.kaki, names.part, yomi, hits_total, most_common.total, hits_total*1.0/most_common.total pc
+                SELECT
+                    names.kaki,
+                    names.part,
+                    yomi,
+                    hits_total,
+                    most_common.total,
+                    hits_total*1.0/most_common.total pc
                 FROM names
-                JOIN most_common ON most_common.kaki = names.kaki AND most_common.part = names.part
+                JOIN most_common ON most_common.kaki = names.kaki
+                    AND most_common.part = names.part
                 WHERE pc > 0.2
                 ORDER BY names.kaki, names.part
             )
             -- Group concat the readings so we return one row per kaki.
             -- Don't include very rare readings.
-            SELECT kaki, part, GROUP_CONCAT(yomi) yomi, SUM(total) total
+            SELECT
+                kaki,
+                part,
+                GROUP_CONCAT(yomi) yomi,
+                SUM(total) total
             FROM ungrouped
             GROUP BY kaki, part
             HAVING total >= 75

@@ -5,6 +5,7 @@ import click
 from yomikun.models import NameData
 from yomikun.loader.person_dedupe import PersonDedupe
 
+
 @click.command()
 def person_dedupe():
     """
@@ -36,9 +37,10 @@ def person_dedupe():
 
             print(person.to_jsonl())
             out_records += 1
-        except TypeError as e:
+        except TypeError:
             logging.exception(person)
 
-    click.echo(f"De-duped {in_records} input records to {out_records} output records",
-        err=True)
+    click.echo(
+        f"De-duped {in_records} input records to {out_records} output records", err=True
+    )
     click.echo(f"Passed through {passthru_records} input records", err=True)

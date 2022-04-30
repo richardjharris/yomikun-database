@@ -10,15 +10,21 @@ from mediawiki_dump.reader import DumpReaderArticles
 
 from yomikun.wikipedia_en.parser import parse_wikipedia_article
 
+
 @click.command()
 @click.argument('article', nargs=-1)
-@click.option('-v', '--verbose', count=True, help='Show important log messages (pass twice for more)')
+@click.option(
+    '-v',
+    '--verbose',
+    count=True,
+    help='Show important log messages (pass twice for more)',
+)
 def parse_wikipedia_en(verbose, articles):
     """
     Parse en.wikipedia.org dump
 
     Parses ARTICLE(s), if provided, otherwise expects JSONL-converted article data on stdin.
-    
+
     Extracts names (including aliases), date of birth/death, gender, description.
 
     Wikipedia romaji names have a somewhat inconsistent format. To handle ambiguous

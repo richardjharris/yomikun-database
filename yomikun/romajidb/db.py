@@ -33,9 +33,10 @@ RomajiDbResult = tuple[Optional[str], Optional[set[str]]]
 
 
 @dataclass
-class RomajiDB():
+class RomajiDB:
     data: dict[RomajiDbKey, RomajiDbResult] = field(
-        default_factory=dict, repr=False, compare=False)
+        default_factory=dict, repr=False, compare=False
+    )
 
     @staticmethod
     def load(file: str):
@@ -103,7 +104,8 @@ def test_all_kana():
     assert db.get('佑祐', 'yusuke', 'mei') == 'ゆうすけ'
     db.insert('齋藤', 'saito', 'sei', 'さいとう', {'さいと', 'さいとう'})
     assert db.get_all('齋藤', 'saito', 'sei') == (
-        'さいとう', {'さいと', 'さいとう'},
+        'さいとう',
+        {'さいと', 'さいとう'},
     )
     assert db.get_all('齋藤', 'saito', 'mei') == (None, None)
     assert db.get_all('さいとう', 'saito', 'sei') == ('さいとう', {'さいとう'})

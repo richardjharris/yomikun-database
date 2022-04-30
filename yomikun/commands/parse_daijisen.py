@@ -3,6 +3,7 @@ import sys
 import click
 import yomikun.daijisen.parser
 
+
 @click.command()
 def parse_daijisen():
     """

@@ -6,7 +6,7 @@ cat jsonl/wikipedia_ja.jsonl | pytest scripts/test_split.py -s
 import sys
 
 from yomikun.models.namedata import NameData
-from yomikun.utils.split import *
+from yomikun.utils.split import find_split_point, find_kana_split_point
 
 for line in sys.stdin:
     namedata = NameData.from_jsonl(line)
@@ -17,12 +17,11 @@ for line in sys.stdin:
         continue
 
     try:
-        assert find_split_point(
-            sei_yomi, mei_yomi, f"{sei_kaki}{mei_kaki}") == len(sei_kaki), 'kanji'
-        assert find_kana_split_point(
-            sei_kaki, mei_kaki, f"{sei_yomi}{mei_yomi}") == len(sei_yomi), 'kana'
+        kaki_split = find_split_point(sei_yomi, mei_yomi, f"{sei_kaki}{mei_kaki}")
+        assert kaki_split == len(sei_kaki), 'kanji'
+
+        yomi_split = find_kana_split_point(sei_kaki, mei_kaki, f"{sei_yomi}{mei_yomi}")
+        assert yomi_split == len(sei_yomi), 'kana'
     except AssertionError as e:
-        print('Assertion failed: ', e)
-        print()
-        print(line)
+        print('Assertion failed: ', e, "\n", line)
         # sys.exit(1)

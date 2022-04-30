@@ -1,17 +1,17 @@
 # VW cheatsheet
 # label | feature_name:value (no value implies 1) feature is str or int
 #  label [weight] [prediction] ['tag]  weight defaults to 1, 0.5 is the initial predition (?)
-# 
+#
 # There are label namespaces, so this works. [recommended 1-character only]
 # |kanji A B C |type post |stats views:10
-# 
+#
 # All features are numeric and have a name and a value.
-# 
+#
 # VW can create ngrams with -d2, which just combines sets of 2 adjacent
 # tokens and adds a new feature for each.
-# 
+#
 # -q dt / -interactions dt does 'cross-features', ngrams across namespaces.
-# 
+#
 # TO TEST
 # 雅 - Masa (male name) or Miyabi (female name)
 # 幸 - Kou (male name) or Miyuki (female name)
@@ -21,9 +21,16 @@ import sys
 
 from yomikun.gender.ml import GenderML, generate_examples
 
+
 @click.group()
-@click.option('--weights-file', default='data/gender.vw', help='Source/target VW weights file')
-@click.option('--cache-file', default='data/gender.vw.cache', help='Cache to assist in repeated rebuilds')
+@click.option(
+    '--weights-file', default='data/gender.vw', help='Source/target VW weights file'
+)
+@click.option(
+    '--cache-file',
+    default='data/gender.vw.cache',
+    help='Cache to assist in repeated rebuilds',
+)
 @click.pass_context
 def gender_model(ctx, weights_file, cache_file):
     """

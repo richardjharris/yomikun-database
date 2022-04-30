@@ -10,8 +10,15 @@ import logging
 
 from yomikun.models import NameData
 from yomikun.utils.patterns import name_pat
-from yomikun.utils.split import split_kana_name, split_kanji_name, split_kanji_name_romaji, try_to_swap_names
-from yomikun.utils.romaji import romaji_to_hiragana_fullname, romaji_to_hiragana_fullname_parts
+from yomikun.utils.split import (
+    split_kana_name,
+    split_kanji_name,
+    split_kanji_name_romaji,
+)
+from yomikun.utils.romaji import (
+    romaji_to_hiragana_fullname,
+    romaji_to_hiragana_fullname_parts,
+)
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 
@@ -43,7 +50,9 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:
     return data
 
 
-def _parse_researchmap_inner(kana: str, kanji: str, english: str, swap_names: bool = True) -> NameData | None:
+def _parse_researchmap_inner(
+    kana: str, kanji: str, english: str, swap_names: bool = True
+) -> NameData | None:
     """
     This code does the hard work of figuring out what fields correspond to what name
     parts (if out of order), mapping romaji to kana, splitting kanji names that aren't
@@ -102,7 +111,9 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str, swap_names: bo
         kanji = split_kanji_name(kanji, kana)
         return NameData(kanji, kana)
 
-    elif regex.match(r'^[\p{Katakana}\p{Hiragana}ー]+\s+[\p{Katakana}\p{Hiragana}ー]+$', kana):
+    elif regex.match(
+        r'^[\p{Katakana}\p{Hiragana}ー]+\s+[\p{Katakana}\p{Hiragana}ー]+$', kana
+    ):
         # Convert katakana to hiragana
         # Allow a mixture. In particular hiragana へ・べ can appear in katakana text
         # because they look the same.
@@ -140,8 +151,10 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str, swap_names: bo
 
     romajis = []
     for romaji in romaji_candidates:
-        if regex.match(r'^[a-zāâīīîūûêēōôô\-]+\s+[a-zāâīīîūûêēōôô\-]+$', romaji) and \
-                romaji not in romajis:
+        if (
+            regex.match(r'^[a-zāâīīîūûêēōôô\-]+\s+[a-zāâīīîūûêēōôô\-]+$', romaji)
+            and romaji not in romajis
+        ):
             romajis.append(romaji)
 
     logging.info(f"Got romajis: {romajis}")
@@ -181,16 +194,19 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str, swap_names: bo
             sei_kaki, mei_kaki = kanji.split()
             sei_roma, mei_roma = romaji.split()
 
-            sei_kana, mei_kana = romaji_to_hiragana_fullname_parts(
-                romaji, kanji)
+            sei_kana, mei_kana = romaji_to_hiragana_fullname_parts(romaji, kanji)
             if sei_kana is None:
                 warnings.append(
-                    f"[{raw_data}] SEI ({sei_roma}, {sei_kaki}) was not in romajidb, doing messy conversion")
+                    f"[{raw_data}] SEI ({sei_roma}, {sei_kaki}) was not in romajidb, "
+                    "doing messy conversion"
+                )
                 sei_kana = romaji_to_hiragana_messy(sei_roma, sei_kaki)
                 bad += 1
             if mei_kana is None:
                 warnings.append(
-                    f"[{raw_data}] MEI ({mei_roma}, {mei_kaki}) was not in romajidb, doing messy conversion")
+                    f"[{raw_data}] MEI ({mei_roma}, {mei_kaki}) was not in romajidb, "
+                    "doing messy conversion"
+                )
                 mei_kana = romaji_to_hiragana_messy(mei_roma, mei_kaki)
                 bad += 1
 
@@ -198,7 +214,9 @@ def _parse_researchmap_inner(kana: str, kanji: str, english: str, swap_names: bo
             attempts.append((kana, bad, warnings))
         else:
             warnings.append(
-                f"[{raw_data}] Entry ({romaji}, {kanji}) was not in romajidb (and unable to split), doing messy conversion")
+                f"[{raw_data}] Entry ({romaji}, {kanji}) was not in romajidb "
+                " (and unable to split), doing messy conversion"
+            )
             kana = romaji_to_hiragana_messy(romaji, kanji)
             attempts.append((kana, 10, warnings))
 
@@ -237,8 +255,8 @@ tests = [
     # Hiragana
     (('いいづか しゅん', '飯塚 舜', 'Shun Iizuka'), '飯塚 舜', 'いいづか しゅん'),
     # No space
-    (('イガラシリョウスケ',	'五十嵐 涼介', 'Ryosuke IGARASHI'), '五十嵐 涼介', 'いがらし りょうすけ'),
-    (('アダチシンイチ',	'足立 慎一', 'SHINICHI ADACHI'), '足立 慎一', 'あだち しんいち'),
+    (('イガラシリョウスケ', '五十嵐 涼介', 'Ryosuke IGARASHI'), '五十嵐 涼介', 'いがらし りょうすけ'),
+    (('アダチシンイチ', '足立 慎一', 'SHINICHI ADACHI'), '足立 慎一', 'あだち しんいち'),
     # No space, only part of name
     (('イシイ', '石井 浩二', 'Koji Ishii'), '石井 浩二', 'いしい こうじ'),
     (('ウスクラ', '臼倉 孝弘', 'takahiro usukura'), '臼倉 孝弘', 'うすくら たかひろ'),
@@ -305,7 +323,7 @@ tests = [
 ]
 
 
-@ pytest.mark.parametrize('test', tests, ids=lambda x: x[0][1])
+@pytest.mark.parametrize('test', tests, ids=lambda x: x[0][1])
 def test_parse_researchmap(test):
     test_args, expected_kaki, expected_yomi = test
     result = parse_researchmap(*test_args)
@@ -316,4 +334,5 @@ def test_parse_researchmap(test):
         assert result is not None
         result.remove_xx_tags()
         assert result == NameData(
-            expected_kaki, expected_yomi, source='researchmap', tags={'person'})
+            expected_kaki, expected_yomi, source='researchmap', tags={'person'}
+        )

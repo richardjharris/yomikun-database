@@ -47,15 +47,18 @@ def pytest_generate_tests(metafunc):
     """
     Generates a pytest test case for every article in the test directories.
     """
+
     def get_id(test_page: tuple[Path, str]):
         path, lang = test_page
         return f"{lang}_{path.name}"
 
     if 'test_page' in metafunc.fixturenames:
-        ja_files = ((file, 'ja') for file in Path(
-            __file__).parent.glob('wikipedia_ja_pages/*'))
-        en_files = ((file, 'en') for file in Path(
-            __file__).parent.glob("wikipedia_en_pages/*"))
+        ja_files = (
+            (file, 'ja') for file in Path(__file__).parent.glob('wikipedia_ja_pages/*')
+        )
+        en_files = (
+            (file, 'en') for file in Path(__file__).parent.glob("wikipedia_en_pages/*")
+        )
 
         files = itertools.chain(ja_files, en_files)
 
@@ -77,8 +80,7 @@ def test_parser(test_page: tuple[Path, str]):
     else:
         raise Exception('invalid lang')
 
-    result = module.parse_wikipedia_article(
-        path.name, content, add_source=False)
+    result = module.parse_wikipedia_article(path.name, content, add_source=False)
 
     if result is None:
         result = NameData()

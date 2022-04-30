@@ -20,7 +20,7 @@ from yomikun.models.nameauthenticity import NameAuthenticity
 
 
 @dataclass
-class AggregatedData():
+class AggregatedData:
     """
     Aggregate data (number of people, male/female) for a given forename
     or surname.
@@ -86,8 +86,7 @@ def make_final_db(names: Iterable[NameData], db_out: TextIO):
     aggregate the data and produce output in JSONL format suitable for
     importing into SQLite. This text is sent to [db_out].
     """
-    aggregated_data: dict[DictKey,
-                          AggregatedData] = defaultdict(AggregatedData)
+    aggregated_data: dict[DictKey, AggregatedData] = defaultdict(AggregatedData)
 
     for name in names:
         Aggregator.copy_data_to_subreadings(name)

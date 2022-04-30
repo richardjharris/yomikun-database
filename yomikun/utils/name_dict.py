@@ -18,9 +18,11 @@ jam = jamdict.Jamdict(
 )
 assert jam.has_jmne()
 
-NOISY_LOGGERS = ('jamdict.jmdict_sqlite',
-                 'jamdict.jmnedict_sqlite',
-                 'puchikarui.puchikarui')
+NOISY_LOGGERS = (
+    'jamdict.jmdict_sqlite',
+    'jamdict.jmnedict_sqlite',
+    'puchikarui.puchikarui',
+)
 
 for logger in NOISY_LOGGERS:
     logging.getLogger(logger).setLevel(logging.ERROR)
@@ -57,16 +59,17 @@ def find(query, senses) -> list[NameResult]:
     Given kana or kanji name (`query`), return all results matching the
     senses in `senses`.
     """
-    result = jam.lookup(
-        query=query, strict_lookup=True, lookup_chars=False)
+    result = jam.lookup(query=query, strict_lookup=True, lookup_chars=False)
     out = []
     for name in result.names:
         name_senses = _get_sense_names(name.senses)
         if name_senses.intersection(senses):
-            out.append(NameResult(
-                kana=[kf.text for kf in name.kana_forms],
-                kanji=[kf.text for kf in name.kanji_forms],
-            ))
+            out.append(
+                NameResult(
+                    kana=[kf.text for kf in name.kana_forms],
+                    kanji=[kf.text for kf in name.kanji_forms],
+                )
+            )
     return out
 
 

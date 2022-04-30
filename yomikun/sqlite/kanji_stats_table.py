@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Generator, Iterable
+from typing import Generator
 
 import regex
 
@@ -21,14 +21,16 @@ class KanjiStatsTable:
         self.counts = defaultdict(lambda: (0, 0))
 
     def handle(self, row: dict) -> None:
-        part = row['part']
-        if part == 'person':
+        part = row["part"]
+        if part == "person":
             # already covered by mei/sei
             return
 
         for ji in self.is_han.findall(row["kaki"]):
             m, f = self.counts[(ji, part)]
-            self.counts[(ji, part)] = m + int(row["hits_male"]), f + int(row["hits_female"])
+            self.counts[(ji, part)] = m + int(row["hits_male"]), f + int(
+                row["hits_female"]
+            )
 
     @staticmethod
     def create_statement() -> str:
@@ -58,17 +60,17 @@ class KanjiStatsTable:
             m, f = mf
             # All genders combined
             yield (
-                f"INSERT INTO kanji_stats VALUES(?, ?, 'A', ?, ?)",
+                "INSERT INTO kanji_stats VALUES(?, ?, 'A', ?, ?)",
                 (ji, PART_ID[part], m + f, self._female_ratio(mf)),
             )
-            if part == 'mei':
+            if part == "mei":
                 # Add male and female-only counts
                 yield (
-                    f"INSERT INTO kanji_stats VALUES(?, ?, 'M', ?, 0)",
+                    "INSERT INTO kanji_stats VALUES(?, ?, 'M', ?, 0)",
                     (ji, PART_ID[part], m),
                 )
                 yield (
-                    f"INSERT INTO kanji_stats VALUES(?, ?, 'F', ?, 0)",
+                    "INSERT INTO kanji_stats VALUES(?, ?, 'F', ?, 0)",
                     (ji, PART_ID[part], f),
                 )
 

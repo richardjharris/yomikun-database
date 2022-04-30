@@ -56,20 +56,20 @@ def make_romajidb(names: Iterable[NameData], db_out: TextIO):
         values = data[key]
         counts = collections.Counter(values)
         unique = _find_unique_reading(key, counts, values)
-        print(*key, unique or '', ','.join(sorted(counts.keys())),
-              sep='\t', file=db_out)
+        print(
+            *key, unique or '', ','.join(sorted(counts.keys())), sep='\t', file=db_out
+        )
 
 
 def _find_unique_reading(key, counts, values):
     if len(counts) == 1:
         return values[0]
     else:
-        top, = counts.most_common(1)
+        (top,) = counts.most_common(1)
         if (top[1] / len(values)) >= 0.8:
             # Clear majority
             return top[0]
         else:
             # Not sure what to do
-            logging.warning(
-                f"No unique reading for {key} - too many values ({counts})")
+            logging.warning(f"No unique reading for {key} - too many values ({counts})")
             return

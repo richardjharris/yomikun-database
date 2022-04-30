@@ -10,6 +10,7 @@ import regex
 from yomikun.utils.split import split_kanji_name
 from yomikun.models import NameData, Lifetime, NameAuthenticity
 
+
 @click.command()
 def parse_wikidata():
     """
@@ -46,7 +47,7 @@ def parse_wikidata():
             if regex.search(r'^\p{Han}', kanji2):
                 kanji = kanji2
             else:
-                #logging.error(f"Entry with no surname kanji: {data}")
+                # logging.error(f"Entry with no surname kanji: {data}")
                 # TBD possibly some of these are fine, but majority are junk
                 # at least reject anything with all-romaji/katakana
                 continue
@@ -66,11 +67,13 @@ def parse_wikidata():
 
         kanji = split_kanji_name(kanji, kana)
 
-        lifetime = Lifetime(year(extract(data, 'dob.value')),
-                            year(extract(data, 'dod.value')))
+        lifetime = Lifetime(
+            year(extract(data, 'dob.value')), year(extract(data, 'dod.value'))
+        )
 
-        namedata = NameData(kanji, kana, lifetime=lifetime,
-                            source=f'wikidata:{item}', tags={'person'})
+        namedata = NameData(
+            kanji, kana, lifetime=lifetime, source=f'wikidata:{item}', tags={'person'}
+        )
 
         if tag := gender(extract(data, 'genderLabel.value')):
             namedata.add_tag(tag)
@@ -80,8 +83,7 @@ def parse_wikidata():
             namedata.authenticity = NameAuthenticity.PSEUDO
             # TBD add subreading
             if 'birthNameKana' in birth_name_:
-                kanji, kana = birth_name_[
-                    'birthName'], birth_name_['birthNameKana']
+                kanji, kana = birth_name_['birthName'], birth_name_['birthNameKana']
                 kanji = split_kanji_name(kanji, kana)
                 namedata.add_subreading(NameData(kanji, kana))
 
@@ -127,4 +129,3 @@ def gender(s: str | None):
             return "masc"
         elif s == "女性":
             return "fem"
-

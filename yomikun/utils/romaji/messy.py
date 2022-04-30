@@ -3,7 +3,9 @@ import romkan
 import regex
 
 
-def romaji_to_hiragana_messy(romaji: str, kanji: str | None = None, leading_o: str = '') -> str:
+def romaji_to_hiragana_messy(
+    romaji: str, kanji: str | None = None, leading_o: str = ''
+) -> str:
     """
     Convert romaji string to hiragana. If kanji is supplied, used as
     a hint for converting ō to either ou or oo in limited cases.
@@ -89,8 +91,9 @@ def test_shumpei():
 
 
 def test_oh():
-    assert romaji_to_hiragana_messy('Ryohei Saito') == 'りょへい さいと', \
-        'Short os are wrong, but oh has not been converted to ou'
+    assert (
+        romaji_to_hiragana_messy('Ryohei Saito') == 'りょへい さいと'
+    ), 'Short os are wrong, but oh has not been converted to ou'
 
     assert romaji_to_hiragana_messy('Tomohiko TAKAHASHI') == 'ともひこ たかはし'
     assert romaji_to_hiragana_messy('Maki Saitoh') == 'まき さいとう'

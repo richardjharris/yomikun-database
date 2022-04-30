@@ -3,6 +3,7 @@ import click
 
 from yomikun.models import NameData
 
+
 @click.command()
 def parse_myoji_yurai():
     """

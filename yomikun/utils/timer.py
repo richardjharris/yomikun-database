@@ -1,7 +1,8 @@
 import sys
 import time
 
-class Timer():
+
+class Timer:
     def __init__(self):
         """
         Creates and starts a timer.
@@ -18,6 +19,6 @@ class Timer():
 
     def report(self, prefix_message: str):
         """
-        Prints elapsed time to stderr, as "{prefix_message} in {seconds}" 
+        Prints elapsed time to stderr, as "{prefix_message} in {seconds}"
         """
         print(f'{prefix_message} in {self.elapsed}s', file=sys.stderr)

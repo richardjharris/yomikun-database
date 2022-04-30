@@ -5,6 +5,7 @@ from glob import glob
 
 from yomikun.custom_data.csv import parse_file
 
+
 @click.command()
 def parse_custom_data():
     """

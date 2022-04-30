@@ -8,6 +8,7 @@ from yomikun.models.namedata import NameData
 
 fields = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
 
+
 @click.command()
 def clean_custom_data():
     """

@@ -1,8 +1,9 @@
 import json
-from typing import IO, TextIO
+from typing import TextIO
 import click
 
 import yomikun.pdd
+
 
 @click.command()
 @click.argument('input', type=click.File('r'), default='-')

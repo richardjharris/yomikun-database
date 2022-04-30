@@ -16,6 +16,7 @@ import click
 import yomikun.jmnedict
 import yomikun.utils.name_dict
 
+
 @click.command()
 def parse_jmnedict():
     """

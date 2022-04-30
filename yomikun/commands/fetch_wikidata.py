@@ -33,7 +33,8 @@ kanatab = """
 
 base_query = """
 SELECT DISTINCT
-  ?item ?itemLabel ?itemDescription ?kana ?genderLabel ?dob ?dod ?countryLabel ?nativeName ?ethnicGroupLabel ?birthName ?birthNameKana
+  ?item ?itemLabel ?itemDescription ?kana ?genderLabel ?dob ?dod ?countryLabel ?nativeName
+  ?ethnicGroupLabel ?birthName ?birthNameKana
 WHERE
 {
   ?item wdt:P1814 ?kana .  # which have 'name in kana'
@@ -48,6 +49,7 @@ WHERE
   FILTER(STRSTARTS(?kana, '$PREFIX'))
 }
 """
+
 
 @click.command()
 def fetch_wikidata():
@@ -78,7 +80,5 @@ def _fetch_wikidata(prefix: str):
             print(json.dumps(binding, ensure_ascii=True))
         # Mark prefix as done
         print(prefix, file=sys.stderr)
-    except:
+    except Exception:
         logging.exception(f"Error processing prefix {prefix}")
-
-

@@ -7,7 +7,7 @@ DEFAULT_JSONL_PATH = 'db/gender.jsonl'
 
 
 @dataclass
-class GenderInfo():
+class GenderInfo:
     ml_score: float
     ct_score: float
     ct_confidence: float
@@ -16,7 +16,7 @@ class GenderInfo():
         return dataclasses.asdict(self)
 
 
-class GenderDict():
+class GenderDict:
     def __init__(self, file: str = DEFAULT_JSONL_PATH):
         self.dict = {}
         with open(file) as fh:

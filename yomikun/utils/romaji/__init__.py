@@ -25,7 +25,7 @@ def romaji_to_hiragana_strict(romaji: str) -> str:
         raise ValueError(f"Input '{romaji}' has weird characters in it. Yuk!")
 
     # Fix 'Itchiku' (いっちく、一竹)
-    romaji = romaji.replace('tch', 'cch')
+    romaji = romaji.replace("tch", "cch")
 
     return romkan.to_hiragana(romaji)
 
@@ -50,16 +50,16 @@ def romaji_to_hiragana_fullname(romaji: str, kanji: str) -> str | None:
     return f"{new_sei} {new_mei}"
 
 
-def romaji_to_hiragana_fullname_parts(romaji: str, kanji: str) -> tuple[str | None, str | None]:
+def romaji_to_hiragana_fullname_parts(
+    romaji: str, kanji: str
+) -> tuple[str | None, str | None]:
     """
     Converts ambiguous romaji full name to hiragana, using kanji as a guide. Both [romaji]
     and [kanji] must have two name components. Returns the hiragana form of the name as
     a tuple of two name components.
     """
-    new_sei = romaji_to_hiragana_part(
-        romaji.split()[0], kanji.split()[0], sei=True)
-    new_mei = romaji_to_hiragana_part(
-        romaji.split()[1], kanji.split()[1], sei=False)
+    new_sei = romaji_to_hiragana_part(romaji.split()[0], kanji.split()[0], sei=True)
+    new_mei = romaji_to_hiragana_part(romaji.split()[1], kanji.split()[1], sei=False)
 
     return new_sei, new_mei
 
@@ -70,10 +70,11 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
     guide to determine length of vowels.
     """
     key = romaji_key(romaji)
-    kana = romajidb().get(kanji, key, 'sei' if sei else 'mei')
+    kana = romajidb().get(kanji, key, "sei" if sei else "mei")
 
     logging.debug(
-        f"[r2h:part] ({romaji}[{key}], {kanji}, {'SEI' if sei else 'MEI'}) => {kana}")
+        f"[r2h:part] ({romaji}[{key}], {kanji}, {'SEI' if sei else 'MEI'}) => {kana}"
+    )
 
     if kana:
         # We are done
@@ -84,6 +85,6 @@ def romaji_to_hiragana_part(romaji: str, kanji: str, sei: bool) -> str | None:
 
 
 def test_hiragana_part():
-    assert romaji_to_hiragana_part('Saito', '齋藤', sei=True) == 'さいとう'
-    assert romaji_to_hiragana_part('Ohashi', '大橋', sei=True) == 'おおはし'
-    assert romaji_to_hiragana_part('Yuki', '祐紀', sei=False) == 'ゆうき'
+    assert romaji_to_hiragana_part("Saito", "齋藤", sei=True) == "さいとう"
+    assert romaji_to_hiragana_part("Ohashi", "大橋", sei=True) == "おおはし"
+    assert romaji_to_hiragana_part("Yuki", "祐紀", sei=False) == "ゆうき"

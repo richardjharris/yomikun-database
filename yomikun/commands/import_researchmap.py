@@ -5,6 +5,7 @@ import click
 from yomikun.researchmap import parse_researchmap
 from yomikun.utils.timer import Timer
 
+
 @click.command()
 def import_researchmap():
     """
@@ -45,5 +46,7 @@ def import_researchmap():
         total += 1
 
     print(
-        f'Parsed {parsed} of {total} results ({parsed/total:.1%}) in {timer.elapsed}s ({errors} errors)',
-        file=sys.stderr)
+        f'Parsed {parsed} of {total} results ({parsed/total:.1%}) '
+        f'in {timer.elapsed}s ({errors} errors)',
+        file=sys.stderr,
+    )

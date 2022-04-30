@@ -9,6 +9,7 @@ from yomikun.utils.split import try_to_swap_names
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.models import NameData, Lifetime
 
+
 @click.command()
 def parse_wikidata_nokana():
     """
@@ -57,12 +58,16 @@ def parse_wikidata_nokana():
         if regex.search('[a-z]', kana, regex.I):
             continue
 
-        lifetime = Lifetime(year(data.get('dob', None)),
-                            year(data.get('dod', None)))
+        lifetime = Lifetime(year(data.get('dob', None)), year(data.get('dod', None)))
 
         # Include xx-romaji tag, as we only have romaji data
-        namedata = NameData(kanji, kana, lifetime=lifetime,
-                            source=f'wikidata:{item}', tags={'xx-romaji'})
+        namedata = NameData(
+            kanji,
+            kana,
+            lifetime=lifetime,
+            source=f'wikidata:{item}',
+            tags={'xx-romaji'},
+        )
 
         if tag := gender(data.get('genderLabel', None)):
             namedata.add_tag(tag)

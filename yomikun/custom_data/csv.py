@@ -14,7 +14,10 @@ csv_fields = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
 last_raw_line = ''
 last_raw_line_number = 0
 
-def parse_file(input_file: TextIO, output_file: TextIO, input_filename: Optional[str] = None):
+
+def parse_file(
+    input_file: TextIO, output_file: TextIO, input_filename: Optional[str] = None
+):
     """
     Parse a CSV file and write JSONL output.
 
@@ -41,6 +44,7 @@ def parse_file(input_file: TextIO, output_file: TextIO, input_filename: Optional
                 f"Generated namedata: {namedata}"
             )
             sys.exit(1)
+
 
 def skip_lines_and_comments(lines):
     global last_raw_line

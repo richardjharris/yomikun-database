@@ -1,8 +1,6 @@
 """
 Utilities for ignoring invalid names from Wikipedia articles
 """
-from yomikun.models import NameData
-
 import regex
 
 """Ignore names containing these words"""

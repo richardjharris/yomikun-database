@@ -10,6 +10,7 @@ from yomikun.sqlite.kanji_stats_table import KanjiStatsTable
 from yomikun.sqlite.names_table import NamesTable
 from yomikun.sqlite.quiz_table import QuizTable
 
+
 def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> None:
     """
     Builds the Yomikun database using the supplied `connection`.

@@ -27,8 +27,10 @@ class NamesTable:
         )
 
         return (
-            f"""
-                INSERT INTO names(kaki,yomi,part,hits_total,hits_male,hits_female,hits_pseudo,female_ratio)
+            """
+                INSERT INTO names(
+                    kaki,yomi,part,hits_total,hits_male,hits_female,hits_pseudo,female_ratio
+                )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             values,

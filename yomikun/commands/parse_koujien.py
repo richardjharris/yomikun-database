@@ -3,6 +3,7 @@ import sys
 import click
 import yomikun.koujien
 
+
 @click.command()
 def parse_koujien():
     """

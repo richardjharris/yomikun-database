@@ -1,9 +1,7 @@
 from __future__ import annotations
 import dataclasses
 import json
-import copy
 import pytest
-
 import regex
 
 from yomikun.models.nameauthenticity import NameAuthenticity
@@ -19,10 +17,11 @@ def normalise(s: str) -> str:
 
 
 @dataclasses.dataclass
-class NameData():
+class NameData:
     """
     Name data extracted by the parsers.
     """
+
     # Full name (parts separated by a space)
     kaki: str = ''
     yomi: str = ''
@@ -57,7 +56,7 @@ class NameData():
 
         self.clean()
 
-    @ classmethod
+    @classmethod
     def person(cls, *args, **kvargs):
         nd = NameData(*args, **kvargs)
         nd.add_tag('person')
@@ -161,10 +160,18 @@ class NameData():
 
         mei_tag = self.gender() or 'given'
 
-        sei = self.clone().set_name(sei_kaki, sei_yomi) \
-            .remove_tags('person', 'masc', 'fem', 'given').add_tag('surname')
-        mei = self.clone().set_name(mei_kaki, mei_yomi) \
-            .remove_tags('person', 'given').add_tag(mei_tag)
+        sei = (
+            self.clone()
+            .set_name(sei_kaki, sei_yomi)
+            .remove_tags('person', 'masc', 'fem', 'given')
+            .add_tag('surname')
+        )
+        mei = (
+            self.clone()
+            .set_name(mei_kaki, mei_yomi)
+            .remove_tags('person', 'given')
+            .add_tag(mei_tag)
+        )
 
         return (sei, mei)
 
@@ -177,7 +184,7 @@ class NameData():
         for sub in self.subreadings:
             sub.clean()
 
-        ### BEAT TAKESHI HACK ###
+        # HACK for Beat Takeshi
         to_delete = []
         for sub in self.subreadings:
             if (self.kaki, self.yomi) == (sub.kaki, sub.yomi):
@@ -189,8 +196,8 @@ class NameData():
                 # are parsed together. An 'unknown' authenticity that gets resolved to
                 # 'real' later could help here. and/or parsing the boxes seperately...
                 if sub.authenticity == NameAuthenticity.REAL:
-                    # Was added as a honmyo subreading, which implies it is definitely the
-                    # real name.
+                    # Was added as a honmyo subreading, which implies it is definitely
+                    # the real name.
                     self.authenticity = NameAuthenticity.REAL
                     to_delete += [sub]
 
@@ -222,19 +229,22 @@ class NameData():
             part = 'surname'
         else:
             raise ValueError(
-                f'Data should be tagged to indicate part of name: {self.to_jsonl()}')
+                f'Data should be tagged to indicate part of name: {self.to_jsonl()}'
+            )
 
         if not regex.match(fr'^{kaki_pat}$', self.kaki):
             if self.authenticity == NameAuthenticity.REAL:
                 raise ValueError(
-                    f"Invalid kaki '{self.kaki}' for part {part} ({self.to_jsonl()})")
+                    f"Invalid kaki '{self.kaki}' for part {part} ({self.to_jsonl()})"
+                )
             else:
                 # Anything is allowed for pen-names and fictional characters
                 pass
 
         if not regex.match(fr'^{yomi_pat}$', self.yomi):
             raise ValueError(
-                f"Invalid yomi '{self.yomi}' for part {part} ({self.to_jsonl()})")
+                f"Invalid yomi '{self.yomi}' for part {part} ({self.to_jsonl()})"
+            )
 
         for sub in self.subreadings:
             sub.validate()
@@ -277,15 +287,16 @@ class NameData():
         """
         return json.dumps(self.to_dict(), ensure_ascii=False)
 
-    @ classmethod
+    @classmethod
     def from_dict(cls, data: dict) -> NameData:
         if 'authenticity' in data:
             data['authenticity'] = NameAuthenticity[data['authenticity'].upper()]
         if 'lifetime' in data:
             data['lifetime'] = Lifetime(**data['lifetime'])
         if 'subreadings' in data:
-            data['subreadings'] = list(map(
-                lambda x: NameData.from_dict(x), data['subreadings']))
+            data['subreadings'] = list(
+                map(lambda x: NameData.from_dict(x), data['subreadings'])
+            )
         if 'orig' in data:
             del data['orig']
         if 'tags' in data and isinstance(data['tags'], list):
@@ -293,7 +304,7 @@ class NameData():
 
         return NameData(**data)
 
-    @ classmethod
+    @classmethod
     def from_jsonl(cls, jsonl: str) -> NameData:
         return cls.from_dict(json.loads(jsonl))
 
@@ -372,10 +383,13 @@ def test_kana_validation():
 
 
 def test_split():
-    nd = NameData.person('黒澤 明', 'くろさわ あきら', tags={
-        'xx-romaji', 'masc'}, source='wikipedia_en')
+    nd = NameData.person(
+        '黒澤 明', 'くろさわ あきら', tags={'xx-romaji', 'masc'}, source='wikipedia_en'
+    )
     sei, mei = nd.split()
-    assert sei == NameData('黒澤', 'くろさわ', tags={
-                           'xx-romaji', 'surname'}, source='wikipedia_en')
+    assert sei == NameData(
+        '黒澤', 'くろさわ', tags={'xx-romaji', 'surname'}, source='wikipedia_en'
+    )
     assert mei == NameData(
-        '明', 'あきら', tags={'xx-romaji', 'masc'}, source='wikipedia_en')
+        '明', 'あきら', tags={'xx-romaji', 'masc'}, source='wikipedia_en'
+    )

@@ -9,18 +9,24 @@ import vowpalwabbit
 # --nn didn't help
 # -q kk or other values didn't help (as expected)
 # However n-grams on kana -did- help (-q cc)
-vw_args = '-c --holdout_off --loss_function logistic -c -q kk --passes 5 -b 20 --l2 3e-6 -q cc --power_t 0.4'
+vw_args = (
+    '-c --holdout_off --loss_function logistic -c -q kk --passes 5 '
+    '-b 20 --l2 3e-6 -q cc --power_t 0.4'
+)
 
 
-class GenderML():
+class GenderML:
     def __init__(self, cache_file='gender.vw.cache', weights_file=None, quiet=False):
         self.cache_file = cache_file
         self.weights_file = weights_file
         if weights_file:
-            self.model = vowpalwabbit.Workspace(initial_regressor=weights_file, quiet=quiet)
+            self.model = vowpalwabbit.Workspace(
+                initial_regressor=weights_file, quiet=quiet
+            )
         else:
             self.model = vowpalwabbit.Workspace(
-                f'{vw_args} --cache_file={cache_file}', quiet=quiet)
+                f'{vw_args} --cache_file={cache_file}', quiet=quiet
+            )
 
     def train_str(self, data):
         self.model.learn(data)
@@ -95,6 +101,15 @@ def vw_features(kaki, yomi):
     last_two_yomi = yomi[-2:]
     kaki_len = len(kaki)
     yomi_len = len(yomi)
-    ex = f"|y {yomi} |c {' '.join(yomi)} |k {' '.join(kaki)} |l {last_kaki} |m {last_yomi} |n {last_two_yomi}"
+    ex = ' '.join(
+        [
+            f"|y {yomi}",
+            f"|c {' '.join(yomi)}",
+            f"|k {' '.join(kaki)}",
+            f"|l {last_kaki}",
+            f"|m {last_yomi}",
+            f"|n {last_two_yomi}",
+        ]
+    )
     ex += f" |stats kaki_len:{kaki_len} yomi_len:{yomi_len}"
     return ex

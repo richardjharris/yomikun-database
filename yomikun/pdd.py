@@ -32,7 +32,9 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
     TODO handle の
     TODO handle alternate form of name
     """
-    if m := regex.search(fr'^(?:\[\d+\])?({reading_pat})【({name_pat})(?:\(.*?\))?】', heading):
+    if m := regex.search(
+        fr'^(?:\[\d+\])?({reading_pat})【({name_pat})(?:\(.*?\))?】', heading
+    ):
         yomi, kaki = m.groups()
         reading = NameData(kaki, yomi)
         lines = text.splitlines()
@@ -53,14 +55,14 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         reading.validate()
         return reading
     else:
-        #raise Exception(f"Cannot parse heading {heading}")
+        # raise Exception(f"Cannot parse heading {heading}")
         pass
 
 
 def test_parse_pdd():
     assert name_from_entry(
         "さんゆうてい　えんしょう【三遊亭　円生(６代)】",
-        "いのうえ　ああ【井上　唖々】\n1878. 1.30(明治11) 〜 1923. 7.11(大正12)\n◇小説家・俳人。本名は精一、別号は九穂(キュウスイ)・玉山。名古屋生れ。\n",
+        "いのうえ　ああ【井上　唖々】\n1878. 1.30(明治11) 〜 1923. 7.11(大正12)\n◇小説家・俳人。本名は精一、別号は九穂(キュウスイ)・玉山。名古屋生れ。\n",  # noqa: E501
     ) == NameData.person(
         kaki="三遊亭 円生",
         yomi="さんゆうてい えんしょう",

@@ -224,7 +224,6 @@ tests = [
     # Chinese? Can identify these via 中国 after the year.
     # ("き ゆうこう 帰有光", 1
     # ("そ じゅん 蘇洵", 1
-
     # This requires a forename lookup
     "あびる えいさぶろう 阿比類 鋭三郎",
     "まや みねお 魔夜 峰央",
@@ -263,12 +262,9 @@ def test_split_point_romaji(test):
 
 
 def test_split_romaji_ambiguous():
-    assert split_kanji_name_romaji("北条大峯", "hojo omine") \
-        == "北条 大峯"
-    assert split_kanji_name_romaji("北条 大峯", "hojo omine") \
-        == "北条 大峯", 'already split'
-    assert split_kanji_name_romaji("北条大峯", "hojoomine") \
-        == "北条大峯", 'romaji not split'
+    assert split_kanji_name_romaji("北条大峯", "hojo omine") == "北条 大峯"
+    assert split_kanji_name_romaji("北条 大峯", "hojo omine") == "北条 大峯", 'already split'
+    assert split_kanji_name_romaji("北条大峯", "hojoomine") == "北条大峯", 'romaji not split'
 
 
 def test_split_kanji_name():

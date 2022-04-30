@@ -1,21 +1,5 @@
 """
 Parser for English-language Wikipedia articles.
-
-TODO: {{nihongo}} is used for non-name stuff too. Examples include
-  {{Nihongo|Tokyo Tower|東京タワー|Tōkyō tawā}}
-
-TODO: second argument is optional.
-TODO: honmyo is listed as 'born ' in the extra content.
-
-TODO: a few do not use {{nihongo}} but they seem very rare!
-
-It's possible the template birth/death can be used to filter these
-out.
-
-TODO: Natsume Soseki
-{{nihongo|'''Natsume Sōseki'''|夏目 漱石|extra=9 February 1867&nbsp;– 9 December 1916}}, born '''{{nihongo|Natsume Kin'nosuke|夏目 金之助}}''', was a [[Japanese people|Japanese]] novelist. He is best known around the world for his novels ''[[Kokoro]]'', ''[[Botchan]]'', ''[[I Am a Cat]]'', ''[[Kusamakura (novel)|Kusamakura]]'' and his unfinished work ''[[Light and Darkness (novel)|Light and Darkness]]''. He was also a scholar of [[British literature]] and writer of [[haiku]], ''[[Kanshi (poetry)|kanshi]]'', and [[fairy tale]]s. From 1984 until 2004, his portrait appeared on the front of the Japanese [[Banknotes of the Japanese yen|1000 yen note]].
-
- ^ no extra argument here! oops... what a pain...
 """
 from __future__ import annotations
 import logging
@@ -61,7 +45,8 @@ PROFESSIONS = [
     'lawyer',
 ]
 PROF_REGEX = regex.compile(
-    r"^Japanese (?:male |female )?(\L<professions>)", professions=PROFESSIONS)
+    r"^Japanese (?:male |female )?(\L<professions>)", professions=PROFESSIONS
+)
 
 
 def notes_from_categories(categories: list[str]) -> str | None:
@@ -82,12 +67,16 @@ ROMAJI = r"[A-Za-zŌōā']"
 ROMAJI_NAME = ROMAJI + r'+\s+' + ROMAJI + '+'
 
 # TODO what if the 3rd arg is missing? 1st arg is usually romaji also, just in reverse order
-NIHONGO_TEMPLATE_PAT = r'\{\{' + \
-    fr"[Nn]ihongo\|'''{ROMAJI_NAME}'''\|({name_pat})\|({ROMAJI_NAME})(?:\|(.*?))?" + \
-    r'\}\}(.{1,5000})'
+NIHONGO_TEMPLATE_PAT = (
+    r'\{\{'
+    + fr"[Nn]ihongo\|'''{ROMAJI_NAME}'''\|({name_pat})\|({ROMAJI_NAME})(?:\|(.*?))?"
+    + r'\}\}(.{1,5000})'
+)
 
 
-def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -> NameData | None:
+def parse_wikipedia_article(
+    title: str, content: str, add_source: bool = True
+) -> NameData | None:
     """
     Parse en.wikipedia article for names/readings and return the primary one.
     """
@@ -100,8 +89,7 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
         # HACK: Use researchmap code.
         namedata = None
         try:
-            namedata = _parse_researchmap_inner(
-                romaji, kanji, '', swap_names=True)
+            namedata = _parse_researchmap_inner(romaji, kanji, '', swap_names=True)
         except NotImplementedError:
             pass
 
@@ -115,12 +103,18 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
 
         if regex.search(r'\bfictional\b', rest_of_line):
             namedata.authenticity = NameAuthenticity.FICTIONAL
-        elif regex.search(r"\b[Bb]orn\s*(?:''')?" + NIHONGO_TEMPLATE_PAT, content, regex.S, pos=m.end()):
+        elif regex.search(
+            r"\b[Bb]orn\s*(?:''')?" + NIHONGO_TEMPLATE_PAT,
+            content,
+            regex.S,
+            pos=m.end(),
+        ):
             namedata.authenticity = NameAuthenticity.PSEUDO
             # TODO
         elif regex.search(r"\b[Bb]orn\s+'''", content):
             # e.g. Knock Yokoyama: Born '''Isamu Yamada''' (山田勇 ''Yamada Isamu'')
-            # Born\s*\p{Han} won't work due to FP: "born on July 14, 1986, in [[Uozu, Toyama]].<ref>{{cite web|url=https://www.shogi.or.jp/player/pro/267.html|script-title=ja:棋士データベース(...)"
+            # Born\s*\p{Han} won't work due to FP: "born on July 14, 1986, in [[Uozu, Toyama]].\
+            # <ref>{{cite web|url=https://www.shogi.or.jp/player/pro/267.html|script-title=ja:棋士データベース(...)"
             namedata.authenticity = NameAuthenticity.PSEUDO
 
         # Extract data from categories
@@ -136,8 +130,7 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
                 gender = Gender.female
 
         if gender == Gender.unknown:
-            m = regex.search(r'(?:^|\b)(he|his|she|her)\b',
-                             rest_of_line, regex.I)
+            m = regex.search(r'(?:^|\b)(he|his|she|her)\b', rest_of_line, regex.I)
             if m:
                 matched: str = m[1].lower()
                 if matched in ('he', 'his'):
@@ -160,7 +153,10 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
 
             cleaned_first_sentence = clean(rest_of_line)
 
-            if m := regex.match(r'(?:.*?[,\)])?\s*(?:is|was) (?:the|a|an) (.+?)[.]', cleaned_first_sentence):
+            if m := regex.match(
+                r'(?:.*?[,\)])?\s*(?:is|was) (?:the|a|an) (.+?)[.]',
+                cleaned_first_sentence,
+            ):
                 desc = m[1]
                 namedata.notes = desc[0].upper() + desc[1:]
             elif m := regex.match(r'^\{\{Infobox (.*?)', content):
@@ -168,7 +164,8 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
 
         # 'Japanese' is usually implied
         namedata.notes = regex.sub(
-            r'^Japanese (\w)(.*)$', lambda m: m[1].upper() + m[2], namedata.notes)
+            r'^Japanese (\w)(.*)$', lambda m: m[1].upper() + m[2], namedata.notes
+        )
 
         # Remove italic
         namedata.notes = regex.sub(r"'{2,}", '', namedata.notes)
@@ -189,17 +186,18 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
     #  - 亜馬尻 菊の助 (name from the 'Characters' section of a series page)
     #  - 艦隊これくしょん
     if len(namedata.kaki.split()) == 1:
-        logging.info(
-            f"[{title}] Name '{namedata.kaki}' could not be split, skipping")
+        logging.info(f"[{title}] Name '{namedata.kaki}' could not be split, skipping")
         return
     elif should_ignore_name(namedata.kaki):
         if namedata.authenticity == NameAuthenticity.REAL:
             logging.info(
-                f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
+                f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping"
+            )
             return
         else:
             logging.info(
-                f"[{title}] Name '{namedata.kaki}' matched ignore rules but character is not real - allowing")
+                f"[{title}] Name '{namedata.kaki}' matched ignore rules but character is not real - allowing"
+            )
             pass
     elif not namedata.lifetime:
         if namedata.authenticity == NameAuthenticity.REAL:
@@ -207,7 +205,8 @@ def parse_wikipedia_article(title: str, content: str, add_source: bool = True) -
             return
         else:
             logging.info(
-                f"[{title}] No birth / death year found, but character is not real - allowing")
+                f"[{title}] No birth / death year found, but character is not real - allowing"
+            )
             pass
 
     namedata.add_tag('person')
@@ -303,7 +302,7 @@ In 2000, a 21-year-old campaign volunteer accused Yokoyama of [[sexual harassmen
 
 def test_allow_fictional_character_with_no_lifetime():
     content = """
-{{nihongo|'''Mai Shiranui'''|不知火 舞|Shiranui Mai|lead=yes}} (alternatively written しらぬい まい) is a [[fictional character]] in the ''[[Fatal Fury]]'' and ''[[The King of Fighters]]'' series of [[fighting game]]s by [[SNK]]. She has also appeared in other media of these franchises and in a number of other games since her debut in 1992's ''[[Fatal Fury 2]]'' as the first female character in an SNK fighting game. She also appears in the games' various manga and anime adaptations and plays a leading role in the [[The King of Fighters (film)|live-action film]].    
+{{nihongo|'''Mai Shiranui'''|不知火 舞|Shiranui Mai|lead=yes}} (alternatively written しらぬい まい) is a [[fictional character]] in the ''[[Fatal Fury]]'' and ''[[The King of Fighters]]'' series of [[fighting game]]s by [[SNK]]. She has also appeared in other media of these franchises and in a number of other games since her debut in 1992's ''[[Fatal Fury 2]]'' as the first female character in an SNK fighting game. She also appears in the games' various manga and anime adaptations and plays a leading role in the [[The King of Fighters (film)|live-action film]].
 """.strip()
     assert parse_wikipedia_article('foo', content) == NameData.person(
         kaki='不知火 舞',
@@ -311,5 +310,5 @@ def test_allow_fictional_character_with_no_lifetime():
         authenticity=NameAuthenticity.FICTIONAL,
         source='wikipedia_en:foo',
         tags={'person', 'fem'},
-        notes='Fictional character in the Fatal Fury and The King of Fighters series of fighting games by SNK'
+        notes='Fictional character in the Fatal Fury and The King of Fighters series of fighting games by SNK',
     )

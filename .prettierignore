@@ -6,3 +6,6 @@ db
 jsonl
 old
 tmp
+tests/fixtures
+tests/wikipedia_en_pages
+tests/wikipedia_ja_pages

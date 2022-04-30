@@ -26,12 +26,13 @@ for category in categories:
     names = {}
     continue_token = ''
     while True:
-        result = site.get('query',
-                          list='categorymembers',
-                          cmtitle='Category:' + category,
-                          cmlimit=500,
-                          cmcontinue=continue_token,
-                          )
+        result = site.get(
+            'query',
+            list='categorymembers',
+            cmtitle='Category:' + category,
+            cmlimit=500,
+            cmcontinue=continue_token,
+        )
         if 'warnings' in result:
             logging.exception(result['warnings'])
 

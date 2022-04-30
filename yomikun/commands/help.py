@@ -1,5 +1,6 @@
 import click
 
+
 def make_help_command(cli):
     @click.command()
     @click.argument('subcommand')
@@ -16,4 +17,5 @@ def make_help_command(cli):
         else:
             ctx.info_name = subcommand
             click.echo(subcommand_obj.get_help(ctx))
+
     return help

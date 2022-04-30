@@ -12,3 +12,6 @@ addopts = "--ignore=setup.py --ignore=scripts"
 [tool.pyright]
 venv = true
 venvPath = ".env"
+
+[tool.black]
+skip-string-normalization = "true"

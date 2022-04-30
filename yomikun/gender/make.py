@@ -25,7 +25,7 @@ class ListTitle(str, enum.Enum):
     MALE = 'Japanese masculine given names'
     FEMALE = 'Japanese feminine given names'
     UNISEX = 'Japanese unisex given names'
-    #SURNAME = 'Japanese-language surnames'
+    # SURNAME = 'Japanese-language surnames'
 
 
 def load_name_lists(name_list_data: NameLists) -> dict[str, set[ListTitle]]:
@@ -75,10 +75,12 @@ def adjusted_wald_moe(female, male, z=1.96):
 
     # Use Adjusted Wald: is better for small samples
     # Normally phat is just female/n
-    phat = (female + ((z*z)/2)) / (n + (z*z))
+    phat = (female + ((z * z) / 2)) / (n + (z * z))
 
     # Work out Margin of Error by applying Wald formula
-    margin_of_error = (z * sqrt((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n)
+    margin_of_error = (z * sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (
+        1 + z * z / n
+    )
 
     return margin_of_error
 
@@ -140,8 +142,6 @@ def make_gender_dict(
     # Count the occurences, per-gender, for each input name.
     # Train the ML model
     for name in names:
-        source = name.source.split(':')[0]
-
         if name.is_given_name() and name.gender() and name.has_tag('dict'):
             # A gendered 'dict' entry is intended to gender-tag a non-
             # gender-tagged entry elsewhere.
@@ -183,17 +183,23 @@ def make_gender_dict(
         if err:
             logging.warning(f"{test} error: {err}")
 
-        print(json.dumps({
-            'kaki': test.kaki,
-            'yomi': test.yomi,
-            'ml_score': ml_score,
-            'ct_score': ct_score,
-            'ct_confidence': ct_confidence,
-            'hits_male': by_kanji[Gender.male],
-            'hits_female': by_kanji[Gender.female],
-            'hits_unknown': max(by_kanji[Gender.unknown], 0),
-            'err': err,
-        }, ensure_ascii=False), file=dict_out)
+        print(
+            json.dumps(
+                {
+                    'kaki': test.kaki,
+                    'yomi': test.yomi,
+                    'ml_score': ml_score,
+                    'ct_score': ct_score,
+                    'ct_confidence': ct_confidence,
+                    'hits_male': by_kanji[Gender.male],
+                    'hits_female': by_kanji[Gender.female],
+                    'hits_unknown': max(by_kanji[Gender.unknown], 0),
+                    'err': err,
+                },
+                ensure_ascii=False,
+            ),
+            file=dict_out,
+        )
 
     if weights:
         model.save(weights)

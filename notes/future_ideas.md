@@ -270,3 +270,21 @@ Some records make no sense and could be rejected, e.g.
 jsonl/wikidata.jsonl:{"kaki": "河野悠里", "yomi": "だいぜんじ ふみこ", "authenticity": "real", "lifetime": {"birth_year": 1983, "death_year": null}, "subreadings": [], "source": "wikidata:http://www.wikidata.org/entity/Q11554202", "tags": ["fem"]}
 
 [**] Also need a re-run for katakana handling update.
+
+## Wikipedia EN misc todo
+
+TODO: {{nihongo}} is used for non-name stuff too. Examples include
+  {{Nihongo|Tokyo Tower|東京タワー|Tōkyō tawā}}
+
+TODO: second argument is optional.
+TODO: honmyo is listed as 'born ' in the extra content.
+
+TODO: a few do not use {{nihongo}} but they seem very rare!
+
+It's possible the template birth/death can be used to filter these
+out.
+
+TODO: Natsume Soseki
+{{nihongo|'''Natsume Sōseki'''|夏目 漱石|extra=9 February 1867&nbsp;– 9 December 1916}}, born '''{{nihongo|Natsume Kin'nosuke|夏目 金之助}}''', was a [[Japanese people|Japanese]] novelist. He is best known around the world for his novels ''[[Kokoro]]'', ''[[Botchan]]'', ''[[I Am a Cat]]'', ''[[Kusamakura (novel)|Kusamakura]]'' and his unfinished work ''[[Light and Darkness (novel)|Light and Darkness]]''. He was also a scholar of [[British literature]] and writer of [[haiku]], ''[[Kanshi (poetry)|kanshi]]'', and [[fairy tale]]s. From 1984 until 2004, his portrait appeared on the front of the Japanese [[Banknotes of the Japanese yen|1000 yen note]].
+
+ ^ no extra argument here! oops... what a pain...

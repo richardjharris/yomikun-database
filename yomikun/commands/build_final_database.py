@@ -1,10 +1,10 @@
 import json
-import sqlite3
 import sys
 import click
 from yomikun.models import NameData
 from yomikun.loader.finaldb import make_final_db
 from yomikun.utils.timer import Timer
+
 
 @click.command()
 def build_final_database():

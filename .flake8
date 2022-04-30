@@ -1,2 +1,8 @@
 [flake8]
 max-line-length = 100
+per-file-ignores =
+    # line too long (tests)
+    yomikun/wikipedia_en/parser.py: E501,
+    yomikun/wikipedia_ja/infobox.py: E501,
+    # claims imports not used, but they are
+    **/__init__.py: F401,
