@@ -57,6 +57,8 @@ prep:
 	# Wheel is required for jamdict-data
 	pip install wheel
 	pip install -r requirements.txt
+	# Makes 'yomikun' script available without modifying PATH
+	pip install --editable .
 
 prep-dev:
 	pip install -r requirements-dev.txt
