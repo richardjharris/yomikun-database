@@ -15,6 +15,8 @@ jobs:
           cache: 'pip'
       - name: Install deps
         run: make prep-dev
+      - name: debug
+        run: find
       - name: Run tests
         run: make test
 
