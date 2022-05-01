@@ -1,5 +1,6 @@
 import logging
 import sys
+from typing import TextIO
 import click
 
 from yomikun.models import NameData
@@ -7,7 +8,8 @@ from yomikun.loader.person_dedupe import PersonDedupe
 
 
 @click.command()
-def person_dedupe():
+@click.argument('input', type=click.File('r'), default='-')
+def person_dedupe(input: TextIO):
     """
     De-deduplicate person records
 
@@ -22,7 +24,7 @@ def person_dedupe():
     dedupe = PersonDedupe()
     in_records, out_records, passthru_records = 0, 0, 0
 
-    for line in sys.stdin:
+    for line in input:
         data = NameData.from_jsonl(line)
         if dedupe.ingest(data):
             in_records += 1

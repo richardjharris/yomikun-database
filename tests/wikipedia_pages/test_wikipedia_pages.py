@@ -1,7 +1,7 @@
 """
-Runs Wikipedia (EN+JA) article parse tests.
+Runs Wikipedia (EN+JA) real-world article parse tests.
 
-Wikipedia articles are stored in a test directory (test_pages)
+Wikipedia articles are stored in a test directory (fixtures/*_pages)
 with metadata (including expected results) at the top of each
 article.
 """
@@ -15,6 +15,8 @@ from yomikun.models.lifetime import Lifetime
 from yomikun.models import NameAuthenticity, NameData
 import yomikun.wikipedia_en.parser
 import yomikun.wikipedia_ja.parser
+
+FIXTURE_DIR = Path(__file__).parent.joinpath('fixtures')
 
 
 def load_test(file: Path) -> tuple[str, dict]:
@@ -53,12 +55,8 @@ def pytest_generate_tests(metafunc):
         return f"{lang}_{path.name}"
 
     if 'test_page' in metafunc.fixturenames:
-        ja_files = (
-            (file, 'ja') for file in Path(__file__).parent.glob('wikipedia_ja_pages/*')
-        )
-        en_files = (
-            (file, 'en') for file in Path(__file__).parent.glob("wikipedia_en_pages/*")
-        )
+        ja_files = ((file, 'ja') for file in FIXTURE_DIR.glob('wikipedia_ja_pages/*'))
+        en_files = ((file, 'en') for file in FIXTURE_DIR.glob("wikipedia_en_pages/*"))
 
         files = itertools.chain(ja_files, en_files)
 

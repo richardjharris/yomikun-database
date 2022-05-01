@@ -20,5 +20,10 @@ jobs:
       - name: Install deps
         run: make prep-dev
       - name: Run tests
-        run: make test
+        run: coverage run -m pytest
+      - name: Coverage badge
+        id: coverage_comment
+        uses: ewjoachim/python-coverage-comment-action@v2
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
 
