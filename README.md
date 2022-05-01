@@ -1,6 +1,7 @@
 ### yomikun-database
 
 ![Unit test status](https://github.com/richardjharris/yomikun-database/actions/workflows/tests.yml/badge.svg?event=push)
+![Test coverage status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/wiki/richardjharris/yomikun-database/python-coverage-comment-action-badge.json)
 
 Scripts and modules to generate the name database used by Yomikun.
 
