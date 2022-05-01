@@ -64,8 +64,6 @@ prep:
 	pip install --editable .
 
 prep-dev: prep
-	# Pip cache seems to have problems with extras
-	pip install --no-cache-dir coverage[toml]
 	pip install -r requirements-dev.txt
 
 prep-perl:
