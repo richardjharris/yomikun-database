@@ -7,7 +7,8 @@ from yomikun.utils.timer import Timer
 
 
 @click.command()
-def import_researchmap():
+@click.argument('input', type=click.File('r'), default='-')
+def import_researchmap(input):
     """
     Import data from ResearchMap user cards
 
@@ -17,7 +18,7 @@ def import_researchmap():
     parsed, errors, total = 0, 0, 0
     timer = Timer()
 
-    for line in sys.stdin:
+    for line in input:
         line = line.rstrip()
         parts = line.split('\t')
         try:

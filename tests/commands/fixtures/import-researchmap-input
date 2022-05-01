@@ -1,0 +1,10 @@
+# Fails validation (deromanizes to ほ hしんに)
+ホーシンニー	何 昕霓	Hsin-Ni Ho
+# Not implemented (mix of katakana and romaji)
+ヤマザキ Ken'ichi	山﨑 健一	
+# Normal record
+	齊藤 隆典	Takasuke SAITO
+# Normal record with reversed name
+Adachi Naoko	足立 直子	Naoko Adachi
+# Normal record with kana
+アオキ ケンジ	青木 堅持	Kenji Aoki
