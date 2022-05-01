@@ -26,4 +26,5 @@ jobs:
         uses: ewjoachim/python-coverage-comment-action@v2
         with:
           GITHUB_TOKEN: ${{ github.token }}
-
+          MINIMUM_GREEN: 80
+          MINIMUM_ORANGE: 70
