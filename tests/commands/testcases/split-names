@@ -1,0 +1,9 @@
+command: split-names
+---
+{"kaki": "柳原 尚之", "yomi": "やなぎはら なおゆき", "authenticity": "real", "source": "custom", "tags": ["masc", "person"], "notes": "Chef"}
+{"kaki": "齋藤 訓之", "yomi": "さいとう さとし", "authenticity": "real", "lifetime": {"birth_year": 1964, "death_year": null}, "source": "custom", "tags": ["masc", "person"], "notes": "Food Watch Japan writer and editor"}
+---
+{"kaki": "柳原", "yomi": "やなぎはら", "authenticity": "real", "source": "custom", "tags": ["surname"], "notes": "Chef"}
+{"kaki": "尚之", "yomi": "なおゆき", "authenticity": "real", "source": "custom", "tags": ["masc"], "notes": "Chef"}
+{"kaki": "齋藤", "yomi": "さいとう", "authenticity": "real", "lifetime": {"birth_year": 1964, "death_year": null}, "source": "custom", "tags": ["surname"], "notes": "Food Watch Japan writer and editor"}
+{"kaki": "訓之", "yomi": "さとし", "authenticity": "real", "lifetime": {"birth_year": 1964, "death_year": null}, "source": "custom", "tags": ["masc"], "notes": "Food Watch Japan writer and editor"}

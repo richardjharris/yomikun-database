@@ -6,11 +6,10 @@ from yomikun.custom_data.importer import convert_to_hiragana
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData
 
-fields = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
-
 
 @click.command()
-def clean_custom_data():
+@click.argument('input', type=click.File('r'), default='-')
+def clean_custom_data(input):
     """
     Clean up/anonymize sloppy custom.csv data
 
@@ -34,7 +33,8 @@ def clean_custom_data():
     佐藤 直哉,さとう　なおや,m
     頴川 文彦,Fumihiko Egawa,m+fictional
     """
-    reader = csv.DictReader(sys.stdin, fields)
+    fields = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
+    reader = csv.DictReader(input, fields)
     for row in reader:
         _output_clean_row(row)
 

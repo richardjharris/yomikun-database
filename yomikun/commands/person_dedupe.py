@@ -1,5 +1,4 @@
 import logging
-import sys
 from typing import TextIO
 import click
 

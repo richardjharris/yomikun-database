@@ -12,7 +12,7 @@ from yomikun.wikipedia_en.parser import parse_wikipedia_article
 
 
 @click.command()
-@click.argument('article', nargs=-1)
+@click.argument('articles', nargs=-1, metavar='ARTICLE')
 @click.option(
     '-v',
     '--verbose',

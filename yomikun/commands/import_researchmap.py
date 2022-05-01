@@ -46,8 +46,8 @@ def import_researchmap(input):
             sys.exit(1)
         total += 1
 
-    print(
+    click.echo(
         f'Parsed {parsed} of {total} results ({parsed/total:.1%}) '
         f'in {timer.elapsed}s ({errors} errors)',
-        file=sys.stderr,
+        err=True,
     )
