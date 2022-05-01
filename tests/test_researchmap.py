@@ -80,6 +80,10 @@ tests = [
     # mp/mb
     (('', '池 俊平', 'Shumpei IKE'), '池 俊平', 'いけ しゅんぺい'),
     (('', '神林 由美', 'Yumi Kambayashi'), '神林 由美', 'かんばやし ゆみ'),
+    # apostrophe
+    (("Sin'ya Ryoma", '新屋 良磨', "Ryoma Sin'ya"), '新屋 良磨', 'しんや りょうま'),
+    (('', '古川 淳一朗', "Jun'ichiro Furukawa"), '古川 淳一朗', 'ふるかわ じゅんいちろう'),
+    (('', '平田 統一', "Toh'ichi Hirata"), '平田 統一', 'ひらた とういち'),
 ]
 
 

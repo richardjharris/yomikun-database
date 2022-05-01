@@ -151,7 +151,7 @@ def _parse_researchmap_inner(
     romajis = []
     for romaji in romaji_candidates:
         if (
-            regex.match(r'^[a-zāâīīîūûêēōôô\-]+\s+[a-zāâīīîūûêēōôô\-]+$', romaji)
+            regex.match(r'^[a-zāâīīîūûêēōôô\-\']+\s+[a-zāâīīîūûêēōôô\-\']+$', romaji)
             and romaji not in romajis
         ):
             romajis.append(romaji)
