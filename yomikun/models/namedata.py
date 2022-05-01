@@ -315,8 +315,12 @@ class NameData:
         if 'surname' in tags:
             tags.remove('surname')
             tags.add('s')
+        if self.authenticity == NameAuthenticity.PSEUDO:
+            tags.add('pseudo')
+        if self.authenticity == NameAuthenticity.FICTIONAL:
+            tags.add('fictional')
 
-        fields = [self.kaki, self.yomi, '+'.join(tags)]
+        fields = [self.kaki, self.yomi, '+'.join(sorted(tags))]
         lifetime = self.lifetime.to_csv()
         if lifetime or self.notes:
             fields.append(lifetime)
