@@ -1,0 +1,3 @@
+command: '--loglevel=INFO -vv help'
+exception: cannot specify -v and --loglevel together
+exit_code: 1

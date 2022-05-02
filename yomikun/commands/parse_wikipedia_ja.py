@@ -1,5 +1,4 @@
 from __future__ import annotations
-import logging
 import json
 import sys
 import click
@@ -13,13 +12,7 @@ from yomikun.wikipedia_ja.parser import parse_wikipedia_article
 
 @click.command()
 @click.argument('article', nargs=-1)
-@click.option(
-    '-v',
-    '--verbose',
-    count=True,
-    help='Show important log messages (pass twice for more)',
-)
-def parse_wikipedia_ja(verbose, articles):
+def parse_wikipedia_ja(articles):
     """
     Parses ja.wikipedia.org dump
 
@@ -27,11 +20,6 @@ def parse_wikipedia_ja(verbose, articles):
 
     Extracts names (including aliases), date of birth/death, gender, description.
     """
-    if verbose >= 2:
-        logging.basicConfig(level=logging.DEBUG)
-    elif verbose >= 1:
-        logging.basicConfig(level=logging.INFO)
-
     if articles:
         # Fetch article directly (uses local file cache)
         site = mwclient.Site('ja.wikipedia.org')

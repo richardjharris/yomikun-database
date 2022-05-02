@@ -39,7 +39,7 @@ def import_researchmap(input):
             logging.error('-----')
             errors += 1
         except ValueError as e:
-            logging.error(f"Failed to validate {parts}: {e}")
+            logging.error(f"Failed to validate {parts}: {e}", exc_info=True)
             errors += 1
         except Exception:
             logging.exception(f'Error when parsing {parts}')

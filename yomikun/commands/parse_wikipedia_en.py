@@ -13,13 +13,7 @@ from yomikun.wikipedia_en.parser import parse_wikipedia_article
 
 @click.command()
 @click.argument('articles', nargs=-1, metavar='ARTICLE')
-@click.option(
-    '-v',
-    '--verbose',
-    count=True,
-    help='Show important log messages (pass twice for more)',
-)
-def parse_wikipedia_en(verbose, articles):
+def parse_wikipedia_en(articles):
     """
     Parse en.wikipedia.org dump
 
@@ -33,11 +27,6 @@ def parse_wikipedia_en(verbose, articles):
     """
     # Does not filter out 'User' pages as they contain good quality names - in some cases
     # the only source for a particular name.
-    if verbose >= 2:
-        logging.basicConfig(level=logging.DEBUG)
-    elif verbose >= 1:
-        logging.basicConfig(level=logging.INFO)
-
     if articles:
         # Fetch article directly (uses local file cache)
         site = mwclient.Site('en.wikipedia.org')

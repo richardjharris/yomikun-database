@@ -10,13 +10,26 @@ from yomikun.commands import add_yomikun_commands
 @click.option(
     '--loglevel',
     type=click.Choice(
-        ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG'], case_sensitive=False
+        ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NONE'], case_sensitive=False
     ),
     default='WARNING',
     envvar='LOGLEVEL',
 )
-def cli(loglevel):
-    logging.basicConfig(level=loglevel)
+@click.option(
+    '-v',
+    '--verbose',
+    count=True,
+    help='Show detailed log messages (pass twice for more)',
+)
+@click.version_option()
+def cli(loglevel, verbose):
+    if verbose > 0:
+        if loglevel:
+            raise Exception("cannot specify -v and --loglevel together")
+        loglevel = 'DEBUG' if verbose >= 2 else 'INFO'
+
+    if loglevel != 'NONE':
+        logging.basicConfig(level=loglevel)
 
 
 add_yomikun_commands(cli)
