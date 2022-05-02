@@ -114,10 +114,10 @@ data/romajidb.tsv.gz:
 	${CAT} jsonl/* | $(YOMIKUN) build-romajidb | gzip -9f > $@
 
 jsonl/wikipedia_en.jsonl: data/enwiki-template-only.gz
-	${ZCAT} $< | $(PARALLEL) $(YOMIKUN) parse-wikipedia-en > $@
+	${ZCAT} $< | $(PARALLEL) $(YOMIKUN) parse-wikipedia --lang=en > $@
 
 jsonl/wikipedia_ja.jsonl: data/jawiki-articles.gz
-	${ZCAT} data/jawiki-articles.gz | $(PARALLEL) $(YOMIKUN) parse-wikipedia-ja > $@
+	${ZCAT} data/jawiki-articles.gz | $(PARALLEL) $(YOMIKUN) parse-wikipedia --lang=ja > $@
 
 jsonl/wikidata.jsonl: data/wikidata.jsonl.gz
 	${ZCAT} $< | ${PARALLEL} $(YOMIKUN) parse-wikidata > $@ 2>/dev/null

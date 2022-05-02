@@ -15,8 +15,7 @@ from .parse_myoji_yurai import parse_myoji_yurai
 from .parse_pdd import parse_pdd
 from .parse_wikidata import parse_wikidata
 from .parse_wikidata_nokana import parse_wikidata_nokana
-from .parse_wikipedia_en import parse_wikipedia_en
-from .parse_wikipedia_ja import parse_wikipedia_ja
+from .parse_wikipedia import parse_wikipedia
 from .person_dedupe import person_dedupe
 from .split_names import split_names
 
@@ -42,7 +41,6 @@ def add_yomikun_commands(cli) -> None:
     cli.add_command(parse_pdd)
     cli.add_command(parse_wikidata_nokana)
     cli.add_command(parse_wikidata)
-    cli.add_command(parse_wikipedia_en)
-    cli.add_command(parse_wikipedia_ja)
+    cli.add_command(parse_wikipedia)
     cli.add_command(person_dedupe)
     cli.add_command(split_names)

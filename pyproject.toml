@@ -37,7 +37,7 @@ disable = [
     "redefined-builtin",
     "global-statement",
     # Noisy, but will revisit later
-    "fixme",
+    #"fixme",
     # Will revisit later
     "too-many-return-statements",
     "too-many-branches",

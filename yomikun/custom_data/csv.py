@@ -61,6 +61,7 @@ def skip_lines_and_comments(lines):
             yield line.rstrip()
 
 
+# FIXME: should move closer to namedata.py as it will need to change if NameData changes.
 def parse_csv_data(row: dict) -> NameData:
     """
     Parse an incoming CSV data row and return a NameData object.
