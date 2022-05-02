@@ -6,7 +6,7 @@ import regex
 
 # Romaji keys where the 'h' is part of the vowel and should
 # be removed, e.g. 'ohishi' (おおいし) vs. 'ohashi' (おおはし)
-remove_vowel_h = {
+REMOVE_VOWEL_H = {
     'ohae': 'oae',
     'ohe': 'oe',
     'ohi': 'oi',
@@ -26,7 +26,7 @@ remove_vowel_h = {
     'yohichi': 'yoichi',
 }
 
-accents = {
+ACCENTS = {
     'a': {'ā', 'â'},
     'i': {'ī', 'î'},
     'u': {'ū', 'û'},
@@ -44,8 +44,8 @@ def remove_accents(s: str) -> str:
     # as one would expect. Otherwise 'ōue' becomes 'oe'.
     s = s.replace('ōu', 'oou')
 
-    for letter in accents:
-        for accent in accents[letter]:
+    for letter in ACCENTS:
+        for accent in ACCENTS[letter]:
             s = s.replace(accent, letter)
     return s
 
@@ -107,7 +107,7 @@ def romaji_key(romaji: str) -> str:
     romaji = regex.sub(r'([aiu])\1+', '\\1', romaji)
 
     # Remove 'h's that are most likely vowels
-    romaji = remove_vowel_h.get(romaji, romaji)
+    romaji = REMOVE_VOWEL_H.get(romaji, romaji)
 
     return romaji
 
