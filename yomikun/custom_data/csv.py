@@ -7,7 +7,7 @@ from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData
 
 # CSV field names
-csv_fields = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
+CSV_FIELDS = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
 
 # Remember last CSV input line, for error handling
 last_raw_line = ''
@@ -23,11 +23,11 @@ def parse_file(
     If an error is encountered, displays contextual information and returns False.
     The caller should then exit the program.
     """
-    reader = csv.DictReader(skip_lines_and_comments(input_file), csv_fields)
+    reader = csv.DictReader(skip_lines_and_comments(input_file), CSV_FIELDS)
     for row in reader:
         namedata = None
         try:
-            namedata = parse_row(row)
+            namedata = parse_csv_data(row)
             namedata.validate()
             print(namedata.to_jsonl(), file=output_file)
         except ValueError as e:
@@ -61,7 +61,7 @@ def skip_lines_and_comments(lines):
             yield line.rstrip()
 
 
-def parse_row(row: dict) -> NameData:
+def parse_csv_data(row: dict) -> NameData:
     """
     Parse an incoming CSV data row and return a NameData object.
     """

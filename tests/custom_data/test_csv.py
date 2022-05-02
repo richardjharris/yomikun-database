@@ -1,6 +1,5 @@
 import io
 
-import pytest
 from yomikun.custom_data import csv
 
 
@@ -29,7 +28,7 @@ def test_success():
 {"kaki": "小田 剛嗣", "yomi": "おだ つよし", "authenticity": "real", "lifetime": {"birth_year": 1920, "death_year": 1980}, "source": "custom", "tags": ["masc", "person"]}
 {"kaki": "宇治", "yomi": "うじ", "authenticity": "fictional", "source": "custom", "tags": ["surname"]}
 {"kaki": "白馬 弥那", "yomi": "はくば みな", "authenticity": "fictional", "source": "custom", "tags": ["fem", "person"]}
-    """.strip()
+    """.strip()  # noqa
         + "\n"
     )
 
