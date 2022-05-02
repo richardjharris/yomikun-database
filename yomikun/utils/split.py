@@ -17,7 +17,7 @@ updated.
 #   therefore we split, but んじ is not valid?
 
 from __future__ import annotations
-import yomikun.utils.name_dict as name_dict
+from yomikun.utils import name_dict
 
 
 def split_kanji_name_romaji(kanji: str, romaji: str) -> str:

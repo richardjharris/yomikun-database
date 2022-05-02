@@ -1,5 +1,4 @@
 import csv
-import sys
 import click
 
 from yomikun.custom_data.importer import convert_to_hiragana

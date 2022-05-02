@@ -1,6 +1,5 @@
 import csv
 import logging
-import sys
 from typing import Optional, TextIO
 import regex
 from yomikun.custom_data.importer import convert_to_hiragana

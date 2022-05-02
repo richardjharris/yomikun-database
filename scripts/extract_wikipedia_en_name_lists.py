@@ -42,7 +42,7 @@ for category in categories:
             # Strip parens
             title = regex.sub(r'\s*\(.*?\)$', '', title)
             if len(title.split()) > 1:
-                logging.warn(f"Skipping multi-word name '{title}'")
+                logging.warning(f"Skipping multi-word name '{title}'")
                 continue
 
             names[pageid] = title

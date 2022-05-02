@@ -1,6 +1,5 @@
 import sys
 import logging
-from glob import glob
 import click
 
 
