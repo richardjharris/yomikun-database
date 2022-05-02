@@ -44,7 +44,7 @@ def remove_accents(s: str) -> str:
     # as one would expect. Otherwise 'ōue' becomes 'oe'.
     s = s.replace('ōu', 'oou')
 
-    for letter, accents in ACCENTS:
+    for letter, accents in ACCENTS.items():
         for accent in accents:
             s = s.replace(accent, letter)
     return s
