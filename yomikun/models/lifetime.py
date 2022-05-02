@@ -9,7 +9,6 @@ class Lifetime:
     (to either indicate unknown, or alive).
     """
 
-    # TODO distinguish unknown and alive?
     birth_year: int | None = None
     death_year: int | None = None
 

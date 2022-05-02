@@ -4,18 +4,12 @@ data in the future).
 """
 from dataclasses import dataclass
 import logging
-
 import jamdict
 
 from yomikun.romajidb.db import romajidb
 from yomikun.utils.romaji import romaji_key
 
-
-# TODO: turn on memory_mode outside of test mode (??)
-# TODO: we use jamdict-data for now
-jam = jamdict.Jamdict(
-    memory_mode=False,
-)
+jam = jamdict.Jamdict(memory_mode=False)
 assert jam.has_jmne()
 
 NOISY_LOGGERS = (
