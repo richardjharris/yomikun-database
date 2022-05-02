@@ -1,4 +1,6 @@
 from __future__ import annotations
+from dataclasses import dataclass
+import dataclasses
 from operator import itemgetter
 from typing import cast
 import logging
@@ -21,13 +23,53 @@ from yomikun.utils.romaji import (
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 
+@dataclass
+class ResearchMapRecord:
+    kana: str
+    kanji: str
+    english: str
+
+    def has_name_kanji(self) -> bool:
+        """
+        Returns true if this record's `kanji` field looks like a name.
+        """
+        return regex.fullmatch(name_pat, self.kanji) is not None
+
+    def has_romaji(self) -> bool:
+        """
+        Returns true if this record's `english` or `kana` fields contain
+        romaji.
+        """
+        return regex.search('[a-z]', self.kana + self.english) is not None
+
+    def stripped(self):
+        """
+        Returns a copy with all fields stripped of surrounding whitespace.
+        """
+        return ResearchMapRecord(
+            kana=self.kana.strip(),
+            kanji=self.kanji.strip(),
+            english=self.english.strip(),
+        )
+
+    def astuple(self):
+        return dataclasses.astuple(self)
+
+    def clone(self):
+        return dataclasses.replace(self)
+
+    def __str__(self):
+        return str(dataclasses.astuple(self))
+
+
 def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:
     """
     Parse a researchmap card (kana, kanji, english fields) and return
     a NameData object, or None if we know the input is not a Japanese
     name.
     """
-    data = _parse_researchmap_inner(kana, kanji, english)
+    record = ResearchMapRecord(kana, kanji, english)
+    data = _parse_researchmap_inner(record)
     if not data:
         return
 
@@ -50,7 +92,7 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:
 
 
 def _parse_researchmap_inner(
-    kana: str, kanji: str, english: str, swap_names: bool = True
+    record: ResearchMapRecord, swap_names: bool = True
 ) -> NameData | None:
     """
     This code does the hard work of figuring out what fields correspond to what name
@@ -71,39 +113,52 @@ def _parse_researchmap_inner(
     generate a name in the wrong order. For sites like wikipedia where the romaji is
     usually in the correct order, `swap_names` should be set to False.
     """
-    raw_data = (kana, kanji, english)
-    logging.debug(f"Parsing {raw_data}")
+    raw_data = record.clone()
+    logging.debug(f"Parsing {record}")
 
-    kana, kanji, english = (col.strip() for col in raw_data)
+    # Perform basic cleanup and normalisation
+    record = _clean_record(record)
 
-    kana = kana.lower()
-
-    # Fix a common pattern of LastnameFirstname
-    english = regex.sub(r'^([A-Z][a-z]+)([A-Z][a-z]+)$', r'\1 \2', english)
-    # ... and firstnameLASTNAME
-    english = regex.sub(r'^([A-Za-z][a-z]+)([A-Z]+)$', r'\2 \1', english)
-    english = english.replace('ｰ', '-')
-    english = english.lower()
-
-    kanji_ok = regex.fullmatch(name_pat, kanji)
-    if not kanji_ok:
+    if not record.has_name_kanji():
         # Records without kanji in the second field are generally non-Japanese
         logging.debug("Rejecting (not kanji_ok)")
         return
 
-    # Convert half-width
-    if kana:
-        kana = cast(str, jcconv3.half2hira(kana))
-
-    # Hack for tenten. There are only a handful of these in the input, so we don't
-    # need to consider all of them.
-    kana = kana.replace('ス゛', 'ズ').replace('タ゛', 'ダ').replace('シ゛', 'ジ')
-    kana = kana.replace('カ゛', 'ガ').replace('ウ゛', 'ヴ')
-
-    if kana in ('no data', 'no date'):
+    if record.kana in ('no data', 'no date'):
         # These records never contain any readings.
         logging.debug("Rejecting (no data)")
         return
+
+    # Try to parse without romaji
+    if result := _parse_researchmap_using_kana(record):
+        return result
+
+    # Bah, we have to use romaji and also figure out which order the name
+    # might be in.
+    if not record.has_romaji():
+        # Neither field contains romaji
+        logging.debug("Rejecting (no romaji)")
+        return
+
+    if result := _parse_researchmap_using_romaji(record, raw_data, swap_names):
+        return result if result.has_name() else None
+
+    raise NotImplementedError("don't know how to handle this")
+
+
+def reverse_words(s: str):
+    """
+    Split string `s`, reverse its parts and join again with spaces.
+    """
+    return ' '.join(reversed(s.split()))
+
+
+def _parse_researchmap_using_kana(record: ResearchMapRecord) -> NameData | None:
+    """
+    Parser that assumes the input has a reading in the `kana` field and kanji in
+    the `kanji` field.
+    """
+    kana, kanji, _ = record.astuple()
 
     if regex.match(r'^\p{Hiragana}+\s+\p{Hiragana}+$', kana):
         # Most common case: kana is as expected
@@ -129,10 +184,28 @@ def _parse_researchmap_inner(
                 # Successful
                 return NameData(kanji, kana).add_tag('xx-split')
 
-    if not regex.search('[a-z]', kana + english):
-        # Neither field contains romaji
-        logging.debug("Rejecting (no romaji)")
-        return
+    return None
+
+
+def _parse_researchmap_using_romaji(
+    record: ResearchMapRecord,
+    raw_data: ResearchMapRecord,
+    swap_names: bool,
+) -> NameData | None:
+    """
+    Parser that assumes the kanji is in `kanji`, but that the reading could be in either
+    `english` or `kana` (both are common), in Western or Japanese order, with ambiguous
+    romaji (Ryoma -> りょうま etc.)
+
+    Due to all of the above, this parser is a bit more complex, and aims to pick the
+    'best' result (the one where it has made the fewest assumptions).
+
+    Has a tristate return value:
+      valid NameData -> parsed ok
+      empty NameData -> explicit rejection, move on
+      None           -> we don't know how to handle this
+    """
+    kana, kanji, english = record.astuple()
 
     # If both fields are romaji then the 'kana' entry tends to be
     # in Japanese name order while the 'english' entry tends to be
@@ -141,8 +214,8 @@ def _parse_researchmap_inner(
     if swap_names:
         romaji_candidates = [
             kana,
-            reverse_parts(english),
-            reverse_parts(kana),
+            reverse_words(english),
+            reverse_words(kana),
             english,
         ]
     else:
@@ -166,7 +239,7 @@ def _parse_researchmap_inner(
             # Could not convert to kana - probably a non-Japanese name.
             # (allow w (~ow), h as in 'oh', and 'm' (n).
             logging.debug("Rejecting (non-japanese name?)")
-            return
+            return NameData()
 
         # May need to split the kanji (rare)
         new_kanji = split_kanji_name_romaji(kanji, romaji)
@@ -235,8 +308,27 @@ def _parse_researchmap_inner(
         #      can be fixed if we return 2 parts.
         return NameData(kanji, kana, tags={'xx-romaji'})
 
-    raise NotImplementedError("don't know how to handle this")
+    return None
 
 
-def reverse_parts(s: str):
-    return ' '.join(reversed(s.split()))
+def _clean_record(record: ResearchMapRecord) -> ResearchMapRecord:
+    kana, kanji, english = record.stripped().astuple()
+
+    # Fix a common pattern of LastnameFirstname
+    english = regex.sub(r'^([A-Z][a-z]+)([A-Z][a-z]+)$', r'\1 \2', english)
+    # ... and firstnameLASTNAME
+    english = regex.sub(r'^([A-Za-z][a-z]+)([A-Z]+)$', r'\2 \1', english)
+    english = english.replace('ｰ', '-')
+    english = english.lower()
+
+    # Convert half-width katakana to full-width
+    if kana:
+        kana = kana.lower()
+        kana = cast(str, jcconv3.half2hira(kana))
+
+    # Handle tenten characters. There are only a few in the input, so we don't
+    # need to consider all of them.
+    kana = kana.replace('ス゛', 'ズ').replace('タ゛', 'ダ').replace('シ゛', 'ジ')
+    kana = kana.replace('カ゛', 'ガ').replace('ウ゛', 'ヴ')
+
+    return ResearchMapRecord(kana, kanji, english)

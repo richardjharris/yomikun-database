@@ -8,7 +8,7 @@ import enum
 import regex
 from mediawiki_dump.tokenizer import clean
 
-from yomikun.researchmap import _parse_researchmap_inner
+from yomikun.researchmap import ResearchMapRecord, _parse_researchmap_inner
 from yomikun.wikipedia_ja.ignore import should_ignore_name
 from yomikun.models import NameData, NameAuthenticity
 from yomikun.utils.patterns import name_pat
@@ -87,9 +87,11 @@ def parse_wikipedia_article(
         romaji = regex.sub(r"^''(.*?)''$", r"\1", romaji)
 
         # HACK: Use researchmap code.
+        # TODO: replace with nicer abstraction.
         namedata = None
         try:
-            namedata = _parse_researchmap_inner(romaji, kanji, '', swap_names=True)
+            record = ResearchMapRecord(romaji, kanji, '')
+            namedata = _parse_researchmap_inner(record, swap_names=True)
         except NotImplementedError:
             pass
 
