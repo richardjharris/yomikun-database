@@ -95,7 +95,6 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
     Returns the NameData that we expect to parse from a test case, using
     the test metadata.
     """
-    # TODO this should probably go in NameData.from_yaml or similar
     namedata = NameData()
     for key, value in metadata.items():
         if key == 'name':

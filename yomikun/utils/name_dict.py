@@ -7,7 +7,7 @@ import logging
 import jamdict
 
 from yomikun.romajidb.db import romajidb
-from yomikun.utils.romaji import romaji_key
+from yomikun.utils.romaji.helpers import romaji_key
 
 jam = jamdict.Jamdict(memory_mode=False)
 assert jam.has_jmne()

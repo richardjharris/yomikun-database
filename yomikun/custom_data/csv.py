@@ -2,7 +2,7 @@ import csv
 import logging
 from typing import Optional, TextIO
 import regex
-from yomikun.models.namedata import NameData
+from yomikun.models import NameData
 
 # CSV field names
 CSV_FIELDS = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')

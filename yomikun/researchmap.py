@@ -16,7 +16,7 @@ from yomikun.utils.split import (
     split_kanji_name,
     split_kanji_name_romaji,
 )
-from yomikun.utils.romaji import (
+from yomikun.utils.romaji.names import (
     romaji_to_hiragana_fullname,
     romaji_to_hiragana_fullname_parts,
 )

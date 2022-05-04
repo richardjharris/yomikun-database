@@ -8,7 +8,7 @@ import regex
 import romkan
 import jcconv3
 
-from yomikun.utils.romaji import romaji_key
+from yomikun.utils.romaji.helpers import romaji_key
 
 
 instance = None

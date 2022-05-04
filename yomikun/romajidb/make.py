@@ -9,7 +9,7 @@ import romkan
 from yomikun.models import NameData
 from yomikun.loader.aggregator import Aggregator
 from yomikun.loader.models import NamePosition
-from yomikun.utils.romaji import romaji_key
+from yomikun.utils.romaji.helpers import romaji_key
 
 
 def make_romajidb(names: Iterable[NameData], db_out: TextIO):

@@ -2,7 +2,6 @@ from yomikun.models import Lifetime, NameData, NameAuthenticity
 from yomikun.wikipedia_en.parser import parse_wikipedia_article
 
 
-# TODO: xx-romaji could be omitted here due to the long o.
 def test_basic():
     content = """
 {{nihongo|'''Akifumi Endō'''|遠藤 章史|Endō Akifumi|born December 10, 1964}} is a Japanese [[Seiyū|voice actor]] who is affiliated with [[Troubadour Musique Office]].

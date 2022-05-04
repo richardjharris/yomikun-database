@@ -1,6 +1,7 @@
 # Parses PDD (public domain dictionary) 人名辞典.
 
 from __future__ import annotations
+import logging
 import regex
 
 
@@ -32,31 +33,32 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
     TODO handle の
     TODO handle alternate form of name
     """
-    if m := regex.search(
+    m = regex.search(
         fr'^(?:\[\d+\])?({reading_pat})【({name_pat})(?:\(.*?\))?】', heading
-    ):
-        yomi, kaki = m.groups()
-        reading = NameData(kaki, yomi)
-        lines = text.splitlines()
+    )
+    if not m:
+        logging.warning(f"Cannot parse heading {heading}")
+        return
 
-        if len(lines) < 2:
-            return
+    yomi, kaki = m.groups()
+    reading = NameData(kaki, yomi)
+    lines = text.splitlines()
 
-        result = text.splitlines()[1].split('〜')
-        if len(result) == 2:
-            left, right = result
-            if m := regex.search(r'^(\d{4})\.', left):
-                reading.lifetime.birth_year = int(m[1])
-            if m := regex.search(r'^\s*(\d{4})\.', right):
-                reading.lifetime.death_year = int(m[1])
+    if len(lines) < 2:
+        return
 
-        reading.add_tag('person')
-        reading.source = f'pdd:{heading}'
-        reading.validate()
-        return reading
-    else:
-        # raise Exception(f"Cannot parse heading {heading}")
-        pass
+    result = text.splitlines()[1].split('〜')
+    if len(result) == 2:
+        left, right = result
+        if m := regex.search(r'^(\d{4})\.', left):
+            reading.lifetime.birth_year = int(m[1])
+        if m := regex.search(r'^\s*(\d{4})\.', right):
+            reading.lifetime.death_year = int(m[1])
+
+    reading.add_tag('person')
+    reading.source = f'pdd:{heading}'
+    reading.validate()
+    return reading
 
 
 def test_parse_pdd():
