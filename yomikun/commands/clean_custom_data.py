@@ -1,7 +1,8 @@
 import csv
 import click
 
-from yomikun.custom_data.csv import parse_csv_data, CSV_FIELDS
+from yomikun.custom_data.csv import CSV_FIELDS
+from yomikun.models.namedata import NameData
 
 
 @click.command()
@@ -36,7 +37,7 @@ def clean_custom_data(input):
 
 
 def _output_clean_row(row: dict[str, str]):
-    namedata = parse_csv_data(row)
+    namedata = NameData.from_csv(row)
 
     if len(namedata.kaki.split()) != len(namedata.yomi.split()):
         raise ValueError("kaki and yomi have different name counts")

@@ -2,6 +2,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import regex
+from yomikun.custom_data.importer import convert_to_hiragana
 
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.lifetime import Lifetime
@@ -328,3 +329,53 @@ class NameData:
             fields.append(self.notes)
 
         return ','.join(fields)
+
+    @classmethod
+    def from_csv(cls, row: dict) -> NameData:
+        """
+        Parse an incoming CSV data row and return a NameData object.
+
+        Row must a parsed dict containing the fields: kaki, yomi,
+        tags, lifetime, notes.
+        """
+        kaki = row['kaki']
+        yomi = convert_to_hiragana(row['yomi'])
+        namedata = NameData(kaki, yomi)
+
+        if row['tags']:
+            tags = row['tags'].split('+')
+            for tag in tags:
+                if tag == 'm':
+                    namedata.set_gender('masc')
+                elif tag == 'f':
+                    namedata.set_gender('fem')
+                elif tag == 's':
+                    namedata.set_gender('surname')
+                elif tag == 'pseudo':
+                    namedata.authenticity = NameAuthenticity.PSEUDO
+                elif tag in ('fictional', 'fict'):
+                    namedata.authenticity = NameAuthenticity.FICTIONAL
+                else:
+                    namedata.add_tag(tag)
+
+        if namedata.is_person():
+            namedata.add_tag('person')
+
+        if row['lifetime']:
+            try:
+                birth, death = row['lifetime'].split('-')
+            except ValueError:
+                birth = row['lifetime']
+                death = ''
+
+            if len(birth):
+                namedata.lifetime.birth_year = int(birth)
+            if len(death):
+                namedata.lifetime.death_year = int(death)
+
+        if row['notes']:
+            namedata.notes = row['notes']
+
+        # Normalise spaces
+        namedata.clean()
+        return namedata

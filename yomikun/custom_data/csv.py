@@ -2,8 +2,6 @@ import csv
 import logging
 from typing import Optional, TextIO
 import regex
-from yomikun.custom_data.importer import convert_to_hiragana
-from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData
 
 # CSV field names
@@ -27,7 +25,8 @@ def parse_file(
     for row in reader:
         namedata = None
         try:
-            namedata = parse_csv_data(row)
+            namedata = NameData.from_csv(row)
+            namedata.source = 'custom'
             namedata.validate()
             print(namedata.to_jsonl(), file=output_file)
         except ValueError as e:
@@ -59,53 +58,3 @@ def skip_lines_and_comments(lines):
         line = regex.sub(r'#.*$', '', line)
         if regex.search(r'\S', line):
             yield line.rstrip()
-
-
-# FIXME: should move closer to namedata.py as it will need to change if NameData changes.
-def parse_csv_data(row: dict) -> NameData:
-    """
-    Parse an incoming CSV data row and return a NameData object.
-    """
-    kaki = row['kaki']
-    yomi = convert_to_hiragana(row['yomi'])
-    namedata = NameData(kaki, yomi)
-
-    if row['tags']:
-        tags = row['tags'].split('+')
-        for tag in tags:
-            if tag == 'm':
-                namedata.set_gender('masc')
-            elif tag == 'f':
-                namedata.set_gender('fem')
-            elif tag == 's':
-                namedata.set_gender('surname')
-            elif tag == 'pseudo':
-                namedata.authenticity = NameAuthenticity.PSEUDO
-            elif tag in ('fictional', 'fict'):
-                namedata.authenticity = NameAuthenticity.FICTIONAL
-            else:
-                namedata.add_tag(tag)
-
-    if namedata.is_person():
-        namedata.add_tag('person')
-
-    if row['lifetime']:
-        try:
-            birth, death = row['lifetime'].split('-')
-        except ValueError:
-            birth = row['lifetime']
-            death = ''
-
-        if len(birth):
-            namedata.lifetime.birth_year = int(birth)
-        if len(death):
-            namedata.lifetime.death_year = int(death)
-
-    if row['notes']:
-        namedata.notes = row['notes']
-
-    namedata.source = 'custom'
-
-    # Normalise spaces
-    namedata.clean()
-    return namedata
