@@ -3,6 +3,7 @@ Entry point for all yomikun CLI commands. Handles common options.
 """
 import logging
 import click
+from click.core import ParameterSource
 from yomikun.commands import add_yomikun_commands
 
 
@@ -22,8 +23,11 @@ from yomikun.commands import add_yomikun_commands
     help='Show detailed log messages (pass twice for more)',
 )
 @click.version_option()
-def cli(loglevel, verbose):
-    if verbose > 0:
+@click.pass_context
+def cli(ctx, loglevel, verbose):
+    if verbose:
+        if ctx.get_parameter_source('loglevel') != ParameterSource.DEFAULT:
+            raise Exception('cannot specify -v and --loglevel together')
         loglevel = 'DEBUG' if verbose >= 2 else 'INFO'
 
     if loglevel != 'NONE':
