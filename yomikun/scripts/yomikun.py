@@ -24,8 +24,6 @@ from yomikun.commands import add_yomikun_commands
 @click.version_option()
 def cli(loglevel, verbose):
     if verbose > 0:
-        if loglevel:
-            raise Exception("cannot specify -v and --loglevel together")
         loglevel = 'DEBUG' if verbose >= 2 else 'INFO'
 
     if loglevel != 'NONE':

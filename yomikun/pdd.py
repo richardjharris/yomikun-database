@@ -5,8 +5,13 @@ import logging
 import regex
 
 
-from yomikun.models import NameData, Lifetime
-from yomikun.utils.patterns import name_pat, reading_pat
+from yomikun.models import NameData
+from yomikun.utils.patterns import (
+    name_pat,
+    reading_pat,
+    hiragana_pat,
+    name_pat_with_space,
+)
 
 
 def name_from_entry(heading: str, text: str) -> NameData | None:
@@ -29,19 +34,39 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
 
       A few lack spaces:
       みなもとのたかあきら【源　高明】
-
-    TODO handle の
-    TODO handle alternate form of name
     """
-    m = regex.search(
-        fr'^(?:\[\d+\])?({reading_pat})【({name_pat})(?:\(.*?\))?】', heading
-    )
-    if not m:
+    namedata = None
+    if m := regex.search(fr'^(?:\[\d+\])?(.*?)【({name_pat})(?:\((.*?)\))?】', heading):
+        yomi, kaki, alt_kaki = m.groups()
+
+        # Determine if alternate kanji is actually a name, and not just 二世 or
+        # similar.
+        if alt_kaki and regex.match(fr'^({name_pat_with_space})$', alt_kaki):
+            logging.info(f'Found alternate name for {kaki}: {alt_kaki}')
+        else:
+            alt_kaki = None
+
+        if regex.match(reading_pat, yomi):
+            pass
+        elif regex.match(hiragana_pat, yomi) and yomi.count('の') == 1:
+            yomi = yomi.replace('の', ' ')
+        else:
+            logging.warning(f'Unrecognized yomi: {yomi}')
+            return
+
+        # Some entries have a '??' suffix after the reading - remove them.
+        yomi = regex.sub(r'\s*\?+$', '', yomi)
+        yomi = regex.sub(r'子$', 'こ', yomi)
+
+        namedata = NameData(kaki, yomi)
+
+        if alt_kaki:
+            namedata.add_subreading(NameData(alt_kaki, yomi))
+
+    if not namedata:
         logging.warning(f"Cannot parse heading {heading}")
         return
 
-    yomi, kaki = m.groups()
-    reading = NameData(kaki, yomi)
     lines = text.splitlines()
 
     if len(lines) < 2:
@@ -50,24 +75,13 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
     result = text.splitlines()[1].split('〜')
     if len(result) == 2:
         left, right = result
-        if m := regex.search(r'^(\d{4})\.', left):
-            reading.lifetime.birth_year = int(m[1])
-        if m := regex.search(r'^\s*(\d{4})\.', right):
-            reading.lifetime.death_year = int(m[1])
+        if m := regex.search(r'^\s*(\d{3,4})[\.\(]', left):
+            namedata.lifetime.birth_year = int(m[1])
+        if m := regex.search(r'^\s*(\d{3,4})[\.\(]', right):
+            namedata.lifetime.death_year = int(m[1])
 
-    reading.add_tag('person')
-    reading.source = f'pdd:{heading}'
-    reading.validate()
-    return reading
+    namedata.add_tag('person')
+    namedata.source = f'pdd:{heading}'
 
-
-def test_parse_pdd():
-    assert name_from_entry(
-        "さんゆうてい　えんしょう【三遊亭　円生(６代)】",
-        "いのうえ　ああ【井上　唖々】\n1878. 1.30(明治11) 〜 1923. 7.11(大正12)\n◇小説家・俳人。本名は精一、別号は九穂(キュウスイ)・玉山。名古屋生れ。\n",  # noqa: E501
-    ) == NameData.person(
-        kaki="三遊亭 円生",
-        yomi="さんゆうてい えんしょう",
-        lifetime=Lifetime(1878, 1923),
-        source='pdd:さんゆうてい　えんしょう【三遊亭　円生(６代)】',
-    )
+    namedata.validate()
+    return namedata

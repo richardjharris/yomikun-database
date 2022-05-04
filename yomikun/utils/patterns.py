@@ -16,8 +16,15 @@ mei_pat = fr'[{sei_chars}' + r'\p{Hiragana}\p{Katakana}ー]+'
 
 """
 Pattern for a full written name. We focus on names with kanji surnames.
+
+Space is optional.
 """
 name_pat = fr'{sei_pat}\s*{mei_pat}'
+
+"""
+Pattern for a full written name with required space.
+"""
+name_pat_with_space = fr'{sei_pat}\s+{mei_pat}'
 
 hiragana_pat = r'[\p{Hiragana}ー]+'
 
