@@ -17,6 +17,7 @@ from .parse_wikidata import parse_wikidata
 from .parse_wikidata_nokana import parse_wikidata_nokana
 from .parse_wikipedia import parse_wikipedia
 from .person_dedupe import person_dedupe
+from .query import query
 from .split_names import split_names
 
 
@@ -43,4 +44,5 @@ def add_yomikun_commands(cli) -> None:
     cli.add_command(parse_wikidata)
     cli.add_command(parse_wikipedia)
     cli.add_command(person_dedupe)
+    cli.add_command(query)
     cli.add_command(split_names)
