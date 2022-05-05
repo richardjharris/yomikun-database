@@ -3,7 +3,7 @@ import copy
 from dataclasses import dataclass
 
 from yomikun.models import NameData, NameAuthenticity
-from yomikun.loader.models import Gender, NamePosition
+from yomikun.models import Gender, NamePosition
 
 
 @dataclass(frozen=True)

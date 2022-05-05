@@ -6,9 +6,8 @@ import jcconv3
 
 import romkan
 
-from yomikun.models import NameData
+from yomikun.models import NameData, NamePosition
 from yomikun.loader.aggregator import Aggregator
-from yomikun.loader.models import NamePosition
 from yomikun.utils.romaji.helpers import romaji_key
 
 

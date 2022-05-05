@@ -13,7 +13,7 @@ import jcconv3
 from yomikun.gender.dict import GenderDict
 
 from yomikun.loader.aggregator import Aggregator
-from yomikun.loader.models import Gender, NamePosition
+from yomikun.models import Gender, NamePosition
 from yomikun.models import NameData
 from yomikun.models.lifetime import Lifetime
 from yomikun.models.nameauthenticity import NameAuthenticity

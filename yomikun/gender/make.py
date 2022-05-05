@@ -13,8 +13,7 @@ import logging
 
 from yomikun.gender.ml import GenderML
 from yomikun.loader.aggregator import Aggregator, NamePart
-from yomikun.loader.models import Gender, NamePosition
-from yomikun.models import NameData
+from yomikun.models import NameData, Gender, NamePosition
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 
