@@ -1,7 +1,7 @@
 import json
 import sys
 import click
-import yomikun.daijisen.parser
+import yomikun.parsers.daijisen.parser
 
 
 @click.command()
@@ -23,5 +23,5 @@ def parse_daijisen():
             continue
 
         text = entry['text']
-        if reading := yomikun.daijisen.parser.name_from_entry(heading, text):
+        if reading := yomikun.parsers.daijisen.parser.name_from_entry(heading, text):
             print(reading.to_jsonl())

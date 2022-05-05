@@ -1,5 +1,5 @@
 import click
-import yomikun.wikidata.parse_wikidata_nokana as parser
+import yomikun.parsers.wikidata.parse_wikidata_nokana as parser
 
 
 @click.command()

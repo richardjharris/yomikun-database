@@ -2,7 +2,7 @@ import json
 from typing import TextIO
 import click
 
-import yomikun.pdd
+import yomikun.parsers.pdd
 
 
 @click.command()
@@ -33,5 +33,5 @@ def parse_pdd(input: TextIO):
             continue
 
         text = entry['text']
-        if reading := yomikun.pdd.name_from_entry(heading, text):
+        if reading := yomikun.parsers.pdd.name_from_entry(heading, text):
             print(reading.to_jsonl())

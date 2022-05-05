@@ -1,7 +1,7 @@
 import json
 import sys
 import click
-import yomikun.koujien
+import yomikun.parsers.koujien
 
 
 @click.command()
@@ -18,5 +18,5 @@ def parse_koujien():
     for entry in entries:
         heading = entry['heading']
         text = entry['text']
-        if reading := yomikun.koujien.name_from_entry(heading, text):
+        if reading := yomikun.parsers.koujien.name_from_entry(heading, text):
             print(reading.to_jsonl())

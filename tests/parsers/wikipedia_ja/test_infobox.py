@@ -1,5 +1,5 @@
 from yomikun.models import Lifetime, NameData
-from yomikun.wikipedia_ja.infobox import (
+from yomikun.parsers.wikipedia_ja.infobox import (
     extract_infoboxes,
     parse_infoboxes,
     extract_year,
@@ -156,7 +156,7 @@ def test_abe_hiroshi():
 |その他=
 }}
 '''阿部 寛'''（あべ ひろし、[[1964年]]〈昭和39年〉[[6月22日]]<ref name="rirekisho" /> - ）は、[[日本]]の[[俳優]]。[[茂田オフィス]]所属。
-"""
+"""  # noqa
     boxes = extract_infoboxes(abe)
     parsed = parse_infoboxes(boxes)
     assert parsed == NameData(

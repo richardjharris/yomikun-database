@@ -1,5 +1,5 @@
 import pytest
-from yomikun.wikidata.common import extract, year
+from yomikun.parsers.wikidata.common import extract, year
 
 
 def test_extract():

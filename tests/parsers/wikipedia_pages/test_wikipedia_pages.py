@@ -13,8 +13,8 @@ import yaml
 
 from yomikun.models.lifetime import Lifetime
 from yomikun.models import NameAuthenticity, NameData
-import yomikun.wikipedia_en.parser
-import yomikun.wikipedia_ja.parser
+import yomikun.parsers.wikipedia_en.parser
+import yomikun.parsers.wikipedia_ja.parser
 
 FIXTURE_DIR = Path(__file__).parent.joinpath('fixtures')
 
@@ -72,9 +72,9 @@ def test_parser(test_page: tuple[Path, str]):
     content, metadata = load_test(path)
 
     if lang == 'en':
-        module = yomikun.wikipedia_en.parser
+        module = yomikun.parsers.wikipedia_en.parser
     elif lang == 'ja':
-        module = yomikun.wikipedia_ja.parser
+        module = yomikun.parsers.wikipedia_ja.parser
     else:
         raise Exception('invalid lang')
 

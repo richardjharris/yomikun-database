@@ -8,8 +8,8 @@ import mwclient
 from mediawiki_dump.dumps import MediaWikiClientDump
 from mediawiki_dump.reader import DumpReaderArticles
 
-from yomikun.wikipedia_en.parser import parse_wikipedia_article as parse_en
-from yomikun.wikipedia_ja.parser import parse_wikipedia_article as parse_ja
+from yomikun.parsers.wikipedia_en.parser import parse_wikipedia_article as parse_en
+from yomikun.parsers.wikipedia_ja.parser import parse_wikipedia_article as parse_ja
 
 
 PARSERS = {

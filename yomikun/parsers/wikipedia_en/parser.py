@@ -9,7 +9,7 @@ import regex
 from mediawiki_dump.tokenizer import clean
 
 from yomikun.researchmap import ResearchMapRecord, _parse_researchmap_inner
-from yomikun.wikipedia_ja.ignore import should_ignore_name
+from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
 from yomikun.models import NameData, NameAuthenticity
 from yomikun.utils.patterns import name_pat
 from yomikun.utils.split import split_kanji_name
@@ -116,7 +116,7 @@ def parse_wikipedia_article(
         elif regex.search(r"\b[Bb]orn\s+'''", content):
             # e.g. Knock Yokoyama: Born '''Isamu Yamada''' (山田勇 ''Yamada Isamu'')
             # Born\s*\p{Han} won't work due to FP: "born on July 14, 1986, in [[Uozu, Toyama]].\
-            # <ref>{{cite web|url=https://www.shogi.or.jp/player/pro/267.html|script-title=ja:棋士データベース(...)"
+            # <ref>{{cite web|url=https://www.shogi.or.jp/player/pro/267.html|script-title=ja:棋士データベース(...)" # noqa
             namedata.authenticity = NameAuthenticity.PSEUDO
 
         # Extract data from categories
@@ -198,7 +198,8 @@ def parse_wikipedia_article(
             return
         else:
             logging.info(
-                f"[{title}] Name '{namedata.kaki}' matched ignore rules but character is not real - allowing"
+                f"[{title}] Name '{namedata.kaki}' matched ignore rules but character "
+                "is not real - allowing"
             )
             pass
     elif not namedata.lifetime:

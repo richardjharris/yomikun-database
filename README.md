@@ -41,17 +41,19 @@ from Mediawiki dumps.
 - tmp: tmp directory for makefile (sorts etc)
 - yomikun: python code
  - commands - CLI subcommand logic
- - daijisen - tools for reading Daijisen's epwing data
  - gender - name to gender guesser
  - jmnedict - related to JMnedict parsing
  - loader - assembles the final database
  - models - general-purpose classes used by everything (NameData is the most important)
+ - parsers - parsing code
+   - daijisen - Daijisen dictionary
+   - wikidata - WikiData EN/JA
+   - wikipedia_en - Wikipedia EN
+   - wikipedia_ja - Wikipedia JA
+   - koujien.py - Koujien dictionary
+   - pdd.py - Public Domain Dictionary
  - scripts - CLI entrypoint
  - utils - code used by everything (e.g. romaji to kana conversion, regexes)
- - wikipedia\_en - code to parse EN (English) wikipedia
- - wikipedia\_ja - code to parse JA (Japanese) wikipedia
- - koujien.py - tools for reading Koujien's epwing data
- - pdd.py - tools for reading the Public Domain Dictionary (PDD)
 
 ## JSONL (NameData)
 

@@ -7,7 +7,7 @@ import regex
 
 from yomikun.utils.split import split_kanji_name
 from yomikun.models import NameData, Lifetime, NameAuthenticity
-from yomikun.wikidata.common import extract, year
+from yomikun.parsers.wikidata.common import extract, year
 
 
 def load_birth_name_data(handle: TextIO) -> dict[str, dict[str, str]]:

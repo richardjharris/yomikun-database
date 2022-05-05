@@ -1,6 +1,6 @@
 import click
 
-import yomikun.wikidata.parse_wikidata as parser
+import yomikun.parsers.wikidata.parse_wikidata as parser
 
 
 @click.command()

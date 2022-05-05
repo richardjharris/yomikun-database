@@ -7,7 +7,7 @@ import regex
 from yomikun.utils.split import try_to_swap_names
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.models import NameData, Lifetime
-from yomikun.wikidata.common import year
+from yomikun.parsers.wikidata.common import year
 
 
 def parse_wikidata_nokana(input: TextIO):

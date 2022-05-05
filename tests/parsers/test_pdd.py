@@ -1,5 +1,5 @@
 from yomikun.models import NameData, Lifetime
-from yomikun.pdd import name_from_entry
+from yomikun.parsers.pdd import name_from_entry
 
 
 def test_parse_pdd():

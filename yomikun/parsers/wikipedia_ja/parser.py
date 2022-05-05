@@ -8,13 +8,13 @@ import regex
 from mediawiki_dump.tokenizer import clean
 
 from yomikun.models import NameData, NameAuthenticity, Lifetime
-from yomikun.wikipedia_ja.ignore import should_ignore_name
-from yomikun.wikipedia_ja.infobox import extract_infoboxes, parse_infoboxes
-from yomikun.wikipedia_ja.honmyo import find_honmyo
+from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
+from yomikun.parsers.wikipedia_ja.infobox import extract_infoboxes, parse_infoboxes
+from yomikun.parsers.wikipedia_ja.honmyo import find_honmyo
 from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
 from yomikun.utils.split import split_kanji_name
 
-from yomikun.wikipedia_en.parser import get_categories
+from yomikun.parsers.wikipedia_en.parser import get_categories
 
 
 def parse_article_text(title: str, content: str) -> NameData:
