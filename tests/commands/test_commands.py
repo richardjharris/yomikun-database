@@ -20,5 +20,5 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize('test_case', test_cases, ids=attrgetter('name'))
 
 
-def test_commands(test_case: CommandTestCase):
-    test_case.run()
+def test_commands(caplog, test_case: CommandTestCase):
+    test_case.run(caplog)

@@ -19,6 +19,8 @@ class CommandTestCase:
                may be a string or array
       exception: if set, expect an exception containing this substring
       exit_code: if set, expect this exit code (rather than 0)
+      loggging:  if set (list of strings), for each string, expect an exception
+                 containing the strings. If unset, ignore logs.
     Second block is input data.
     Third block is expected stdout data.
     Fourth block is expected stderr data. This may contain placeholders such as '<seconds>'
@@ -34,6 +36,7 @@ class CommandTestCase:
     expected_stderr: str
     expected_exit_code: int
     expected_exception: str | None
+    expected_logging: list[str]
 
     @classmethod
     def from_file(cls, file: Path) -> CommandTestCase:
@@ -56,12 +59,15 @@ class CommandTestCase:
             expected_stderr=stderr,
             expected_exit_code=int(metadata.get('exit_code', '0')),
             expected_exception=metadata.get('exception'),
+            expected_logging=metadata.get('logging', []),
         )
 
-    def run(self):
+    def run(self, caplog):
         runner = CliRunner(mix_stderr=False)
         logging.info(f"Command: {self.command}")
-        result = runner.invoke(cli, self.command, input=self.input)
+
+        with caplog.at_level(logging.INFO):
+            result = runner.invoke(cli, self.command, input=self.input)
 
         logging.info(f"Got stdout: {result.stdout}")
         logging.info(f"Got stderr: {result.stderr}")
@@ -74,6 +80,12 @@ class CommandTestCase:
             assert self.expected_exception in str(result.exception)
         else:
             assert result.exception is None
+
+        messages = list(caplog.messages)
+        for expected_log in self.expected_logging:
+            assert any(
+                expected_log in m for m in messages
+            ), f'Logs should contain "{expected_log}"'
 
     @property
     def expected_stderr_pattern(self):
