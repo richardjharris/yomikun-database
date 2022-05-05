@@ -1,0 +1,4 @@
+{"kaki": "真", "yomi": "まこと", "ml_score": -2, "ct_score": -0.8, "ct_confidence": 0.95, "hits_male": 83, "hits_female": 5, "hits_unknown": 365, "err": null}
+{"kaki": "真琴", "yomi": "まこと", "ml_score": 0.5, "ct_score": -0.8, "ct_confidence": 0.95, "hits_male": 13, "hits_female": 31, "hits_unknown": 36, "err": null}
+{"kaki": "淳", "yomi": "ひろし", "ml_score": -6, "ct_score": -0.99, "ct_confidence": 0.99, "hits_male": 0, "hits_female": 0, "hits_unknown": 1, "err": null}
+{"kaki": "和稀子", "yomi": "わきこ", "ml_score": 4.5, "ct_score": 1.0, "ct_confidence": 0.11, "hits_male": 0, "hits_female": 0, "hits_unknown": 1, "err": null}
