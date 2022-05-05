@@ -52,6 +52,7 @@ test:
 	pytest
 
 cover:
+	rm -rf .coverage htmlcov
 	coverage run -m pytest
 	coverage html
 	(sleep 1 && xdg-open http://localhost:8111) & python -m http.server --directory htmlcov 8111
