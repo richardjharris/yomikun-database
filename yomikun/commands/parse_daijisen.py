@@ -1,9 +1,9 @@
-import json
 import sys
 
 import click
 
-import yomikun.parsers.daijisen.parser
+import yomikun.parsers.epwing.daijisen.parser
+from yomikun.parsers.epwing.parser import EpwingParser
 
 
 @click.command()
@@ -15,15 +15,5 @@ def parse_daijisen():
 
     Output is NameData in JSONL format.
     """
-    root = json.load(sys.stdin)
-    entries = root['subbooks'][0]['entries']
-    for entry in entries:
-        heading = entry['heading']
-
-        if 'text' not in entry:
-            print(f"No text for entry '{heading}'", file=sys.stderr)
-            continue
-
-        text = entry['text']
-        if reading := yomikun.parsers.daijisen.parser.name_from_entry(heading, text):
-            print(reading.to_jsonl())
+    parser = yomikun.parsers.epwing.daijisen.parser.name_from_entry
+    EpwingParser(parser).parse_json_input(sys.stdin)

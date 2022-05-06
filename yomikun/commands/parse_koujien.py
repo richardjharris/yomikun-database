@@ -1,9 +1,9 @@
-import json
 import sys
 
 import click
 
-import yomikun.parsers.koujien
+import yomikun.parsers.epwing.koujien
+from yomikun.parsers.epwing.parser import EpwingParser
 
 
 @click.command()
@@ -15,10 +15,5 @@ def parse_koujien():
 
     Output is NameData in JSONL format.
     """
-    root = json.load(sys.stdin)
-    entries = root['subbooks'][0]['entries']
-    for entry in entries:
-        heading = entry['heading']
-        text = entry['text']
-        if reading := yomikun.parsers.koujien.name_from_entry(heading, text):
-            print(reading.to_jsonl())
+    parser = yomikun.parsers.epwing.koujien.name_from_entry
+    EpwingParser(parser).parse_json_input(sys.stdin)

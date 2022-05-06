@@ -1,9 +1,9 @@
-import json
 from typing import TextIO
 
 import click
 
-import yomikun.parsers.pdd
+import yomikun.parsers.epwing.pdd
+from yomikun.parsers.epwing.parser import EpwingParser
 
 
 @click.command()
@@ -21,18 +21,6 @@ def parse_pdd(input: TextIO):
     Example:
     zcat data/pdd.jsonl.gz | yomikun parse-pdd > jsonl/pdd.jsonl
     """
-    root = json.load(input)
-    entries = root['subbooks'][0]['entries']
-    for entry in entries:
-        if 'heading' not in entry:
-            continue
+    parser = yomikun.parsers.epwing.pdd.name_from_entry
 
-        heading = entry['heading']
-
-        if 'text' not in entry:
-            click.echo(f"No text for entry '{heading}'", err=True)
-            continue
-
-        text = entry['text']
-        if reading := yomikun.parsers.pdd.name_from_entry(heading, text):
-            print(reading.to_jsonl())
+    return EpwingParser(parser).parse_json_input(input)
