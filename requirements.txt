@@ -4,6 +4,7 @@ jamdict==0.1a11.post2
 jcconv3==1.2.3
 mediawiki-dump==0.8.0
 mwclient==0.10.1
+prettytable==3.3.0
 PyYAML==5.4.1
 regex==2022.4.24
 types-regex==2021.11.10.4
