@@ -1,6 +1,4 @@
 from __future__ import annotations
-from dataclasses import dataclass
-import dataclasses
 from operator import itemgetter
 from typing import cast
 import logging
@@ -10,7 +8,7 @@ import jcconv3
 import romkan
 
 from yomikun.models import NameData
-from yomikun.utils.patterns import name_pat
+from yomikun.researchmap.record import ResearchMapRecord
 from yomikun.utils.split import (
     split_kana_name,
     split_kanji_name,
@@ -21,45 +19,6 @@ from yomikun.utils.romaji.names import (
     romaji_to_hiragana_fullname_parts,
 )
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
-
-
-@dataclass
-class ResearchMapRecord:
-    kana: str
-    kanji: str
-    english: str
-
-    def has_name_kanji(self) -> bool:
-        """
-        Returns true if this record's `kanji` field looks like a name.
-        """
-        return regex.fullmatch(name_pat, self.kanji) is not None
-
-    def has_romaji(self) -> bool:
-        """
-        Returns true if this record's `english` or `kana` fields contain
-        romaji.
-        """
-        return regex.search('[a-z]', self.kana + self.english) is not None
-
-    def stripped(self):
-        """
-        Returns a copy with all fields stripped of surrounding whitespace.
-        """
-        return ResearchMapRecord(
-            kana=self.kana.strip(),
-            kanji=self.kanji.strip(),
-            english=self.english.strip(),
-        )
-
-    def astuple(self):
-        return dataclasses.astuple(self)
-
-    def clone(self):
-        return dataclasses.replace(self)
-
-    def __str__(self):
-        return str(dataclasses.astuple(self))
 
 
 def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:
