@@ -3,7 +3,10 @@ from dataclasses import dataclass
 import logging
 from pathlib import Path
 import re
+from tempfile import NamedTemporaryFile
+from typing import Any
 from click.testing import CliRunner
+import regex
 import yaml
 from yomikun.scripts.yomikun import cli
 
@@ -25,6 +28,9 @@ class CommandTestCase:
     Third block is expected stdout data.
     Fourth block is expected stderr data. This may contain placeholders such as '<seconds>'
       (names are arbitrary) to pattern match against the real stderr.
+    Any subsequent blocks should begin with a line: '%identifier%' (no quotes)
+      These are extra input files. They can be included in the command in place of
+      an actual file, e.g. 'command: build-final-database --genderdb %identifier%'
 
     Missing blocks default to the empty string.
     """
@@ -37,6 +43,7 @@ class CommandTestCase:
     expected_exit_code: int
     expected_exception: str | None
     expected_logging: list[str]
+    other_files: dict[str, Any]
 
     @classmethod
     def from_file(cls, file: Path) -> CommandTestCase:
@@ -46,11 +53,13 @@ class CommandTestCase:
     @classmethod
     def from_string(cls, string: str, test_name: str) -> CommandTestCase:
         parts = string.split("---\n")
-        assert 1 <= len(parts) <= 4
         metadata = yaml.load(''.join(parts[0]), Loader=yaml.BaseLoader)
         input = parts[1] if len(parts) >= 2 else ''
         output = parts[2] if len(parts) >= 3 else ''
         stderr = parts[3] if len(parts) == 4 else ''
+
+        other_files = cls._parse_other_files(parts[4:])
+
         return CommandTestCase(
             name=test_name,
             command=metadata['command'],
@@ -60,14 +69,21 @@ class CommandTestCase:
             expected_exit_code=int(metadata.get('exit_code', '0')),
             expected_exception=metadata.get('exception'),
             expected_logging=metadata.get('logging', []),
+            other_files=other_files,
         )
 
     def run(self, caplog):
         runner = CliRunner(mix_stderr=False)
-        logging.info(f"Command: {self.command}")
+
+        # Replace %identifier%s with filenames
+        command = regex.sub(
+            r'%(\w+)%', lambda m: self.other_files[m[1]].name, self.command
+        )
+
+        logging.info(f"Command: {command}")
 
         with caplog.at_level(logging.INFO):
-            result = runner.invoke(cli, self.command, input=self.input)
+            result = runner.invoke(cli, command, input=self.input)
 
         logging.info(f"Got stdout: {result.stdout}")
         logging.info(f"Got stderr: {result.stderr}")
@@ -93,3 +109,19 @@ class CommandTestCase:
         pattern = re.escape(self.expected_stderr)
         pattern = re.sub(r'<\w+>', '.*?', pattern)
         return pattern
+
+    @classmethod
+    def _parse_other_files(cls, blocks):
+        other_files = {}
+        for block in blocks:
+            if m := regex.match(r'^\s*%(\w+)%\s*\n', block):
+                identifier = m.group(1)
+                content = block[m.end() :]  # noqa: E203
+                temp = NamedTemporaryFile(mode='w')
+                temp.write(content)
+                temp.flush()
+                other_files[identifier] = temp
+            else:
+                raise Exception('Invalid block, should start with %identifier%')
+
+        return other_files

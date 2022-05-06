@@ -7,7 +7,13 @@ from yomikun.utils.timer import Timer
 
 
 @click.command()
-def build_final_database():
+@click.argument('input', type=click.File('r'), default='-')
+@click.option(
+    '--genderdb',
+    default='db/gender.jsonl',
+    help='Path to gender score database',
+)
+def build_final_database(input, genderdb):
     """
     Build final.jsonl for SQLite load
 
@@ -18,10 +24,8 @@ def build_final_database():
     with one line per yomi/kaki/part and the total hits, split by
     gender and authenticity. Person records will be split into
     surname and given name parts.
-
-    Also requires db/gender.jsonl for gender scores.
     """
     timer = Timer()
-    names = (NameData.from_dict(json.loads(line)) for line in sys.stdin)
-    make_final_db(names, db_out=sys.stdout)
+    names = (NameData.from_dict(json.loads(line)) for line in input)
+    make_final_db(names_in=names, genderdb_file_in=genderdb, db_out=sys.stdout)
     timer.report('Generated final database')

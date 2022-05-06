@@ -80,7 +80,7 @@ class AggregatedData:
 DictKey = tuple[str, str, NamePosition]
 
 
-def make_final_db(names: Iterable[NameData], db_out: TextIO):
+def make_final_db(names_in: Iterable[NameData], genderdb_file_in: str, db_out: TextIO):
     """
     Given input name records (which can be people or individual name parts)
     aggregate the data and produce output in JSONL format suitable for
@@ -88,7 +88,7 @@ def make_final_db(names: Iterable[NameData], db_out: TextIO):
     """
     aggregated_data: dict[DictKey, AggregatedData] = defaultdict(AggregatedData)
 
-    for name in names:
+    for name in names_in:
         Aggregator.copy_data_to_subreadings(name)
         for part, gender in Aggregator.extract_name_parts(name):
             kana = part.yomi
@@ -111,13 +111,15 @@ def make_final_db(names: Iterable[NameData], db_out: TextIO):
 
                 aggregated_data[key].mark_top5k(population)
 
-    _output_aggregated_data(aggregated_data, db_out)
+    _output_aggregated_data(aggregated_data, genderdb_file_in, db_out)
 
 
 def _output_aggregated_data(
-    aggregated_data: dict[DictKey, AggregatedData], db_out: TextIO
+    aggregated_data: dict[DictKey, AggregatedData],
+    genderdb_file_in: str,
+    db_out: TextIO,
 ):
-    genderdb = GenderDict()
+    genderdb = GenderDict(genderdb_file_in)
 
     # Output aggregated data
     for key, aggregated in aggregated_data.items():
