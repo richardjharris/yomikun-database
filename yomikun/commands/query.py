@@ -1,15 +1,15 @@
+import sqlite3
+import sys
 import click
 import prettytable
 import regex
 import romkan
-import sqlite3
-import sys
 
 PARTS_IN_DATABASE_ORDER = ['unknown', 'sei', 'mei']
 
 
 @click.command()
-@click.argument('query')
+@click.argument('search_term')
 @click.option(
     '--dbfile',
     type=str,
@@ -29,14 +29,14 @@ PARTS_IN_DATABASE_ORDER = ['unknown', 'sei', 'mei']
     type=int,
     default=10,
 )
-def query(query, dbfile, mode, trace, limit):
+def query(search_term, dbfile, mode, trace, limit):
     """
     Query the Yomikun database.
     """
     conn = sqlite3.connect(dbfile)
     if trace:
         conn.set_trace_callback(lambda s: click.echo(s, err=True))
-    cur = get_data(conn, query, mode, limit)
+    cur = get_data(conn, search_term, mode, limit)
     if sys.stdout.isatty():
         print_pretty_table(cur)
     else:
@@ -68,17 +68,17 @@ def print_tsv(cur: sqlite3.Cursor):
 
 
 def get_data(
-    conn: sqlite3.Connection, query: str, mode: str, limit: int
+    conn: sqlite3.Connection, search_term: str, mode: str, limit: int
 ) -> sqlite3.Cursor:
     cur = conn.cursor()
     cur.row_factory = sqlite3.Row
 
-    is_kaki = regex.match(r'\p{Han}', query)
+    is_kaki = regex.match(r'\p{Han}', search_term)
     if is_kaki:
         query_col = 'kaki'
     else:
         query_col = 'yomi'
-        query = romkan.to_roma(query)
+        search_term = romkan.to_roma(search_term)
 
     part_id = PARTS_IN_DATABASE_ORDER.index(mode)
     limit_sql = '' if limit == -1 else f'LIMIT {int(limit)}'
@@ -89,5 +89,5 @@ def get_data(
         ORDER BY hits_total DESC
         {limit_sql}
     """
-    cur.execute(sql, (query, part_id))
+    cur.execute(sql, (search_term, part_id))
     return cur
