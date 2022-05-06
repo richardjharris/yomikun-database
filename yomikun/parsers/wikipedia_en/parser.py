@@ -3,7 +3,6 @@ Parser for English-language Wikipedia articles.
 """
 from __future__ import annotations
 import logging
-import enum
 
 import regex
 from mediawiki_dump.tokenizer import clean
@@ -13,16 +12,10 @@ from yomikun.researchmap import ResearchMapRecord
 # XXX: importing private function
 from yomikun.researchmap.parser import _parse_researchmap_inner
 from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
-from yomikun.models import NameData, NameAuthenticity
+from yomikun.models import NameData, NameAuthenticity, Gender
 from yomikun.utils.patterns import name_pat
 from yomikun.utils.split import split_kanji_name
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
-
-
-class Gender(enum.Enum):
-    unknown = 1
-    male = 2
-    female = 3
 
 
 CATEGORY_PAT = r'\[\[[cC]ategory:(.*?)\]\]'
