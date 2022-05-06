@@ -1,9 +1,9 @@
 from __future__ import annotations
+
 import copy
 from dataclasses import dataclass
 
-from yomikun.models import NameData, NameAuthenticity
-from yomikun.models import Gender, NamePosition
+from yomikun.models import Gender, NameAuthenticity, NameData, NamePosition
 
 
 @dataclass(frozen=True)

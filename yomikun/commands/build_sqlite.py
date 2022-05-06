@@ -1,5 +1,7 @@
 import sqlite3
+
 import click
+
 from yomikun.sqlite import builder
 
 

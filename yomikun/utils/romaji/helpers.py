@@ -1,8 +1,8 @@
 import functools
-
 import unicodedata
-import romkan
+
 import regex
+import romkan
 
 # Romaji keys where the 'h' is part of the vowel and should
 # be removed, e.g. 'ohishi' (おおいし) vs. 'ohashi' (おおはし)

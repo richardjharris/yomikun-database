@@ -1,11 +1,11 @@
-from datetime import datetime
-from itertools import zip_longest
 import json
 import sqlite3
 import sys
+from datetime import datetime
+from itertools import zip_longest
 from typing import IO, Generator, Iterable
-from yomikun.sqlite.constants import SqliteQuery
 
+from yomikun.sqlite.constants import SqliteQuery
 from yomikun.sqlite.kanji_stats_table import KanjiStatsTable
 from yomikun.sqlite.names_table import NamesTable
 from yomikun.sqlite.quiz_table import QuizTable

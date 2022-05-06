@@ -1,6 +1,7 @@
 import json
 import logging
 import sys
+
 import click
 
 from yomikun.models.namedata import NameData

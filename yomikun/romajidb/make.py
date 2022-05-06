@@ -1,13 +1,14 @@
 from __future__ import annotations
-from typing import Iterable, TextIO
+
 import collections
 import logging
-import jcconv3
+from typing import Iterable, TextIO
 
+import jcconv3
 import romkan
 
-from yomikun.models import NameData, NamePosition
 from yomikun.loader.aggregator import Aggregator
+from yomikun.models import NameData, NamePosition
 from yomikun.utils.romaji.helpers import romaji_key
 
 

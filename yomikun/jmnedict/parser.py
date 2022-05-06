@@ -1,14 +1,14 @@
 from __future__ import annotations
-from operator import itemgetter
+
 import re
 from dataclasses import dataclass, field
+from operator import itemgetter
 from typing import cast
-from yomikun.models.namedata import NameData
-from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 from yomikun.models import Lifetime
+from yomikun.models.namedata import NameData
+from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.split import split_kanji_name
-
 
 name_types_we_want = {"fem", "given", "person", "masc", "surname", "unclass"}
 

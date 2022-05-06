@@ -1,6 +1,6 @@
+import pytest
 import regex
 from jcconv3 import kata2hira
-import pytest
 
 from yomikun.utils.romaji.strict import romaji_to_hiragana_strict
 

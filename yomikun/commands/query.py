@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+
 import click
 import prettytable
 import regex

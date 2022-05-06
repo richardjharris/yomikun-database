@@ -1,13 +1,15 @@
 from __future__ import annotations
-import logging
+
 import json
+import logging
 from typing import TextIO
+
 import regex
 
-from yomikun.utils.split import try_to_swap_names
-from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
-from yomikun.models import NameData, Lifetime
+from yomikun.models import Lifetime, NameData
 from yomikun.parsers.wikidata.common import year
+from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
+from yomikun.utils.split import try_to_swap_names
 
 
 def parse_wikidata_nokana(input: TextIO):

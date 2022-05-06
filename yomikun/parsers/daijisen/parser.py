@@ -6,9 +6,9 @@ from __future__ import annotations
 
 import regex
 
-from yomikun.models import NameData, Lifetime
-from yomikun.utils.split import split_kanji_name
+from yomikun.models import Lifetime, NameData
 from yomikun.parsers.daijisen.year import parse_birth_and_death_year
+from yomikun.utils.split import split_kanji_name
 
 
 def name_from_entry(heading: str, text: str) -> NameData | None:

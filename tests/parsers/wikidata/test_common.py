@@ -1,4 +1,5 @@
 import pytest
+
 from yomikun.parsers.wikidata.common import extract, year
 
 

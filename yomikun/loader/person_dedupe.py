@@ -1,5 +1,5 @@
-from collections import defaultdict
 import logging
+from collections import defaultdict
 
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.namedata import NameData

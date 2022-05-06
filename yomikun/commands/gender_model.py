@@ -16,7 +16,9 @@
 # 雅 - Masa (male name) or Miyabi (female name)
 # 幸 - Kou (male name) or Miyuki (female name)
 import sys
+
 import click
+
 from yomikun.gender.ml import GenderML, generate_examples
 
 

@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from yomikun.gender.dict import GenderDict, GenderInfo
 
 FIXTURE_DIR = Path(__file__).parent.joinpath('fixtures')

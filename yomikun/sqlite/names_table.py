@@ -1,4 +1,5 @@
 import romkan
+
 from yomikun.sqlite.constants import PART_ID, SqliteQuery
 
 

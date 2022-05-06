@@ -1,11 +1,12 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 import regex
 from mediawiki_dump.tokenizer import clean
 
 from yomikun.models import NameData
-from yomikun.utils.patterns import name_pat, reading_pat, name_paren_start
+from yomikun.utils.patterns import name_paren_start, name_pat, reading_pat
 from yomikun.utils.split import split_kanji_name
 
 

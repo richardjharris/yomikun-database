@@ -1,4 +1,4 @@
-from yomikun.models import NameData, Lifetime
+from yomikun.models import Lifetime, NameData
 from yomikun.parsers.pdd import name_from_entry
 
 

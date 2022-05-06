@@ -1,8 +1,8 @@
 from yomikun.models import Lifetime, NameData
 from yomikun.parsers.wikipedia_ja.infobox import (
     extract_infoboxes,
-    parse_infoboxes,
     extract_year,
+    parse_infoboxes,
 )
 
 

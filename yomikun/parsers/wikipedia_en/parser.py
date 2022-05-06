@@ -2,21 +2,21 @@
 Parser for English-language Wikipedia articles.
 """
 from __future__ import annotations
+
 import logging
 
 import regex
 from mediawiki_dump.tokenizer import clean
 
+from yomikun.models import Gender, NameAuthenticity, NameData
+from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
 from yomikun.researchmap import ResearchMapRecord
 
 # XXX: importing private function
 from yomikun.researchmap.parser import _parse_researchmap_inner
-from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
-from yomikun.models import NameData, NameAuthenticity, Gender
 from yomikun.utils.patterns import name_pat
-from yomikun.utils.split import split_kanji_name
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
-
+from yomikun.utils.split import split_kanji_name
 
 CATEGORY_PAT = r'\[\[[cC]ategory:(.*?)\]\]'
 

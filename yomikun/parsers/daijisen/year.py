@@ -1,6 +1,8 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
 import re
+from dataclasses import dataclass
+
 import pytest
 
 kanji_numbers = '〇一二三四五六七八九'

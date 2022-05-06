@@ -4,18 +4,18 @@ the data/name_lists.json data from wikipedia.
 """
 
 from __future__ import annotations
-import json
-from typing import Iterable, TextIO
+
 import enum
-from collections import defaultdict, Counter
-from math import sqrt
+import json
 import logging
+from collections import Counter, defaultdict
+from math import sqrt
+from typing import Iterable, TextIO
 
 from yomikun.gender.ml import GenderML
 from yomikun.loader.aggregator import Aggregator, NamePart
-from yomikun.models import NameData, Gender, NamePosition
+from yomikun.models import Gender, NameData, NamePosition
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
-
 
 NameLists = dict[str, dict[str, str]]
 

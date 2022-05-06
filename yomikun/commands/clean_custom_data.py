@@ -1,4 +1,5 @@
 import csv
+
 import click
 
 from yomikun.custom_data.csv import CSV_FIELDS

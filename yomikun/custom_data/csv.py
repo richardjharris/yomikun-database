@@ -1,7 +1,9 @@
 import csv
 import logging
 from typing import Optional, TextIO
+
 import regex
+
 from yomikun.models import NameData
 
 # CSV field names

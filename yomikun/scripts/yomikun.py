@@ -2,8 +2,10 @@
 Entry point for all yomikun CLI commands. Handles common options.
 """
 import logging
+
 import click
 from click.core import ParameterSource
+
 from yomikun.commands import add_yomikun_commands
 
 

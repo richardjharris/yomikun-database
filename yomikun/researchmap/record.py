@@ -1,4 +1,5 @@
 import dataclasses
+
 import regex
 
 from yomikun.utils.patterns import name_pat

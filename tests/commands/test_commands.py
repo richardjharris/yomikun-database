@@ -7,8 +7,8 @@ contain unstable data such as elapsed time, placeholders are supported.
 """
 from operator import attrgetter
 from pathlib import Path
-from .command_test_case import CommandTestCase
 
+from .command_test_case import CommandTestCase
 
 TESTCASE_DIR = Path(__file__).parent.joinpath('testcases')
 

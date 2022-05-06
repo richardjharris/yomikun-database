@@ -1,11 +1,11 @@
-import sys
 import json
-from functools import reduce
-import time
 import logging
-import click
+import sys
+import time
+from functools import reduce
 
-from SPARQLWrapper import SPARQLWrapper, JSON
+import click
+from SPARQLWrapper import JSON, SPARQLWrapper
 
 ENDPOINT_URL = "https://query.wikidata.org/sparql"
 

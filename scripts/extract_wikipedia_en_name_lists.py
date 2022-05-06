@@ -6,11 +6,12 @@ Japanese given names. To be used in gender classification.
 """
 
 from __future__ import annotations
-import logging
-import json
 
-import regex
+import json
+import logging
+
 import mwclient
+import regex
 
 categories = (
     'Japanese masculine given names',

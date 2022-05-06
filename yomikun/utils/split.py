@@ -17,6 +17,7 @@ updated.
 #   therefore we split, but んじ is not valid?
 
 from __future__ import annotations
+
 from yomikun.utils import name_dict
 
 

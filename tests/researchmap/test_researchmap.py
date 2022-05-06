@@ -1,7 +1,7 @@
 import pytest
+
 from yomikun.models.namedata import NameData
 from yomikun.researchmap import parse_researchmap
-
 
 tests = [
     # (kana, kanji, english), expected_kaki, expected_yomi

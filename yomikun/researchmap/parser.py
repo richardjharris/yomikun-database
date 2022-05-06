@@ -1,24 +1,25 @@
 from __future__ import annotations
+
+import logging
 from operator import itemgetter
 from typing import cast
-import logging
 
-import regex
 import jcconv3
+import regex
 import romkan
 
 from yomikun.models import NameData
 from yomikun.researchmap.record import ResearchMapRecord
+from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
+from yomikun.utils.romaji.names import (
+    romaji_to_hiragana_fullname,
+    romaji_to_hiragana_fullname_parts,
+)
 from yomikun.utils.split import (
     split_kana_name,
     split_kanji_name,
     split_kanji_name_romaji,
 )
-from yomikun.utils.romaji.names import (
-    romaji_to_hiragana_fullname,
-    romaji_to_hiragana_fullname_parts,
-)
-from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 
 def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:

@@ -1,6 +1,7 @@
 from __future__ import annotations
-import romkan
+
 import regex
+import romkan
 
 
 def romaji_to_hiragana_messy(

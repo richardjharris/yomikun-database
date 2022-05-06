@@ -1,11 +1,14 @@
 from __future__ import annotations
+
 import dataclasses
 import json
+
 import regex
+
 from yomikun.custom_data.importer import convert_to_hiragana
-from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.models.lifetime import Lifetime
-from yomikun.utils import patterns, normalise_whitespace
+from yomikun.models.nameauthenticity import NameAuthenticity
+from yomikun.utils import normalise_whitespace, patterns
 
 
 @dataclasses.dataclass

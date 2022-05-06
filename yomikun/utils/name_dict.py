@@ -2,8 +2,9 @@
 Name dictionary based on JMnedict (may include our own
 data in the future).
 """
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
+
 import jamdict
 
 from yomikun.romajidb.db import romajidb

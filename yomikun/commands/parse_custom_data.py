@@ -1,7 +1,7 @@
-import sys
 import logging
-import click
+import sys
 
+import click
 
 from yomikun.custom_data.csv import parse_file
 

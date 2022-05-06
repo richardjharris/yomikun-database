@@ -1,16 +1,16 @@
 from __future__ import annotations
+
+import json
 import logging
 import sys
-import json
-import click
 
+import click
 import mwclient
 from mediawiki_dump.dumps import MediaWikiClientDump
 from mediawiki_dump.reader import DumpReaderArticles
 
 from yomikun.parsers.wikipedia_en.parser import parse_wikipedia_article as parse_en
 from yomikun.parsers.wikipedia_ja.parser import parse_wikipedia_article as parse_ja
-
 
 PARSERS = {
     'en': parse_en,

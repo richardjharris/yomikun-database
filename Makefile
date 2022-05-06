@@ -23,7 +23,7 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test prep prep-perl prep-dev deadcode cover lint pylint install
+.PHONY: all clean test prep prep-perl prep-dev deadcode cover lint pylint install isort
 
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
@@ -81,6 +81,9 @@ lint:
 
 pylint:
 	-pylint $(SOURCE_FILES)
+
+isort:
+	isort $(SOURCE_FILES)
 
 db/deduped.jsonl: ${JSONLFILES}
 	$(YOMIKUN) person-dedupe < $^ > $@

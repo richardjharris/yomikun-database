@@ -1,8 +1,10 @@
 import json
 import sys
+
 import click
-from yomikun.models import NameData
+
 from yomikun.loader.finaldb import make_final_db
+from yomikun.models import NameData
 from yomikun.utils.timer import Timer
 
 

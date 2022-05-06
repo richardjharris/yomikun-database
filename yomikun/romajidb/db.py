@@ -1,15 +1,15 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import cast, Optional
+
 import gzip
 import os
+from dataclasses import dataclass, field
+from typing import Optional, cast
 
+import jcconv3
 import regex
 import romkan
-import jcconv3
 
 from yomikun.utils.romaji.helpers import romaji_key
-
 
 instance = None
 

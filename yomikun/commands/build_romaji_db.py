@@ -1,5 +1,6 @@
-import sys
 import json
+import sys
+
 import click
 
 from yomikun.models import NameData

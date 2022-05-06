@@ -2,7 +2,6 @@
 # does not support enums.
 from typing import Any, Iterable
 
-
 PART_ID = {
     "unknown": 0,
     "sei": 1,

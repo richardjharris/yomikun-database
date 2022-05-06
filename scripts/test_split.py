@@ -6,7 +6,7 @@ cat jsonl/wikipedia_ja.jsonl | pytest scripts/test_split.py -s
 import sys
 
 from yomikun.models.namedata import NameData
-from yomikun.utils.split import find_split_point, find_kana_split_point
+from yomikun.utils.split import find_kana_split_point, find_split_point
 
 for line in sys.stdin:
     namedata = NameData.from_jsonl(line)

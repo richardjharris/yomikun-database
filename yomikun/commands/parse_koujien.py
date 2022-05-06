@@ -1,6 +1,8 @@
 import json
 import sys
+
 import click
+
 import yomikun.parsers.koujien
 
 

@@ -1,4 +1,5 @@
 from typing import TextIO
+
 import click
 
 from yomikun.models import NameData

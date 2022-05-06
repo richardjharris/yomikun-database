@@ -1,9 +1,10 @@
 import logging
 from typing import TextIO
+
 import click
 
-from yomikun.models import NameData
 from yomikun.loader.person_dedupe import PersonDedupe
+from yomikun.models import NameData
 
 
 @click.command()

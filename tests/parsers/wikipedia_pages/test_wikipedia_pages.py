@@ -7,14 +7,16 @@ article.
 """
 
 from __future__ import annotations
+
 import itertools
 from pathlib import Path
+
 import yaml
 
-from yomikun.models.lifetime import Lifetime
-from yomikun.models import NameAuthenticity, NameData
 import yomikun.parsers.wikipedia_en.parser
 import yomikun.parsers.wikipedia_ja.parser
+from yomikun.models import NameAuthenticity, NameData
+from yomikun.models.lifetime import Lifetime
 
 FIXTURE_DIR = Path(__file__).parent.joinpath('fixtures')
 

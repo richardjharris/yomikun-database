@@ -1,16 +1,17 @@
 # Parses PDD (public domain dictionary) 人名辞典.
 
 from __future__ import annotations
-import logging
-import regex
 
+import logging
+
+import regex
 
 from yomikun.models import NameData
 from yomikun.utils.patterns import (
-    name_pat,
-    reading_pat,
     hiragana_pat,
+    name_pat,
     name_pat_with_space,
+    reading_pat,
 )
 
 

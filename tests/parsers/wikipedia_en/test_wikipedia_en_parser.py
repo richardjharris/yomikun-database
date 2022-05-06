@@ -1,4 +1,4 @@
-from yomikun.models import Lifetime, NameData, NameAuthenticity
+from yomikun.models import Lifetime, NameAuthenticity, NameData
 from yomikun.parsers.wikipedia_en.parser import parse_wikipedia_article
 
 

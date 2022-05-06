@@ -1,5 +1,6 @@
 import logging
 import sys
+
 import click
 
 from yomikun.researchmap import parse_researchmap

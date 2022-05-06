@@ -3,9 +3,10 @@
 # Parses names out of Koujien
 
 from __future__ import annotations
+
 import regex
 
-from yomikun.models import NameData, Lifetime
+from yomikun.models import Lifetime, NameData
 from yomikun.utils.split import split_kanji_name
 
 

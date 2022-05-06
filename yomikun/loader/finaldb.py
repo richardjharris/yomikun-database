@@ -2,19 +2,19 @@
 Builds the final database.
 """
 from __future__ import annotations
-from collections import defaultdict
-from dataclasses import dataclass, field
+
 import dataclasses
 import json
+from collections import defaultdict
+from dataclasses import dataclass, field
 from typing import Iterable, TextIO, cast
 
-import regex
 import jcconv3
-from yomikun.gender.dict import GenderDict
+import regex
 
+from yomikun.gender.dict import GenderDict
 from yomikun.loader.aggregator import Aggregator
-from yomikun.models import Gender, NamePosition
-from yomikun.models import NameData
+from yomikun.models import Gender, NameData, NamePosition
 from yomikun.models.lifetime import Lifetime
 from yomikun.models.nameauthenticity import NameAuthenticity
 

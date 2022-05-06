@@ -1,13 +1,15 @@
 from __future__ import annotations
-import logging
+
 import json
+import logging
 from typing import TextIO, cast
+
 import jcconv3
 import regex
 
-from yomikun.utils.split import split_kanji_name
-from yomikun.models import NameData, Lifetime, NameAuthenticity
+from yomikun.models import Lifetime, NameAuthenticity, NameData
 from yomikun.parsers.wikidata.common import extract, year
+from yomikun.utils.split import split_kanji_name
 
 
 def load_birth_name_data(handle: TextIO) -> dict[str, dict[str, str]]:

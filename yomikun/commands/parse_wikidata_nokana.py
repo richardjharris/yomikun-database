@@ -1,4 +1,5 @@
 import click
+
 import yomikun.parsers.wikidata.parse_wikidata_nokana as parser
 
 

@@ -1,5 +1,6 @@
 import pytest
-from yomikun.models import NameData, NameAuthenticity
+
+from yomikun.models import NameAuthenticity, NameData
 
 
 def test_add_tag():

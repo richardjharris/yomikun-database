@@ -1,6 +1,7 @@
 import pytest
+
 from yomikun.loader.person_dedupe import PersonDedupe
-from yomikun.models import NameData, Lifetime
+from yomikun.models import Lifetime, NameData
 from yomikun.models.nameauthenticity import NameAuthenticity as NA
 
 

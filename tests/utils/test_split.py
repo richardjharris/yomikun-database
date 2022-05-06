@@ -3,6 +3,7 @@
 # the computed split point would add the space back correctly.
 import pytest
 import romkan
+
 from yomikun.utils.split import (
     find_kana_split_point,
     find_split_point,
@@ -10,7 +11,6 @@ from yomikun.utils.split import (
     split_kanji_name,
     split_kanji_name_romaji,
 )
-
 
 tests = [
     "まつだいら ただなお 松平 忠直",
