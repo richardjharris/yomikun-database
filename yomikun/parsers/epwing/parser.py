@@ -1,10 +1,17 @@
 import json
 import logging
-from typing import TextIO
+from typing import Callable, TextIO
+
+from yomikun.models import NameData
 
 
 class EpwingParser:
-    def __init__(self, parser_function):
+    def __init__(self, parser_function: Callable[[str, str], NameData | None]):
+        """
+        Creates a parser. The parser function is required and converts heading/
+        text (both strings) to a NameData object, or None if the entry was not
+        a name.
+        """
         self.name_from_entry = parser_function
 
     def parse_json_input(self, input: TextIO):
