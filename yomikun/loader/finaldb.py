@@ -1,7 +1,7 @@
 """
 Builds the final database.
 """
-from __future__ import annotations
+
 
 import dataclasses
 import json

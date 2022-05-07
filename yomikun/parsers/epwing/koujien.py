@@ -2,7 +2,6 @@
 
 # Parses names out of Koujien
 
-from __future__ import annotations
 
 import regex
 

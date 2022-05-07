@@ -5,8 +5,6 @@ Extracts names from the EN wikipedia categories for male/female/unisex
 Japanese given names. To be used in gender classification.
 """
 
-from __future__ import annotations
-
 import json
 import logging
 

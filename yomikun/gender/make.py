@@ -3,7 +3,6 @@ Builds a gender database from incoming NameData objects and
 the data/name_lists.json data from wikipedia.
 """
 
-from __future__ import annotations
 
 import enum
 import json

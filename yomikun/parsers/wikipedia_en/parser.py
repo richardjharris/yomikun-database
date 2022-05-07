@@ -1,7 +1,7 @@
 """
 Parser for English-language Wikipedia articles.
 """
-from __future__ import annotations
+
 
 import logging
 

@@ -10,7 +10,7 @@ from yomikun.models.namedata import NameData
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.split import split_kanji_name
 
-name_types_we_want = {"fem", "given", "person", "masc", "surname", "unclass"}
+NAME_TYPES_WE_WANT = {"fem", "given", "person", "masc", "surname", "unclass"}
 
 
 @dataclass
@@ -60,7 +60,7 @@ def parse(data: dict) -> list[NameData]:
     records_out = []
 
     for sense in data["senses"]:
-        name_types = set(sense["name_type"]).intersection(name_types_we_want)
+        name_types = set(sense["name_type"]).intersection(NAME_TYPES_WE_WANT)
         if not name_types:
             continue
 

@@ -1,6 +1,5 @@
 # Parses PDD (public domain dictionary) 人名辞典.
 
-from __future__ import annotations
 
 import logging
 

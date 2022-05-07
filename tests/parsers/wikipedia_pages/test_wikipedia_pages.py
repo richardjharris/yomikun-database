@@ -6,8 +6,6 @@ with metadata (including expected results) at the top of each
 article.
 """
 
-from __future__ import annotations
-
 import itertools
 from pathlib import Path
 

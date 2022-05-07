@@ -16,7 +16,6 @@ updated.
 #   jmnedict matches 和田 as わだし only
 #   therefore we split, but んじ is not valid?
 
-from __future__ import annotations
 
 from yomikun.utils import name_dict
 
