@@ -76,4 +76,4 @@ Run `make`.
 
 Run `make test`.
 
-For coverage run `make coverage`.
+For coverage run `make cover`.
