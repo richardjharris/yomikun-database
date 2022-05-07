@@ -65,7 +65,7 @@ def test_natsume():
 def test_non_person_dedupe():
     pd = PersonDedupe()
     assert pd.ingest(NameData("心愛", "ここあ", tags={'fem'})) is False, 'ignored'
-    assert list(pd.deduped_people()) == [], 'no results returned'
+    assert not list(pd.deduped_people()), 'no results returned'
 
 
 def test_single_dedupe():

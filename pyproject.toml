@@ -20,6 +20,9 @@ skip-string-normalization = "true"
 profile = "black"
 skip_gitignore = true
 
+[tool.pylint.miscellaneous]
+notes = ["FIXME","TBD","XXX","TODO"]
+
 [tool.pylint.messages_control]
 disable = [
     "missing-docstring",
@@ -40,8 +43,8 @@ disable = [
     # Overriding 'input' is useful most of the time
     "redefined-builtin",
     "global-statement",
-    # Noisy, but will revisit later
-    #"fixme",
+    # FPs
+    "consider-using-with",
     # Will revisit later
     "too-many-return-statements",
     "too-many-branches",

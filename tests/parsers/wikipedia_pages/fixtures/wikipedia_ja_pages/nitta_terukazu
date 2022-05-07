@@ -1,5 +1,5 @@
 # Has <ref> inside name part - need to remove <ref> tags first
-# TBD we don't parse single-line Infoboxes
+# We don't parse single-line Infoboxes yet.
 name: 新田 晃千
 reading: にった てるかず
 lifetime: 1972 ~

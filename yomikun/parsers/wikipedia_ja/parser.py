@@ -126,8 +126,8 @@ def parse_article_text(title: str, content: str) -> NameData:
     if regex.search(r'架空', extra_raw):
         reading.authenticity = NameAuthenticity.FICTIONAL
     elif honmyo:
-        # This is a case where distinguishing unknown from 'confirmed real' would
-        # simplify this logic. TBD
+        # This logic is a bit tricky as the default authenticity 'REAL' can also
+        # mean 'unknown'/'not determined yet'.
         if reading is not honmyo:
             reading.add_subreading(honmyo)
             reading.authenticity = NameAuthenticity.PSEUDO
@@ -171,7 +171,6 @@ def add_category_data(reading: NameData, content: str):
             # There are some false positives here (or rather women performing male roles?)
             reading.add_tag('masc')
 
-        # TBD 架空 by itself may be enough
         if regex.search(r'架空の', category):
             reading.authenticity = NameAuthenticity.FICTIONAL
 
@@ -257,7 +256,7 @@ def parse_wikipedia_article(
     for s in namedata.subreadings:
         s.add_tag('person')
 
-    # namedata.clean_and_validate()
+    namedata.clean_and_validate()
 
     return namedata
 

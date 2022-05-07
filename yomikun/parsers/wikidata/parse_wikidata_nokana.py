@@ -46,8 +46,6 @@ def parse_wikidata_nokana(input: TextIO):
 
         romaji = ' '.join(reversed(romaji.split()))
 
-        # TODO use messy parsing for now. Will re-run with improved dictionary later
-        # TODO should just use the same logic as researchmap
         kana = romaji_to_hiragana_messy(romaji, kanji)
 
         # Since we used the 'messy' method, no dictionary was consulted so the names

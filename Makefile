@@ -23,12 +23,12 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test prep prep-perl prep-dev deadcode cover lint pylint install isort
+.PHONY: all clean test prep prep-ci prep-perl prep-dev deadcode cover lint pylint install isort
 
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
-SOURCE_FILES = tests/*.py yomikun scripts/*.py
+SOURCE_FILES = tests yomikun scripts/*.py
 
 # Installs to the app assets folder for distribution
 install: db/final.db
@@ -66,6 +66,10 @@ prep:
 
 prep-dev: prep
 	pip install -r requirements-dev.txt
+
+# Installs only dependencies needed for automated testing.
+prep-ci: prep
+	pip install coverage pytest
 
 prep-perl:
 	cpanm MediaWiki::DumpFile::FastPages JSON::XS

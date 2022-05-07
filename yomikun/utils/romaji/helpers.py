@@ -99,8 +99,7 @@ def romaji_key(romaji: str) -> str:
     romaji = romaji.replace("'", '')
 
     # Collapse vowels into one, including 'h' if not followed by a vowel
-    # TODO: we could ignore 'y', 'hya' is very rare in names and always
-    #       always 'hyak-' if present
+    # 'hy' is rare (mostly 'hyaku').
     romaji = regex.sub(r'(oh(?![aiueoy])|ou|o+)', 'o', romaji)
     romaji = regex.sub(r'(eh(?![aiueoy])|ei|e+)', 'e', romaji)
     romaji = regex.sub(r'(uh(?![aiueoy])|uu)', 'u', romaji)

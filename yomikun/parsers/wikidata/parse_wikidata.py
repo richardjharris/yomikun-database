@@ -51,9 +51,8 @@ def parse_wikidata(input: TextIO, birth_name_input: TextIO):
             if regex.search(r'^\p{Han}', kanji2):
                 kanji = kanji2
             else:
-                # logging.error(f"Entry with no surname kanji: {data}")
-                # TBD possibly some of these are fine, but majority are junk
-                # at least reject anything with all-romaji/katakana
+                # The majority of these are junk.
+                logging.error(f"Entry with no surname kanji: {data}")
                 continue
 
         # Remove （モデル） etc.

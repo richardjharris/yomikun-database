@@ -11,8 +11,6 @@ from mediawiki_dump.tokenizer import clean
 from yomikun.models import Gender, NameAuthenticity, NameData
 from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
 from yomikun.researchmap import ResearchMapRecord
-
-# XXX: importing private function
 from yomikun.researchmap.parser import _parse_researchmap_inner
 from yomikun.utils.patterns import name_pat
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
@@ -62,7 +60,6 @@ def notes_from_categories(categories: list[str]) -> str | None:
 ROMAJI = r"[A-Za-zŌōā']"
 ROMAJI_NAME = ROMAJI + r'+\s+' + ROMAJI + '+'
 
-# TODO what if the 3rd arg is missing? 1st arg is usually romaji also, just in reverse order
 NIHONGO_TEMPLATE_PAT = (
     r'\{\{'
     + fr"[Nn]ihongo\|'''{ROMAJI_NAME}'''\|({name_pat})\|({ROMAJI_NAME})(?:\|(.*?))?"
@@ -82,8 +79,7 @@ def parse_wikipedia_article(
         # Clean doesn't remove '' ... '' (??)
         romaji = regex.sub(r"^''(.*?)''$", r"\1", romaji)
 
-        # HACK: Use researchmap code.
-        # TODO: replace with nicer abstraction.
+        # HACK: Uses researchmap code.
         namedata = None
         try:
             record = ResearchMapRecord(romaji, kanji, '')
@@ -108,11 +104,13 @@ def parse_wikipedia_article(
             pos=m.end(),
         ):
             namedata.authenticity = NameAuthenticity.PSEUDO
-            # TODO
+            logging.warning('Found possible birth name, but cannot handle yet')
+            pass
         elif regex.search(r"\b[Bb]orn\s+'''", content):
             # e.g. Knock Yokoyama: Born '''Isamu Yamada''' (山田勇 ''Yamada Isamu'')
-            # Born\s*\p{Han} won't work due to FP: "born on July 14, 1986, in [[Uozu, Toyama]].\
-            # <ref>{{cite web|url=https://www.shogi.or.jp/player/pro/267.html|script-title=ja:棋士データベース(...)" # noqa
+            # `Born\s*\p{Han}` won't work due to FP:
+            # "born on July 14, 1986, in [[Uozu, Toyama]].(nl)<ref>
+            # {{cite web|url=https://(...)|script-title=ja:棋士データベース(...)"
             namedata.authenticity = NameAuthenticity.PSEUDO
 
         # Extract data from categories

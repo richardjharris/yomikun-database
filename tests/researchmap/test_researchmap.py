@@ -4,7 +4,7 @@ from yomikun.models.namedata import NameData
 from yomikun.researchmap import parse_researchmap
 
 tests = [
-    # (kana, kanji, english), expected_kaki, expected_yomi
+    # Format: (kana, kanji, english), expected_kaki, expected_yomi
     (('クドウ マサトシ', '工藤 正俊', 'Masatoshi Kudo'), '工藤 正俊', 'くどう まさとし'),
     (('', 'Browne Ryan', 'Ryan Browne'), '', ''),
     (('ドゥベイ アジット・クマール', 'Dubey Ajit Kumar', 'Ajit Kumar Dubey'), '', ''),

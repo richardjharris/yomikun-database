@@ -1,5 +1,4 @@
 # Test for parsing Chinese names.
-# TBD could tag the fact the person is Chinese: 中国の人物 category
 name: 于 吉
 reading: う きつ
 lifetime: ~ 200

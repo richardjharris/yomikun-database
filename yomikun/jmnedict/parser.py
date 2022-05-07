@@ -74,10 +74,6 @@ def parse(data: dict) -> list[NameData]:
             for kana in map(itemgetter("text"), data["kana"]):
                 if gloss.name:
                     # Convert name to hiragana and use it to split the name
-                    # TODO: this is not 100% accurate, some names are not written in standard
-                    #       Romaji. In these cases we just don't split anything.
-                    # TODO: ... would be unwise to use these unsplit entries in the dictionary!!
-                    #       Luckily they are tagged as 'person'. Double-check though...
                     split_kana = romaji_to_hiragana_messy(gloss.name)
                     split_kanji = kanji
 

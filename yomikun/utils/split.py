@@ -6,17 +6,6 @@ This is used by Wikidata/nokana, Daijisen, Koujin, Wikipedia
 EN and JA so these importers should be re-run if this code is
 updated.
 """
-# TODO: this only looks at jamdict (JMnedict) which is missing
-# a number of names e.g. 吉田＝よしだ. Using our own data would
-# improve things.
-
-# TODO: we try to match biggest surname, then biggest given name.
-# In reality if we can match both sides we should prefer that?
-#   An example is 和田慎二 (wada shinji)
-#   jmnedict matches 和田 as わだし only
-#   therefore we split, but んじ is not valid?
-
-
 from yomikun.utils import name_dict
 
 
@@ -106,9 +95,6 @@ def find_split_point(
 
     If we can't do it for some reason, returns None.
     """
-    # TODO RomajiDB should have multiple readings, else we might fail to
-    #      split for some names.
-    # TODO when romaji=False we could still use our own data, it's better.
     # Try to match the largest string first.
     for chars in reversed(range(1, len(kanji))):
         kanji_prefix = kanji[0:chars]
@@ -167,8 +153,6 @@ def try_to_swap_names(kanji: str, kana: str) -> tuple[str, str]:
     """
     # The current method joins the kanji together then tries to split it.
     # This requires there to be JMnedict data.
-    # TODO: A better method would just check our existing surname/mei/sei data.
-    # TODO: Why do we return kanji here?
     old_kanji, old_kana = kanji, kana
     kanji = kanji.replace(' ', '')
 

@@ -3,8 +3,7 @@ Utilities for ignoring invalid names from Wikipedia articles
 """
 import regex
 
-# Name lengths are approx 10% 2 chars, 15% 3, 40% 4,
-# 28% 5, 6% 6, 0.1% 7.
+# Name lengths are approx: 10% 2 chars, 15% 3, 40% 4, 28% 5, 6% 6, 0.1% 7.
 #
 # There are a handful of legally registered names
 # beyond 7 chars, e.g.:

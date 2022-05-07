@@ -23,7 +23,6 @@ class ListTitle(str, enum.Enum):
     MALE = 'Japanese masculine given names'
     FEMALE = 'Japanese feminine given names'
     UNISEX = 'Japanese unisex given names'
-    # SURNAME = 'Japanese-language surnames'
 
 
 def load_name_lists(name_list_data: NameLists) -> dict[str, set[ListTitle]]:
@@ -138,8 +137,6 @@ def make_gender_dict(
             # gender-tagged entry elsewhere.
             part = NamePart(name.kaki, name.yomi, NamePosition.mei)
             counts_kanji[part][Gender.unknown] -= 1
-            # TODO potentially force use of hits-based gender determination
-            # in this case.
 
         Aggregator.copy_data_to_subreadings(name)
         for part, gender in Aggregator.extract_name_parts(name):

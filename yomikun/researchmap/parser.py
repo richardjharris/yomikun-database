@@ -262,8 +262,6 @@ def _parse_researchmap_using_romaji(
         kana, _, warnings = attempts[0]
         for warning in warnings:
             logging.warning(warning)
-        # TODO We tag xx-romaji even if only one part of the name was guessed; this
-        #      can be fixed if we return 2 parts.
         return NameData(kanji, kana, tags={'xx-romaji'})
 
     return None

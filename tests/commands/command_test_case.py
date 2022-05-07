@@ -50,7 +50,7 @@ class CommandTestCase:
 
     @classmethod
     def from_file(cls, file: Path) -> CommandTestCase:
-        with open(file, 'r') as fh:
+        with open(file, 'r', encoding='utf-8') as fh:
             return cls.from_handle(fh, file.name)
 
     @classmethod

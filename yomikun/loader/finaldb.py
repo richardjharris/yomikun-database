@@ -45,7 +45,6 @@ class AggregatedData:
 
         self._record_gender_hit(gender)
         self.years_seen.expand(name.lifetime)
-        # TODO this should only apply to the particular part
         if name.has_tag('xx-romaji'):
             self.hits_xx_romaji += 1
         if name.authenticity != NameAuthenticity.REAL:

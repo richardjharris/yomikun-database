@@ -179,7 +179,7 @@ class NameData:
         for sub in self.subreadings:
             sub.clean()
 
-        # HACK for Beat Takeshi
+        # HACK: for Beat Takeshi
         to_delete = []
         for sub in self.subreadings:
             if (self.kaki, self.yomi) == (sub.kaki, sub.yomi):

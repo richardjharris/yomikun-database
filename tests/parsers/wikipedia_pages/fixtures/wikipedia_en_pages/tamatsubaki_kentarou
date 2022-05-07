@@ -1,6 +1,7 @@
 # Uses ''emphasis'' for the romaji name, needs cleaning.
 # Kanji is not split
-# TBD: this is a pseudonym, as shown by the altername name in the 'Born' section.
+# This is a pseudonym, as shown by the altername name in the 'Born' section, but
+# we don't detect that yet.
 name: 玉椿 憲太郎
 reading: たまつばき けんたろう
 lifetime: 1883 ~ 1928

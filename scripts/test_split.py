@@ -24,4 +24,3 @@ for line in sys.stdin:
         assert yomi_split == len(sei_yomi), 'kana'
     except AssertionError as e:
         print('Assertion failed: ', e, "\n", line)
-        # sys.exit(1)

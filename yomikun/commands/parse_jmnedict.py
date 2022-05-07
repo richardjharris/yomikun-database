@@ -14,7 +14,7 @@ These would show up dead last in a dictionary lookup, but are good for completen
 import click
 
 import yomikun.jmnedict
-import yomikun.utils.name_dict
+import yomikun.utils.jmnedict
 
 
 @click.command()
@@ -30,6 +30,6 @@ def parse_jmnedict():
     Also, entries are tagged 'dict' to indicate that they are not real world name
     sightings. Such entries do not count as a 'hit' in aggregated statistics.
     """
-    for data in yomikun.utils.name_dict.all_jmnedict_data():
+    for data in yomikun.utils.jmnedict.all_jmnedict_data():
         for name in yomikun.jmnedict.parse(data):
             print(name.to_jsonl())

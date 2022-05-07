@@ -11,7 +11,7 @@ def romaji_to_hiragana_messy(
     Otherwise it defaults to ou. A common case is wanting to specify
     a leading ō as 'oo' or 'ou': this can be done by passing leading_o='oo'.
 
-    This function should be replaced with romaji_to_hiragana_fullname
+    This function should be replaced with `romaji_to_hiragana_fullname`
     (or _part) where kanji is available, as it will produce better
     results.
     """
@@ -35,8 +35,6 @@ def romaji_to_hiragana_messy(
 
         if replacement:
             romaji = romaji.replace(start_o[0], replacement, 1)
-
-    # TODO We don't try to handle ē -> ei. We could use a kanji dictionary.
 
     # e.g. Itchiku -> icchiku
     romaji = romaji.replace('tch', 'cch')

@@ -1,6 +1,40 @@
 This lists stuff I don't have time to do now, but could look at in
 the future.
 
+## Code quality
+
+ - run eradicate
+ - move romaji_key to its own file
+ - pylint duplicate code (?)
+ - sqlite vs loader vs finaldb vs aggregator
+
+ - fix use of internal methods
+  - wikipedia_en.parser using _parse_researchmap_inner
+  - stuff using Aggregator hackily
+
+ - inconsistent use of sei/mei vs. given name / surname. Same for reading/written
+   and yomi/kaki.
+
+### import of many loose functions feels off to me
+
+'import foo.bar.baz' makes functions too low
+
+'from module import *' is bad
+
+'from module import a, b, c' is okay but not obviously tied to
+  the module
+
+'import foo.bar.baz as baz' can be too cryptic
+
+Gpod practice:
+ - plain 'import module' for short modules and if functions are
+   only used a few times (clarity > brevity)
+
+ - 'import long.module as x' seems like an upgrade over bare
+   function names for most things.
+
+ - 'from module import x' rarely (e.g. datetime)
+
 ## Names allowed in kanji
 
  data/chars_allowed_in_names
@@ -21,6 +55,11 @@ at dedupe perhaps.
 
 Could check how many new names we're actually getting from EN, it's possible
 most of the EN articles (after dedupe) are just erroneous forms of JA articles.
+
+## Dedupe subreadings
+
+Person dedupe does not dedupe subreadings, it just picks the first record that
+has any. It could at least check if any are being missed.
 
 ## More robust handling of 'yuhya'-type names
 
@@ -87,6 +126,23 @@ https://jahis.law.nagoya-u.ac.jp/who/search  (multiple editions)
 If we compute all subcategories belonging to the root 'Japanese women'
 category we can match against that instead of handcrafted patterns.
 
+## Wikipedia EN
+
+Check for 'nihongo' template requires 3 arguments, there are some with
+fewer.
+
+Uses researchmapcode, but this needs refactoring as it uses an internal
+method
+
+## Wikidata EN
+
+Uses `romaji_to_hiragana_messy`. Could use a better dictionary or use
+the same logic as researchmap. This would swap names also.
+
+## Wikipedia JA
+
+We use 架空の for fictional characters, but 架空 by itself may be enough.
+
 ## Name lists online
 
 Could develop a crawler + extractor for these.
@@ -139,6 +195,12 @@ https://ja.wikipedia.org/wiki/Category:日本語の女性名 (男性名・姓)
   日本人の人名。主に女性名に使われる。
   敦子（あつこ）は、日本の女性名。
 
+And in English:
+
+ https://en.wikipedia.org/wiki/Category:Japanese_unisex_given_names
+
+Would be worth checking these.
+
 ### Wikidata gender override
 
 wikidata is sometimes wrong about gender. We could override it if we have
@@ -189,7 +251,7 @@ kanji most of the time (木 in this case), so not a priority.
 
 Could be done by the app itself.
 
-### Weird missing 'いち', and 'りよう' entries
+### Weird 'しゆん', and 'りよう' entries
 
 Fun stuff here (17 hits):
 
@@ -223,6 +285,13 @@ occasionally seen).
 Could tag individual parts of the name with xx-romaji if we had dictionary
 data for some but not all?
  e.g. xx-romaji-sei, xx-romaji-mei
+
+E.g. in researchmap.parser we attach xx-romaji to all items that use romaji.
+To make this cleaner, the researchmap generator could return 2 parts instead
+of one NameData record.
+
+If we do this, change finaldb's record_hit to only apply to the particular
+part.
 
 ## Other dictionaries
 
@@ -258,10 +327,10 @@ Change unique key to (Q, birth_date % 2, kanji) ?
  if kanji is not split, don't store it? or warn
  Check for unsplit people
 
-        # TODO we also get dupe records with different kanji/kana combinations,
+        # * we also get dupe records with different kanji/kana combinations,
         #      only some make sense. Whoops. e.g. https://www.wikidata.org/wiki/Q6753582
         #      has two 'name in kana', only one makes sense.
-        # TODO we could improve this by doing all of them then outputting the 'best'
+        # * we could improve this by doing all of them then outputting the 'best'
         #      e.g. the one we were able to split.
         # Dump has 143,141 unique names and 147,676 records - so not a major problem,
         # but could return incorrect readings.
@@ -273,13 +342,13 @@ jsonl/wikidata.jsonl:{"kaki": "河野悠里", "yomi": "だいぜんじ ふみこ
 
 ## Wikipedia EN misc todo
 
-TODO: {{nihongo}} is used for non-name stuff too. Examples include
-  {{Nihongo|Tokyo Tower|東京タワー|Tōkyō tawā}}
+-  {{nihongo}} is used for non-name stuff too. Examples include {{Nihongo|Tokyo Tower|東京タワー|Tōkyō tawā}}
 
-TODO: second argument is optional.
-TODO: honmyo is listed as 'born ' in the extra content.
+- second argument is optional.
+- honmyo is listed as 'born ' in the extra content.
+- some are missing the fourth argument too (below)
 
-TODO: a few do not use {{nihongo}} but they seem very rare!
+- a few do not use {{nihongo}} but they seem very rare!
 
 It's possible the template birth/death can be used to filter these
 out.
@@ -288,3 +357,37 @@ TODO: Natsume Soseki
 {{nihongo|'''Natsume Sōseki'''|夏目 漱石|extra=9 February 1867&nbsp;– 9 December 1916}}, born '''{{nihongo|Natsume Kin'nosuke|夏目 金之助}}''', was a [[Japanese people|Japanese]] novelist. He is best known around the world for his novels ''[[Kokoro]]'', ''[[Botchan]]'', ''[[I Am a Cat]]'', ''[[Kusamakura (novel)|Kusamakura]]'' and his unfinished work ''[[Light and Darkness (novel)|Light and Darkness]]''. He was also a scholar of [[British literature]] and writer of [[haiku]], ''[[Kanshi (poetry)|kanshi]]'', and [[fairy tale]]s. From 1984 until 2004, his portrait appeared on the front of the Japanese [[Banknotes of the Japanese yen|1000 yen note]].
 
  ^ no extra argument here! oops... what a pain...
+
+ ---
+
+Code to handle PSEUDO ('Born ....') lines is TBD, so we don't capture the real name.
+
+## Improving splitting
+
+Splitting uses name_dict which internally uses JMNEdict. It could use RomajiDB
+even for romaji=False, for more coverage. Example is 吉田(よしだ), missing from
+jmnedict I think?
+
+We currently match biggest surname possible. We should prefer a split that matches
+both mei/sei together if available.
+
+An example is 和田慎二 (wada shinji)
+ - jmnedict matches 和田 as わだし only
+ - therefore we split, but んじ is not valid?
+
+`try_to_swap_names` could also be improved by consulting the name DB instead o
+abusing split.
+
+---
+
+Not sure if RomajiDB has multiple readings used in find_split_point.
+
+## Other items
+
+ * In make_gender_dict, if we have gender-tagged entries in `dict`, we should
+   consider forcing use of hits-based gender determination, or making it contribute
+   more.
+
+ * In romaji_to_hiragana_messy, we don't try to handle ē -> ei in the same way
+   as o. The whole thing is hacky though, there's rarely a good reason to use this
+   function!
