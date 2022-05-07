@@ -1,0 +1,24 @@
+command: parse-daijisen
+# Uses fake entries to test dictionary parsing, in particular the Kanji-numeral years.
+---
+{
+  "charCode": "jisx0208",
+  "discCode": "epwing",
+  "subbooks": [
+    {
+      "title": "大辞泉",
+      "entries": [
+        {
+          "heading": "あくたがわ‐りゅうのすけ【芥川竜之介】あくたがは‐",
+          "text": "あくたがわ‐りゅうのすけ【芥川竜之介】あくたがは‐\n［一八九二〜一九二七］小説家。お酒が大大大好き！！\n即座ラーメンはお湯を入れずに食べる癖がある。\n"
+        },
+        {
+          "heading": "あくたれ-もの【悪たれ者】",
+          "text": "あくたれ‐もの【悪たれ者】\n嫌な奴！。\n"
+        }
+      ]
+    }
+  ]
+}
+---
+{"kaki": "芥川 竜之介", "yomi": "あくたがわ りゅうのすけ", "authenticity": "real", "lifetime": {"birth_year": 1892, "death_year": 1927}, "source": "daijisen:あくたがわ‐りゅうのすけ【芥川竜之介】あくたがは‐", "tags": ["person"]}
