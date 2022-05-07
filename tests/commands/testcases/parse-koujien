@@ -1,0 +1,24 @@
+command: parse-koujien
+# Uses fake entries to test dictionary parsing, in particular the Kanji-numeral years.
+---
+{
+  "charCode": "jisx0208",
+  "discCode": "epwing",
+  "subbooks": [
+    {
+      "title": "大辞泉",
+      "entries": [
+        {
+          "heading": "おぶち‐けいぞう【小渕恵三】ヲ‥ザウ",
+          "text": "おぶち‐けいぞう【小渕恵三】ヲ‥ザウ\n政治家。群馬県生れ。早大卒。官房長官・外相を歴任。1998年自由民主党総裁・首相。在任中に急死。（1937〜2000）\n小渕恵三\n"
+        },
+        {
+          "heading": "きぐ‐ぜん【木具膳】",
+          "text": "きぐ‐ぜん【木具膳】\n脚が高く縁の深い膳。足付の折敷おしき。足打あしうち。木具。\n"
+        }
+      ]
+    }
+  ]
+}
+---
+{"kaki": "小渕 恵三", "yomi": "おぶち けいぞう", "authenticity": "real", "lifetime": {"birth_year": 1937, "death_year": 2000}, "source": "koujien:おぶち‐けいぞう【小渕恵三】ヲ‥ザウ", "tags": ["person"]}

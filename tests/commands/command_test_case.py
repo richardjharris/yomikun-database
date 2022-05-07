@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Any
+from typing import Any, TextIO
 
 import regex
 import yaml
@@ -51,7 +51,11 @@ class CommandTestCase:
     @classmethod
     def from_file(cls, file: Path) -> CommandTestCase:
         with open(file, 'r') as fh:
-            return cls.from_string(fh.read(), file.name)
+            return cls.from_handle(fh, file.name)
+
+    @classmethod
+    def from_handle(cls, handle: TextIO, test_name: str) -> CommandTestCase:
+        return cls.from_string(handle.read(), test_name)
 
     @classmethod
     def from_string(cls, string: str, test_name: str) -> CommandTestCase:
