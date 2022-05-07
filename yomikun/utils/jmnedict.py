@@ -3,8 +3,8 @@ Interface to the JMnedict database. This is a comprehensive but somewhat
 noisy database of Japanese names, which is used as a data source and
 also sometimes consulted when splitting names.
 """
-import dataclasses
 import logging
+from dataclasses import dataclass
 
 import jamdict
 
@@ -15,7 +15,7 @@ NOISY_LOGGERS = (
     'puchikarui.puchikarui',
 )
 
-instance = None
+_INSTANCE = None
 
 
 def jam() -> jamdict.Jamdict:
@@ -24,18 +24,18 @@ def jam() -> jamdict.Jamdict:
 
     Loads a local copy of the database via the jamdict-data module.
     """
-    global instance
-    if not instance:
-        instance = jamdict.Jamdict(memory_mode=False)
-        assert instance.has_jmne()
+    global _INSTANCE
+    if not _INSTANCE:
+        _INSTANCE = jamdict.Jamdict(memory_mode=False)
+        assert _INSTANCE.has_jmne()
 
         for logger in NOISY_LOGGERS:
             logging.getLogger(logger).setLevel(logging.ERROR)
 
-    return instance
+    return _INSTANCE
 
 
-@dataclasses.dataclass
+@dataclass
 class NameResult:
     kana: list[str]
     kanji: list[str]

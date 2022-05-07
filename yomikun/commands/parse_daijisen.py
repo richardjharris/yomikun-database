@@ -2,7 +2,7 @@ import sys
 
 import click
 
-import yomikun.parsers.epwing.daijisen.parser
+import yomikun.parsers.epwing.daijisen
 from yomikun.parsers.epwing.parser import EpwingParser
 
 
@@ -15,5 +15,5 @@ def parse_daijisen():
 
     Output is NameData in JSONL format.
     """
-    parser = yomikun.parsers.epwing.daijisen.parser.name_from_entry
+    parser = yomikun.parsers.epwing.daijisen.name_from_entry
     EpwingParser(parser).parse_json_input(sys.stdin)

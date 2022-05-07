@@ -1,8 +1,7 @@
 import logging
 from collections import defaultdict
 
-from yomikun.models.nameauthenticity import NameAuthenticity
-from yomikun.models.namedata import NameData
+from yomikun.models import NameAuthenticity, NameData
 
 
 class PersonDedupe:

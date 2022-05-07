@@ -14,9 +14,7 @@ import regex
 
 from yomikun.gender.dict import GenderDict
 from yomikun.loader.aggregator import Aggregator
-from yomikun.models import Gender, NameData, NamePosition
-from yomikun.models.lifetime import Lifetime
-from yomikun.models.nameauthenticity import NameAuthenticity
+from yomikun.models import Gender, Lifetime, NameAuthenticity, NameData, NamePosition
 
 
 @dataclass

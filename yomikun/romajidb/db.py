@@ -11,7 +11,7 @@ import romkan
 
 from yomikun.utils.romaji.helpers import romaji_key
 
-instance = None
+_INSTANCE = None
 
 
 def romajidb() -> RomajiDB:
@@ -21,11 +21,11 @@ def romajidb() -> RomajiDB:
     Loads 'data/romajidb.tsv.gz' from the current directory. Override with
     the ROMAJIDB_TSV_PATH environment variable.
     """
-    global instance
-    if not instance:
+    global _INSTANCE
+    if not _INSTANCE:
         path = os.environ.get('ROMAJIDB_TSV_PATH', 'data/romajidb.tsv.gz')
-        instance = RomajiDB.load(path)
-    return instance
+        _INSTANCE = RomajiDB.load(path)
+    return _INSTANCE
 
 
 RomajiDbKey = tuple[str, str, str]

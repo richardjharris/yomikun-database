@@ -5,8 +5,7 @@ from dataclasses import dataclass, field
 from operator import itemgetter
 from typing import cast
 
-from yomikun.models import Lifetime
-from yomikun.models.namedata import NameData
+from yomikun.models import Lifetime, NameData
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.split import split_kanji_name
 

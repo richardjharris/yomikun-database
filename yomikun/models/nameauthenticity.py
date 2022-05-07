@@ -2,9 +2,7 @@ from enum import Enum
 
 
 class NameAuthenticity(Enum):
-    """
-    Represents the authenticity (realness) of name in a NameData.
-    """
+    """Represents the authenticity (realness) of name in a NameData."""
 
     """Real name"""
     REAL = 1

@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import dataclasses
 import json
+from dataclasses import dataclass, field
 
 import regex
 
-from yomikun.custom_data.importer import convert_to_hiragana
 from yomikun.models.lifetime import Lifetime
 from yomikun.models.nameauthenticity import NameAuthenticity
 from yomikun.utils import normalise_whitespace, patterns
+from yomikun.utils.convert import convert_to_hiragana
 
 
-@dataclasses.dataclass
+@dataclass
 class NameData:
     """
     Name data extracted by the parsers.
@@ -25,17 +26,17 @@ class NameData:
     authenticity: NameAuthenticity = NameAuthenticity.REAL
 
     # Years lived for this name
-    lifetime: Lifetime = dataclasses.field(default_factory=Lifetime)
+    lifetime: Lifetime = field(default_factory=Lifetime)
 
     # Sub-readings (related to this one)
-    subreadings: list[NameData] = dataclasses.field(default_factory=list)
+    subreadings: list[NameData] = field(default_factory=list)
 
     # String identifying the source of this reading
     source: str = ''
 
     # Arbitrary tags assigned to the name. Used by JMNedict to mark
     # whether a name is a forename or a surname, etc.
-    tags: set[str] = dataclasses.field(default_factory=set)
+    tags: set[str] = field(default_factory=set)
 
     # Arbitrary notes. For person records, this indicates the type of person
     # e.g. (actor, musician, politician etc.)

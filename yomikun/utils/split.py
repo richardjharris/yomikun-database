@@ -6,7 +6,7 @@ This is used by Wikidata/nokana, Daijisen, Koujin, Wikipedia
 EN and JA so these importers should be re-run if this code is
 updated.
 """
-from yomikun.utils import name_dict
+from yomikun.utils import jmnedict, name_dict
 
 
 def split_kanji_name_romaji(kanji: str, romaji: str) -> str:
@@ -128,7 +128,7 @@ def find_kana_split_point(sei: str, mei: str, kana: str) -> int | None:
     # Try to match the largest string first.
     for chars in reversed(range(1, len(kana))):
         kana_prefix = kana[0:chars]
-        results = name_dict.find_surname(kana_prefix)
+        results = jmnedict.find_surname(kana_prefix)
 
         for result in results:
             if sei in result.kanji:
@@ -137,7 +137,7 @@ def find_kana_split_point(sei: str, mei: str, kana: str) -> int | None:
     # Try to match forenames instead
     for chars in range(1, len(kana)):
         kana_suffix = kana[chars:]
-        results = name_dict.find_given_name(kana_suffix)
+        results = jmnedict.find_given_name(kana_suffix)
 
         for result in results:
             if mei in result.kanji:

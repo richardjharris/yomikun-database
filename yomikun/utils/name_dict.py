@@ -3,7 +3,7 @@ Name dictionary used for making decisions like splitting a kanji
 name into two halves.
 """
 from yomikun.romajidb.db import romajidb
-from yomikun.utils.jmnedict import find_given_name, find_surname
+from yomikun.utils import jmnedict
 from yomikun.utils.romaji.helpers import romaji_key
 
 
@@ -27,9 +27,9 @@ def match_name(kanji, kana, sei: bool, romaji=False) -> bool:
             return True
     else:
         if sei:
-            results = find_surname(kanji)
+            results = jmnedict.find_surname(kanji)
         else:
-            results = find_given_name(kanji)
+            results = jmnedict.find_given_name(kanji)
 
         for result in results:
             if kana in result.kana:

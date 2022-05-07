@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import dataclasses
+from dataclasses import dataclass
 
 
-@dataclasses.dataclass
+@dataclass
 class Lifetime:
     """
     Represents a span of years lived. Both sides may be None

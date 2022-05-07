@@ -1,11 +1,12 @@
 import dataclasses
+from dataclasses import dataclass
 
 import regex
 
-from yomikun.utils.patterns import name_pat
+from yomikun.utils import patterns
 
 
-@dataclasses.dataclass
+@dataclass
 class ResearchMapRecord:
     """
     Holds a single row from the research map input data.
@@ -19,7 +20,7 @@ class ResearchMapRecord:
         """
         Returns true if this record's `kanji` field looks like a name.
         """
-        return regex.fullmatch(name_pat, self.kanji) is not None
+        return regex.fullmatch(patterns.name_pat, self.kanji) is not None
 
     def has_romaji(self) -> bool:
         """
