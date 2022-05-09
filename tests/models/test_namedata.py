@@ -1,6 +1,6 @@
 import pytest
 
-from yomikun.models import NameAuthenticity, NameData
+from yomikun.models import Lifetime, NameAuthenticity, NameData
 
 
 def test_add_tag():
@@ -82,3 +82,22 @@ def test_gender():
     assert NameData('まこと', 'まこと', tags={'masc'}).gender() == 'masc'
     assert NameData('まこと', 'まこと', tags={'fem', 'masc'}).gender() == 'fem'
     assert NameData('まこと', 'まこと').gender() is None
+
+
+def test_copy_data_to_subreadings():
+    nd = NameData.person(
+        '夏目 漱石',
+        'なつめ そうせき',
+        lifetime=Lifetime(1867, 1916),
+        source='wikipedia_en',
+        subreadings=[
+            NameData('夏目 金之助', 'なつめ きんのすけ', authenticity=NameAuthenticity.REAL)
+        ],
+        authenticity=NameAuthenticity.PSEUDO,
+    )
+
+    nd.copy_pseudo_data_to_subreadings()
+
+    assert nd.subreadings[0].lifetime == Lifetime(1867, 1916)
+    assert nd.subreadings[0].source == 'wikipedia_en'
+    assert 'person' in nd.subreadings[0].tags

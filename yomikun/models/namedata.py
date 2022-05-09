@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+import copy
 import dataclasses
 import json
 from dataclasses import dataclass, field
 
 import regex
 
+from yomikun.models.gender import Gender
 from yomikun.models.lifetime import Lifetime
 from yomikun.models.nameauthenticity import NameAuthenticity
+from yomikun.models.namepart import NamePart
+from yomikun.models.nameposition import NamePosition
 from yomikun.utils import normalise_whitespace, patterns
 from yomikun.utils.convert import convert_to_hiragana
 
@@ -43,7 +47,7 @@ class NameData:
     notes: str = ''
 
     def __post_init__(self):
-        # Do basic type checking, as dataclasses does not
+        # Do basic type checking, as selfclasses does not
         assert isinstance(self.subreadings, list)
 
         # Some tests create NameData with tags as a list
@@ -111,7 +115,7 @@ class NameData:
 
     def has_name(self) -> bool:
         """
-        Returns True if this object has name data fully populated.
+        Returns True if this object has name self fully populated.
         """
         return len(self.kaki) > 0 and len(self.yomi) > 0
 
@@ -122,6 +126,17 @@ class NameData:
             return 'masc'
         else:
             return None
+
+    def _gender_typed(self) -> Gender:
+        tags = self.tags
+        if 'masc' in tags and 'fem' in tags:
+            return Gender.neutral
+        elif 'masc' in tags:
+            return Gender.male
+        elif 'fem' in tags:
+            return Gender.female
+        else:
+            return Gender.unknown
 
     def set_gender(self, new_gender: str | None):
         self.remove_tags('masc', 'fem')
@@ -171,6 +186,47 @@ class NameData:
 
         return (sei, mei)
 
+    def extract_name_parts(self) -> list[tuple[NamePart, Gender | None]]:
+        parts = []
+        if self.is_person():
+            # Sometimes is tagged [person, fem] to indicate the person's gender.
+            gender = self._gender_typed()
+            kakis = self.kaki.split()
+            yomis = self.yomi.split()
+            if len(kakis) == 2 and len(yomis) == 2:
+                sei = NamePart(kaki=kakis[0], yomi=yomis[0], position=NamePosition.sei)
+                mei = NamePart(kaki=kakis[1], yomi=yomis[1], position=NamePosition.mei)
+                parts += [(sei, gender), (mei, gender)]
+            else:
+                # Can't reliably assign positions to names
+                part = NamePart(
+                    kaki=self.kaki, yomi=self.yomi, position=NamePosition.unknown
+                )
+                parts.append((part, gender))
+        elif 'unclass' in self.tags:
+            for tag in ('person', 'surname', 'given', 'fem', 'masc'):
+                assert not self.has_tag(tag)
+
+            part = NamePart(
+                kaki=self.kaki, yomi=self.yomi, position=NamePosition.unknown
+            )
+            parts.append((part, None))
+        else:
+            # Names may be a combination of masc,fem,given,surname
+            if 'surname' in self.tags:
+                sei = NamePart(
+                    kaki=self.kaki, yomi=self.yomi, position=NamePosition.sei
+                )
+                parts.append((sei, None))
+            elif set(self.tags).intersection({'masc', 'fem', 'given'}):
+                gender = self._gender_typed()
+                mei = NamePart(
+                    kaki=self.kaki, yomi=self.yomi, position=NamePosition.mei
+                )
+                parts.append((mei, gender))
+
+        return parts
+
     def clean(self):
         """
         Tidy up / normalise all data. Returns self.
@@ -201,6 +257,26 @@ class NameData:
             self.subreadings.remove(sub)
 
         return self
+
+    def copy_pseudo_data_to_subreadings(self):
+        """
+        Copy information in the main (pseudo) NameData reading to any real
+        subreadings, including lifetime, source, tags.
+
+        Does nothing if the main reading is not PSEUDO.
+        """
+        for subreading in self.subreadings:
+            # Copy over the lifetime / gender / source to the real actor
+            if (
+                self.authenticity == NameAuthenticity.PSEUDO
+                and subreading.authenticity == NameAuthenticity.REAL
+            ):
+                if self.lifetime and not subreading.lifetime:
+                    subreading.lifetime = copy.copy(self.lifetime)
+                if self.source and not subreading.source:
+                    subreading.source = self.source
+                if self.tags and not subreading.tags:
+                    subreading.tags = self.tags
 
     def validate(self):
         """
@@ -277,6 +353,10 @@ class NameData:
 
         return data
 
+    # --------------------------------------------------------------------------------
+    # Conversion methods (JSON/CSV)
+    # --------------------------------------------------------------------------------
+
     def to_jsonl(self) -> str:
         """
         Converts a NameData to a JSONL string.
@@ -304,7 +384,7 @@ class NameData:
 
     def to_csv(self) -> str:
         """
-        Returns namedata in custom.csv format
+        Returns name data in custom.csv format
         """
         if self.subreadings:
             raise ValueError('subreadings are not supported with to_csv')
