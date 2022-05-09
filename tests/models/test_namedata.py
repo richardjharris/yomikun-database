@@ -96,7 +96,7 @@ def test_copy_data_to_subreadings():
         authenticity=NameAuthenticity.PSEUDO,
     )
 
-    nd.copy_pseudo_data_to_subreadings()
+    nd.clean()
 
     assert nd.subreadings[0].lifetime == Lifetime(1867, 1916)
     assert nd.subreadings[0].source == 'wikipedia_en'

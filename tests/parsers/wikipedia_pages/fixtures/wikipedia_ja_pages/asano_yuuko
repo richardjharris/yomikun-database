@@ -9,6 +9,8 @@ subreadings:
  - name: 赤沢 裕子
    reading: あかざわ ゆうこ
    type: real
+   lifetime: 1960 ~
+   gender: F
 gender: F
 lifetime: 1960 ~
 source: https://ja.wikipedia.org/w/index.php?title=%E6%B5%85%E9%87%8E%E3%82%86%E3%81%86%E5%AD%90&oldid=85536404

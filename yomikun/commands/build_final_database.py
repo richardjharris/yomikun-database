@@ -3,7 +3,7 @@ import sys
 
 import click
 
-from yomikun.loader.finaldb import make_final_db
+from yomikun.aggregator.make_aggregated_data import make_aggregated_data
 from yomikun.models import NameData
 from yomikun.utils.timer import Timer
 
@@ -29,5 +29,5 @@ def build_final_database(input, genderdb):
     """
     timer = Timer()
     names = (NameData.from_dict(json.loads(line)) for line in input)
-    make_final_db(names_in=names, genderdb_file_in=genderdb, db_out=sys.stdout)
+    make_aggregated_data(names_in=names, genderdb_file_in=genderdb, db_out=sys.stdout)
     timer.report('Generated final database')

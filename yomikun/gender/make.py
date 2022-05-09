@@ -12,8 +12,8 @@ from math import sqrt
 from typing import Iterable, TextIO
 
 from yomikun.gender.ml import GenderML
-from yomikun.loader.aggregator import Aggregator, NamePart
 from yomikun.models import Gender, NameData, NamePosition
+from yomikun.models.namepart import NamePart
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 NameLists = dict[str, dict[str, str]]
@@ -138,8 +138,7 @@ def make_gender_dict(
             part = NamePart(name.kaki, name.yomi, NamePosition.mei)
             counts_kanji[part][Gender.unknown] -= 1
 
-        Aggregator.copy_data_to_subreadings(name)
-        for part, gender in Aggregator.extract_name_parts(name):
+        for part, gender in name.extract_name_parts():
             if part.position != NamePosition.mei:
                 continue
 

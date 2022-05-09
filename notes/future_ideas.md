@@ -3,7 +3,11 @@ the future.
 
 ## Code quality
 
- - run eradicate
+NameData is too big
+ - refactor to have 'part' and 'gender' fields
+ - require caller to 'cast' namedata to a PersonData sub?class, which has
+   different split() methods etc.
+
  - move romaji_key to its own file
  - pylint duplicate code (?)
  - sqlite vs loader vs finaldb vs aggregator

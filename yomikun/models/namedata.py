@@ -187,6 +187,15 @@ class NameData:
         return (sei, mei)
 
     def extract_name_parts(self) -> list[tuple[NamePart, Gender | None]]:
+        """
+        Used by RomajiDB, GenderDB, person dedupe etc.
+
+        Return a list of name parts from this NameData record. If this record is
+        a person, outputs a sei and mei record; otherwise, outputs a single record
+        matching this name's position.
+        """
+        self.clean()
+
         parts = []
         if self.is_person():
             # Sometimes is tagged [person, fem] to indicate the person's gender.
@@ -256,9 +265,11 @@ class NameData:
         for sub in to_delete:
             self.subreadings.remove(sub)
 
+        self._copy_pseudo_data_to_subreadings()
+
         return self
 
-    def copy_pseudo_data_to_subreadings(self):
+    def _copy_pseudo_data_to_subreadings(self):
         """
         Copy information in the main (pseudo) NameData reading to any real
         subreadings, including lifetime, source, tags.

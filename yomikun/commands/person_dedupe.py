@@ -3,7 +3,7 @@ from typing import TextIO
 
 import click
 
-from yomikun.loader.person_dedupe import PersonDedupe
+from yomikun.aggregator.person_dedupe import PersonDedupe
 from yomikun.models import NameData
 
 

@@ -13,7 +13,6 @@ import jcconv3
 import regex
 
 from yomikun.gender.dict import GenderDict
-from yomikun.loader.aggregator import Aggregator
 from yomikun.models import Gender, Lifetime, NameAuthenticity, NameData, NamePosition
 
 
@@ -77,7 +76,9 @@ class AggregatedData:
 DictKey = tuple[str, str, NamePosition]
 
 
-def make_final_db(names_in: Iterable[NameData], genderdb_file_in: str, db_out: TextIO):
+def make_aggregated_data(
+    names_in: Iterable[NameData], genderdb_file_in: str, db_out: TextIO
+):
     """
     Given input name records (which can be people or individual name parts)
     aggregate the data and produce output in JSONL format suitable for
@@ -86,8 +87,7 @@ def make_final_db(names_in: Iterable[NameData], genderdb_file_in: str, db_out: T
     aggregated_data: dict[DictKey, AggregatedData] = defaultdict(AggregatedData)
 
     for name in names_in:
-        Aggregator.copy_data_to_subreadings(name)
-        for part, gender in Aggregator.extract_name_parts(name):
+        for part, gender in name.extract_name_parts():
             kana = part.yomi
 
             # Some jmnedict results currently contain katakana

@@ -5,7 +5,6 @@ from typing import Iterable, TextIO
 import jcconv3
 import romkan
 
-from yomikun.loader.aggregator import Aggregator
 from yomikun.models import NameData, NamePosition
 from yomikun.utils.romaji.helpers import romaji_key
 
@@ -19,8 +18,7 @@ def make_romajidb(names: Iterable[NameData], db_out: TextIO):
 
         logging.debug(f"Name: {name}")
 
-        Aggregator.copy_data_to_subreadings(name)
-        for part, gender in Aggregator.extract_name_parts(name):
+        for part, gender in name.extract_name_parts():
             logging.info(f"Part {part} gender={gender}")
             if part.position == NamePosition.unknown:
                 continue
