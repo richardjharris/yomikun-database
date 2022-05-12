@@ -12,8 +12,7 @@ from math import sqrt
 from typing import Iterable, TextIO
 
 from yomikun.gender.ml import GenderML
-from yomikun.models import Gender, NameData, NamePosition
-from yomikun.models.namepart import NamePart
+from yomikun.models import Gender, NameData, NamePart, NamePosition
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 NameLists = dict[str, dict[str, str]]

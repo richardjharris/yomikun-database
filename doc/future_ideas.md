@@ -22,7 +22,7 @@ NameData is too big
 
 ### import of many loose functions feels off to me
 
-'import foo.bar.baz' makes functions too low
+'import foo.bar.baz' makes functions too long
 
 'from module import *' is bad
 

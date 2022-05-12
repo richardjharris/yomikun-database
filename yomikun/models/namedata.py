@@ -20,24 +20,69 @@ from yomikun.utils.convert import convert_to_hiragana
 class NameData:
     """
     Name data extracted by the parsers.
+
+    NameData records can represent either a person's full name, or part
+    of a name. In the former case, `kaki` and `yomi` will both contain
+    a space. To identify what kind of name is represented, the `tags`
+    field is used.
     """
 
-    # Full name (parts separated by a space)
+    """Written form of name (typically kanji)"""
     kaki: str = ''
+
+    """Reading form of name (hiragana)"""
     yomi: str = ''
 
-    # Reading type
+    """
+    Whether the name is real, a pen-name or fictional.
+
+    This is used in the Yomikun app to inform the user that particular
+    names may not actually be used in the real world, only in fiction.
+    """
     authenticity: NameAuthenticity = NameAuthenticity.REAL
 
-    # Years lived for this name
+    """
+    Life span of this name.
+
+    This is used in aggregate to indicate that certain names are
+    particularly new or particularly old, and also as a way of de-duplicating
+    person records across multiple sources.
+    """
     lifetime: Lifetime = field(default_factory=Lifetime)
 
-    # Sub-readings (related to this one)
+    """
+    Subreadings attached to this name.
+
+    This is used as a convenient way for NameData parsers to return multiple
+    readings (typically a pen-name or pseudonym) along with the main reading.
+
+    Subreadings are assumed to all represent the same person.
+    """
     subreadings: list[NameData] = field(default_factory=list)
 
-    # String identifying the source of this reading
+    """
+    String identifying the source of this name.
+
+    By convention, this is the JSONL filename (e.g. 'pdd') with an optional
+    article or heading name after a colon (e.g. 'wikipedia_en:Masamune_Shirow')
+    """
     source: str = ''
 
+    """
+    Tags associated with the name.
+
+    The gender and type of a name is indicated by a tag combination:
+
+      masc: male given
+      fem: female given
+      given: given (no gender)
+      surname: surname
+      masc, person: male person
+      fem, person: female person
+      person: person (no gender)
+
+    Additional tags include 'dict' (not a real-world sighting of the name).
+    """
     # Arbitrary tags assigned to the name. Used by JMNedict to mark
     # whether a name is a forename or a surname, etc.
     tags: set[str] = field(default_factory=set)
