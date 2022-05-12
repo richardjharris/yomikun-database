@@ -9,7 +9,7 @@ import jcconv3
 import regex
 import romkan
 
-from yomikun.utils.romaji.helpers import romaji_key
+from yomikun.utils.romaji.romaji_key import romaji_key
 
 _INSTANCE = None
 

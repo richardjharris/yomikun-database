@@ -1,7 +1,7 @@
 import logging
 
 from yomikun.romajidb.db import romajidb
-from yomikun.utils.romaji.helpers import romaji_key
+from yomikun.utils.romaji.romaji_key import romaji_key
 
 
 def romaji_to_hiragana_fullname(romaji: str, kanji: str) -> str | None:

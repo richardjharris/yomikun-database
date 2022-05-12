@@ -4,7 +4,7 @@ name into two halves.
 """
 from yomikun.romajidb.db import romajidb
 from yomikun.utils import jmnedict
-from yomikun.utils.romaji.helpers import romaji_key
+from yomikun.utils.romaji.romaji_key import romaji_key
 
 
 def match_name(kanji, kana, sei: bool, romaji=False) -> bool:

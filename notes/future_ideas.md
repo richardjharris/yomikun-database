@@ -10,8 +10,6 @@ NameData is too big
 
     - split vs extract_name_parts
 
- - move romaji_key to its own file
- - pylint duplicate code (?)
  - sqlite vs loader vs finaldb vs aggregator
 
  - fix use of internal methods

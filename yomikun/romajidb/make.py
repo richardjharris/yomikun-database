@@ -6,7 +6,7 @@ import jcconv3
 import romkan
 
 from yomikun.models import NameData, NamePosition
-from yomikun.utils.romaji.helpers import romaji_key
+from yomikun.utils.romaji.romaji_key import romaji_key
 
 
 def make_romajidb(names: Iterable[NameData], db_out: TextIO):
