@@ -1,4 +1,4 @@
-command: 'build-final-database --genderdb=%genderdb%'
+command: 'build-aggregate-data --genderdb=%genderdb%'
 # Basic test: split names, aggregate hits, consider jmnedict to be 0 hits
 ---
 {"kaki": "小田 剛嗣", "yomi": "おだ つよし", "authenticity": "real", "source": "custom", "tags": ["masc", "person"]}

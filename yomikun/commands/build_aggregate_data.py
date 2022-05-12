@@ -15,11 +15,11 @@ from yomikun.utils.timer import Timer
     default='db/gender.jsonl',
     help='Path to gender score database',
 )
-def build_final_database(input, genderdb):
+def build_aggregate_data(input, genderdb):
     """
-    Build final.jsonl for SQLite load
+    Build aggregated.jsonl for SQLite load
 
-    Builds final.jsonl, aggregated data suitable for loading into
+    Builds aggregated.jsonl - aggregated data suitable for loading into
     SQLite.
 
     Aggregate NameData on STDIN and produce output on STDOUT
@@ -30,4 +30,4 @@ def build_final_database(input, genderdb):
     timer = Timer()
     names = (NameData.from_dict(json.loads(line)) for line in input)
     make_aggregated_data(names_in=names, genderdb_file_in=genderdb, db_out=sys.stdout)
-    timer.report('Generated final database')
+    timer.report('Generated aggregated data')

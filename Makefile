@@ -35,11 +35,11 @@ install: db/final.db
 	cp $< ../app/assets/namesdb.sqlite3
 	sqlite3 --csv --noheader $< 'pragma user_version' > ../app/assets/namesdb.version.txt 2>/dev/null
 
-db/final.db: db/final.jsonl
+db/final.db: db/aggregated.jsonl
 	rm -f $@ && $(YOMIKUN) build-sqlite $@ < $<
 
-db/final.jsonl: db/deduped.jsonl
-	$(YOMIKUN) build-final-database < $< > $@
+db/aggregated.jsonl: db/deduped.jsonl
+	$(YOMIKUN) build-aggregate-data < $< > $@
 
 db/gender.jsonl: db/deduped.jsonl data/name_lists.json
 	$(YOMIKUN) build-gender-db < $< > $@
