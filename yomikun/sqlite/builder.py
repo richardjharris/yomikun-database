@@ -5,9 +5,14 @@ import sys
 from datetime import datetime
 from typing import IO
 
-from yomikun.sqlite.tables.kanji_stats_table import KanjiStatsTable
-from yomikun.sqlite.tables.names_table import NamesTable
-from yomikun.sqlite.tables.quiz_table import QuizTable
+from yomikun.sqlite.table_builders.kanji_stats_table import KanjiStatsTable
+from yomikun.sqlite.table_builders.names_table import NamesTable
+from yomikun.sqlite.table_builders.quiz_table import QuizTable
+
+
+def _make_builders():
+    # The order of tables is important: quiz depends on names.
+    return [NamesTable(), KanjiStatsTable(), QuizTable()]
 
 
 def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> None:
@@ -24,8 +29,7 @@ def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> 
     cur.execute("PRAGMA user_version = " + str(version))
     logging.info("DB revision: %d", version)
 
-    # The order of tables is important: quiz depends on names.
-    tables = [NamesTable(), KanjiStatsTable(), QuizTable()]
+    tables = _make_builders()
 
     for table in tables:
         table.create(cur)
@@ -46,3 +50,11 @@ def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> 
     logging.info("Vacuuming database...")
     cur.execute("VACUUM")
     logging.info("Done.")
+
+
+def compare_databases(old: sqlite3.Connection, new: sqlite3.Connection):
+    tables = _make_builders()
+    old_cur = old.cursor()
+    new_cur = new.cursor()
+    for table in tables:
+        print(table.compare(old_cur, new_cur))

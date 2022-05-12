@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import regex
 
 from yomikun.sqlite.constants import PART_ID
-from yomikun.sqlite.tables.base import TableBase
+from yomikun.sqlite.table_builders.base import TableBuilderBase
 
 
 @dataclass(unsafe_hash=True)
@@ -35,11 +35,13 @@ class GenderCounts:
             return int(self.female / self.total * 255)
 
 
-class KanjiStatsTable(TableBase):
+class KanjiStatsTable(TableBuilderBase):
     """
     Class for generating the `kanji_stats` table, which holds per-kanji
     statistics.
     """
+
+    name = 'kanji_stats'
 
     counts: defaultdict[NameAndPart, GenderCounts]
 

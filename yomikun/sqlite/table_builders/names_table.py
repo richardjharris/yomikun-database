@@ -3,14 +3,16 @@ import sqlite3
 import romkan
 
 from yomikun.sqlite.constants import PART_ID
-from yomikun.sqlite.tables.base import TableBase
+from yomikun.sqlite.table_builders.base import TableBuilderBase
 
 
-class NamesTable(TableBase):
+class NamesTable(TableBuilderBase):
     """
     Class for generating the `names` table, which is the main table
     for all name reading and hit count data.
     """
+
+    name = 'names'
 
     _create_statement = """
         CREATE TABLE names(

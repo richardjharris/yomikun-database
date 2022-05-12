@@ -2,10 +2,12 @@ import sqlite3
 
 import regex
 
-from yomikun.sqlite.tables.base import TableBase
+from yomikun.sqlite.table_builders.base import TableBuilderBase
 
 
-class QuizTable(TableBase):
+class QuizTable(TableBuilderBase):
+    name = 'quiz'
+
     _create_statement = """
         CREATE TABLE quiz AS
             WITH most_common AS (
