@@ -10,3 +10,10 @@
     {kaki, yomi, part, ml_score, hits_*}   - no people
 
  - db/final.db loads json into sqlite
+
+## Special terms
+
+* mei - first/given name
+* sei - surname
+* kaki - written form of name, typically kanji, sometimes kana
+* yomi - reading form of name (pronounciation)

@@ -8,4 +8,6 @@ PART_ID = {
     "mei": 2,
 }
 
+PARTS_IN_DATABASE_ORDER = ["unknown", "sei", "mei"]
+
 SqliteQuery = tuple[str, Iterable[Any]]

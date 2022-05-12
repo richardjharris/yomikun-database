@@ -8,16 +8,20 @@ NameData is too big
  - require caller to 'cast' namedata to a PersonData sub?class, which has
    different split() methods etc.
 
+    - split vs extract_name_parts
+
  - move romaji_key to its own file
  - pylint duplicate code (?)
  - sqlite vs loader vs finaldb vs aggregator
 
  - fix use of internal methods
   - wikipedia_en.parser using _parse_researchmap_inner
-  - stuff using Aggregator hackily
+  - remove Aggregator
 
  - inconsistent use of sei/mei vs. given name / surname. Same for reading/written
    and yomi/kaki.
+
+Add doc/ folder?
 
 ### import of many loose functions feels off to me
 

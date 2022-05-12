@@ -2,22 +2,12 @@ import sqlite3
 
 import regex
 
+from yomikun.sqlite.tables.base import TableBase
 
-class QuizTable:
-    @staticmethod
-    def create(cur: sqlite3.Cursor):
-        cur.executescript(QuizTable.create_statement())
 
-        cur.execute("SELECT kaki FROM quiz")
-
-        # Remove hiragana-only kaki entries, as these won't pose any challenge.
-        kaki_list = [row for row in cur if regex.search(r"^\p{Hiragana}+$", row[0])]
-        cur.executemany("DELETE FROM quiz WHERE kaki = ?", kaki_list)
-
-    @staticmethod
-    def create_statement() -> str:
-        return """
-            CREATE TABLE quiz AS
+class QuizTable(TableBase):
+    _create_statement = """
+        CREATE TABLE quiz AS
             WITH most_common AS (
                 SELECT
                     kaki,
@@ -52,4 +42,16 @@ class QuizTable:
             FROM ungrouped
             GROUP BY kaki, part
             HAVING total >= 75
-          """
+    """
+
+    def finish(self, cur: sqlite3.Cursor):
+        # Create table in finish() as we use the 'names' table to create it.
+        cur.executescript(self._create_statement)
+
+        # Remove hiragana-only kaki entries, as these won't pose any challenge.
+        cur.execute("SELECT kaki FROM quiz")
+        if cur.rowcount == 0:
+            raise Exception("no data in 'quiz' table!")
+
+        kaki_list = [row for row in cur if regex.search(r"^\p{Hiragana}+$", row[0])]
+        cur.executemany("DELETE FROM quiz WHERE kaki = ?", kaki_list)

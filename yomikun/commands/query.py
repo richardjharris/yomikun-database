@@ -6,7 +6,7 @@ import prettytable
 import regex
 import romkan
 
-PARTS_IN_DATABASE_ORDER = ['unknown', 'sei', 'mei']
+from yomikun.sqlite.constants import PARTS_IN_DATABASE_ORDER
 
 
 @click.command()
@@ -72,7 +72,7 @@ def get_data(
     conn: sqlite3.Connection, search_term: str, mode: str, limit: int
 ) -> sqlite3.Cursor:
     cur = conn.cursor()
-    cur.row_factory = sqlite3.Row
+    cur.row_factory = sqlite3.Row  # type: ignore
 
     is_kaki = regex.match(r'\p{Han}', search_term)
     if is_kaki:

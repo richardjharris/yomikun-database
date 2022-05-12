@@ -1,14 +1,13 @@
 import json
+import logging
 import sqlite3
 import sys
 from datetime import datetime
-from itertools import zip_longest
-from typing import IO, Generator, Iterable
+from typing import IO
 
-from yomikun.sqlite.constants import SqliteQuery
-from yomikun.sqlite.kanji_stats_table import KanjiStatsTable
-from yomikun.sqlite.names_table import NamesTable
-from yomikun.sqlite.quiz_table import QuizTable
+from yomikun.sqlite.tables.kanji_stats_table import KanjiStatsTable
+from yomikun.sqlite.tables.names_table import NamesTable
+from yomikun.sqlite.tables.quiz_table import QuizTable
 
 
 def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> None:
@@ -23,45 +22,27 @@ def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> 
     # Autogenerate DB revision based on current time
     version = int(datetime.now().timestamp())
     cur.execute("PRAGMA user_version = " + str(version))
-    print("Generated DB version {}".format(version), file=sys.stderr)
+    logging.info("DB revision: %d", version)
 
-    names_table = NamesTable()
-    cur.executescript(names_table.create_statement())
+    # The order of tables is important: quiz depends on names.
+    tables = [NamesTable(), KanjiStatsTable(), QuizTable()]
 
-    kanji_stats_table = KanjiStatsTable()
-    cur.executescript(kanji_stats_table.create_statement())
+    for table in tables:
+        table.create(cur)
 
-    def process_input() -> Generator[SqliteQuery, None, None]:
-        # Process the input. Lazily generates a list of queries to execute for the
-        # names table.
-        for line in data_input:
-            row = json.loads(line)
-            kanji_stats_table.handle(row)
+    for index, line in enumerate(data_input):
+        row = json.loads(line)
+        for table in tables:
+            table.handle_row(cur, row)
 
-            yield names_table.make_query(row)
-
-    def batch_execute(stream: Iterable[SqliteQuery], batch_size: int = 10000):
-        for batch in _split_into_batches(stream, batch_size):
-            for query in batch:
-                if query:
-                    cur.execute(*query)
+        if index % 10000 == 0:
             connection.commit()
 
-    names_table_queries = process_input()
-    batch_execute(names_table_queries)
-
-    # Now all the rows have been processed, we can generate queries for aggregate
-    # data.
-    batch_execute(kanji_stats_table.insert_statements())
-
-    quiz_table = QuizTable()
-    quiz_table.create(cur)
+    for table in tables:
+        table.finish(cur)
 
     connection.commit()
 
+    logging.info("Vacuuming database...")
     cur.execute("VACUUM")
-
-
-def _split_into_batches(iterable, n, fillvalue=None):
-    args = [iter(iterable)] * n
-    return zip_longest(*args, fillvalue=fillvalue)
+    logging.info("Done.")
