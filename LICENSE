@@ -22,5 +22,5 @@ SOFTWARE.
 
 ---
 
-Test data (tests/test_pages) uses data from JA Wikipedia under the CA BY-SA
-license: https://creativecommons.org/licenses/by-sa/3.0/
+Test data (tests/parsers/wikipedia_pages/fixtures) uses data from JA Wikipedia
+under the CA BY-SA license: https://creativecommons.org/licenses/by-sa/3.0/

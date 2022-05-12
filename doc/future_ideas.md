@@ -1,6 +1,9 @@
 This lists stuff I don't have time to do now, but could look at in
 the future.
 
+Wikipedia EN/WikiData contribute only ~20k names each compared to
+Wikipedia JA's 202k. The epwings even fewer.
+
 ## Code quality
 
 NameData is too big
@@ -10,16 +13,12 @@ NameData is too big
 
     - split vs extract_name_parts
 
- - sqlite vs loader vs finaldb vs aggregator
-
  - fix use of internal methods
   - wikipedia_en.parser using _parse_researchmap_inner
   - remove Aggregator
 
  - inconsistent use of sei/mei vs. given name / surname. Same for reading/written
    and yomi/kaki.
-
-Add doc/ folder?
 
 ### import of many loose functions feels off to me
 
@@ -397,3 +396,5 @@ Not sure if RomajiDB has multiple readings used in find_split_point.
  * In romaji_to_hiragana_messy, we don't try to handle ē -> ei in the same way
    as o. The whole thing is hacky though, there's rarely a good reason to use this
    function!
+
+ * Custom data: support commas in the notes field.
