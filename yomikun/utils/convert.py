@@ -16,13 +16,13 @@ def convert_to_hiragana(yomi: str) -> str:
     out = []
     formats = set()
     for part in parts:
-        if regex.match(r"^[a-z']+$", part, regex.I):
+        if regex.search(r"^[a-z']+$", part, regex.I):
             out.append(romaji_to_hiragana_strict(part))
             formats.add('romaji')
-        elif regex.match(r'^\p{Katakana}+$', part):
+        elif regex.search(r'^\p{Katakana}+$', part):
             out.append(jcconv3.kata2hira(part))
             formats.add('katakana')
-        elif regex.match(r'^\p{Hiragana}+$', part):
+        elif regex.search(r'^\p{Hiragana}+$', part):
             out.append(part)
             formats.add('hiragana')
         else:

@@ -119,12 +119,12 @@ def _parse_researchmap_using_kana(record: ResearchMapRecord) -> NameData | None:
     """
     kana, kanji, _ = record.astuple()
 
-    if regex.match(r'^\p{Hiragana}+\s+\p{Hiragana}+$', kana):
+    if regex.search(r'^\p{Hiragana}+\s+\p{Hiragana}+$', kana):
         # Most common case: kana is as expected
         kanji = split_kanji_name(kanji, kana)
         return NameData(kanji, kana)
 
-    elif regex.match(
+    elif regex.search(
         r'^[\p{Katakana}\p{Hiragana}ー]+\s+[\p{Katakana}\p{Hiragana}ー]+$', kana
     ):
         # Convert katakana to hiragana
@@ -134,7 +134,7 @@ def _parse_researchmap_using_kana(record: ResearchMapRecord) -> NameData | None:
         kanji = split_kanji_name(kanji, kana)
         return NameData(kanji, kana)
 
-    if regex.match(r'^\p{Katakana}+$', kana):
+    if regex.search(r'^\p{Katakana}+$', kana):
         # Katakana name with no space, try to split
         if len(kanji.split()) == 2:
             kana = cast(str, jcconv3.kata2hira(kana))
@@ -183,7 +183,7 @@ def _parse_researchmap_using_romaji(
     romajis = []
     for romaji in romaji_candidates:
         if (
-            regex.match(r'^[a-zāâīīîūûêēōôô\-\']+\s+[a-zāâīīîūûêēōôô\-\']+$', romaji)
+            regex.search(r'^[a-zāâīīîūûêēōôô\-\']+\s+[a-zāâīīîūûêēōôô\-\']+$', romaji)
             and romaji not in romajis
         ):
             romajis.append(romaji)

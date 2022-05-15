@@ -96,7 +96,7 @@ def build_aggregated_data(
 
             if name.source == 'myoji-yurai-5000':
                 population = 0
-                if m := regex.match(r'^population:(\d+)$', name.notes):
+                if m := regex.search(r'^population:(\d+)$', name.notes):
                     population = int(m[1])
 
                 aggregated_data[part.key()].mark_top5k(population)

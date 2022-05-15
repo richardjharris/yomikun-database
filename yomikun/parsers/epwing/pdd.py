@@ -41,14 +41,14 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
 
         # Determine if alternate kanji is actually a name, and not just 二世 or
         # similar.
-        if alt_kaki and regex.match(fr'^({name_pat_with_space})$', alt_kaki):
+        if alt_kaki and regex.search(fr'^({name_pat_with_space})$', alt_kaki):
             logging.info(f'Found alternate name for {kaki}: {alt_kaki}')
         else:
             alt_kaki = None
 
-        if regex.match(reading_pat, yomi):
+        if regex.search(fr'^{reading_pat}', yomi):
             pass
-        elif regex.match(hiragana_pat, yomi) and yomi.count('の') == 1:
+        elif regex.search(fr'^{hiragana_pat}', yomi) and yomi.count('の') == 1:
             yomi = yomi.replace('の', ' ')
         else:
             logging.warning(f'Unrecognized yomi: {yomi}')

@@ -53,7 +53,7 @@ class JmneGloss:
 
             obj.lifetime = Lifetime(birth, death)
 
-        if m := re.match(r"^(\w+ (?:[Nn]o )?\w+)", gloss):
+        if m := re.search(r"^(\w+ (?:[Nn]o )?\w+)", gloss):
             obj.name = m[1]
 
         return obj

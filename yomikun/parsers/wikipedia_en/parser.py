@@ -52,7 +52,7 @@ def notes_from_categories(categories: list[str]) -> str | None:
     for category in categories:
         if category == 'Manga artists':
             return 'Manga artist'
-        if m := regex.match(PROF_REGEX, category):
+        if m := regex.search(PROF_REGEX, category):
             return m[1].capitalize()
 
     return
@@ -147,13 +147,13 @@ def parse_wikipedia_article(
 
             cleaned_first_sentence = clean(rest_of_line)
 
-            if m := regex.match(
-                r'(?:.*?[,\)])?\s*(?:is|was) (?:the|a|an) (.+?)[.]',
+            if m := regex.search(
+                r'^(?:.*?[,\)])?\s*(?:is|was) (?:the|a|an) (.+?)[.]',
                 cleaned_first_sentence,
             ):
                 desc = m[1]
                 namedata.notes = desc[0].upper() + desc[1:]
-            elif m := regex.match(r'^\{\{Infobox (.*?)', content):
+            elif m := regex.search(r'^\{\{Infobox (.*?)', content):
                 namedata.notes = m[1]
 
         # 'Japanese' is usually implied

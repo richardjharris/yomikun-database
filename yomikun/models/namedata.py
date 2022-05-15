@@ -308,7 +308,7 @@ class NameData:
                 logging.error(self)
                 raise ValueError("name with position=unknown")
 
-        if not regex.match(fr'^{kaki_pat}$', self.kaki):
+        if not regex.search(fr'^{kaki_pat}$', self.kaki):
             if self.authenticity == NameAuthenticity.REAL:
                 raise ValueError(
                     f"Invalid kaki '{self.kaki}' for part {self.position} ({self.to_jsonl()})"
@@ -317,7 +317,7 @@ class NameData:
                 # Anything is allowed for pen-names and fictional characters
                 pass
 
-        if not regex.match(fr'^{yomi_pat}$', self.yomi):
+        if not regex.search(fr'^{yomi_pat}$', self.yomi):
             raise ValueError(
                 f"Invalid yomi '{self.yomi}' for part {self.position} ({self.to_jsonl()})"
             )

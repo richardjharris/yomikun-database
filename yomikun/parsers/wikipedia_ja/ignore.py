@@ -28,13 +28,13 @@ ignore_words = [
     '学校',
     '地球',
     '組合',
-    '時代', # suffix
+    '時代',  # suffix
     '大学',
     '大學',
     '女王',
     '幕府',
     '山脈',
-    '庭園', # FPs?
+    '庭園',  # FPs?
     '主義',
     '事件',
     '兵団',
@@ -65,7 +65,7 @@ def should_ignore_name(kaki: str) -> bool:
         return True
     elif ignore_words_pat.search(mei):
         return True
-    elif regex.match(r"^.*の\s*[乱炎]$", kaki):
+    elif regex.search(r"^.*の\s*[乱炎]$", kaki):
         return True
     else:
         return False

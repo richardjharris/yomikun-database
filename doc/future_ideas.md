@@ -12,10 +12,6 @@ NameData is too big
 
  - Run sql comparison thing automatically.
 
- - stop using re/regex.match (start of string only)
-
-    - split vs extract_name_parts
-
  - fix use of internal methods
   - wikipedia_en.parser using _parse_researchmap_inner
   - remove Aggregator

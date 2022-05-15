@@ -24,7 +24,7 @@ def test_sei():
     ]
 
     for sei in expect_match:
-        assert regex.match(fr'^{patterns.sei_pat}$', sei)
+        assert regex.search(fr'^{patterns.sei_pat}$', sei)
 
     for sei in expect_fail:
-        assert not regex.match(fr'^{patterns.sei_pat}$', sei)
+        assert not regex.search(fr'^{patterns.sei_pat}$', sei)

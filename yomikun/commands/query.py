@@ -99,7 +99,7 @@ def get_data(
     cur = conn.cursor()
     cur.row_factory = sqlite3.Row  # type: ignore
 
-    is_kaki = regex.match(r'\p{Han}', search_term)
+    is_kaki = regex.search(r'\p{Han}', search_term)
     if is_kaki:
         query_col = 'kaki'
     else:

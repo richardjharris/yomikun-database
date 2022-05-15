@@ -12,7 +12,7 @@ def romaji_to_hiragana_strict(romaji: str) -> str:
     Returns the hiragana form of the name.
     """
     romaji = romaji.lower()
-    if not regex.match(r"^[a-z' ]*$", romaji):
+    if not regex.search(r"^[a-z' ]*$", romaji):
         raise ValueError(f"Input '{romaji}' has weird characters in it. Yuk!")
 
     # Fix 'Itchiku' (いっちく、一竹)

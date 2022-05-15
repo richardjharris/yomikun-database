@@ -69,7 +69,7 @@ class RomajiDB:
     def get_all(self, kanji: str, romkey: str, part: str) -> RomajiDbResult:
         # Check if the kanji is actually just the romaji in kana
         # or katakana form, if so, return it.
-        if not regex.match(r'\p{Han}', kanji):
+        if not regex.search(r'\p{Han}', kanji):
             if romaji_key(romkan.to_roma(kanji)) == romkey:
                 kana = cast(str, jcconv3.kata2hira(kanji))
                 return (kana, set([kana]))

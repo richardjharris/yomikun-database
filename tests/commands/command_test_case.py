@@ -121,7 +121,7 @@ class CommandTestCase:
     def _parse_other_files(cls, blocks):
         other_files = {}
         for block in blocks:
-            if m := regex.match(r'^\s*%(\w+)%\s*\n', block):
+            if m := regex.search(r'^\s*%(\w+)%\s*\n', block):
                 identifier = m.group(1)
                 content = block[m.end() :]  # noqa: E203
                 temp = NamedTemporaryFile(mode='w')
