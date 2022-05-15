@@ -21,4 +21,4 @@ command: parse-daijisen
   ]
 }
 ---
-{"kaki": "芥川 竜之介", "yomi": "あくたがわ りゅうのすけ", "authenticity": "real", "lifetime": {"birth_year": 1892, "death_year": 1927}, "source": "daijisen:あくたがわ‐りゅうのすけ【芥川竜之介】あくたがは‐", "tags": ["person"]}
+{"kaki": "芥川 竜之介", "yomi": "あくたがわ りゅうのすけ", "authenticity": "real", "position": "person", "lifetime": {"birth_year": 1892, "death_year": 1927}, "source": "daijisen:あくたがわ‐りゅうのすけ【芥川竜之介】あくたがは‐"}

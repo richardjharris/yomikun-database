@@ -4,8 +4,19 @@ Pattern for kanji characters used in surnames
  Interesting examples: 三ツ木 (みつぎ), 木ノ本
  茂り松 etc. are very rare, but interesting.
 """
+import regex
+
 sei_chars = r'\p{Han}ケヶヵノツ'
-sei_with_kana = r'(?:\p{Han}+[ツノ]\p{Han}+|茂り松|下り|走り|渡り|回り道|広エ|新タ|見ル野|反リ目|反り目|安カ川)'
+_sei_with_kana = r"""
+    (?:
+     \p{Han}+[ツノ]\p{Han}+
+    |茂り松|回り道|廻り道|見ル野|賀シ尾|反リ目|反り目|安カ川|烏ト根|沖ッ海
+    |(?:下り|走り|渡り|広エ|新タ|下モ|乙め|五ッ|五ト|三ッ)\p{Han}?
+    |\p{Han}の\p{Han}
+    |一[つっッ]\p{Han}
+    )
+"""
+sei_with_kana = regex.sub(r'\s+', '', _sei_with_kana)
 
 sei_pat = fr'(?:[{sei_chars}]+|{sei_with_kana})'
 

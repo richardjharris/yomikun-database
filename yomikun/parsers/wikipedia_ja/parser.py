@@ -9,6 +9,8 @@ import regex
 from mediawiki_dump.tokenizer import clean
 
 from yomikun.models import Lifetime, NameAuthenticity, NameData
+from yomikun.models.gender import Gender
+from yomikun.models.name_position import NamePosition
 from yomikun.parsers.wikipedia_en.parser import get_categories
 from yomikun.parsers.wikipedia_ja.honmyo import find_honmyo
 from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
@@ -19,7 +21,7 @@ from yomikun.utils.split import split_kanji_name
 
 def parse_article_text(title: str, content: str) -> NameData:
     """
-    Parses the name/years out of the article text. This is fairly consistent across
+    Parses the name/years out of the article `content`. This is fairly consistent across
     articles, e.g.
 
     '''山藤 一郎'''（ふじやま いちろう、[[1911年]]（[[明治]]44年）[[4月8日]] - [[1993年]]（[[平成]]5年）[[8月21日]]）は、
@@ -107,9 +109,9 @@ def parse_article_text(title: str, content: str) -> NameData:
 
     # Look for gender declaration in the opening sentence.
     if regex.search(r'女性\s*。', extra) or '、女性、' in extra_raw:
-        reading.add_tag('fem')
+        reading.gender = Gender.female
     elif regex.search(r'男性\s*。', extra) or '、男性、' in extra_raw:
-        reading.add_tag('masc')
+        reading.gender = Gender.male
 
     # See 松本麻実, 長江麻美, 相沢真美,  山口真未, 華耀きらり
     # FPs: [[多摩美術大学]][[教授]]。妻は女優の[[とよた真帆]]
@@ -120,7 +122,7 @@ def parse_article_text(title: str, content: str) -> NameData:
     if (
         m := regex.search(r'(女学校出身|日本の女性|、女優|、女性|女性\d{4}年)', extra)
     ) and not regex.search(r'教授', extra_raw):
-        reading.add_tag('fem')
+        reading.gender = Gender.female
 
     # Look for 'fictional character' declarations
     if regex.search(r'架空', extra_raw):
@@ -161,15 +163,15 @@ def add_category_data(reading: NameData, content: str):
                 r'(ソプラノ歌手|日本の女性|日本の女子|女性(騎手|競輪選手)|女優$|中国の女性|女流棋士$|の女性$)', category
             )
             or category in ('グラビアアイドル', 'レースクイーン', '女院', '日本の尼僧', '女房名')
-            or regex.search(r'^日本の女子.*選手$‎', category)
+            or regex.search(r'^日本の女子.*選手$', category)
         ):
             if category != '日本の女子サッカー':
-                reading.add_tag('fem')
+                reading.gender = Gender.female
         elif regex.search(r'(日本の男性|日本の男子)', category):
-            reading.add_tag('masc')
-        elif regex.search(r'(日本の男優)', category) and not reading.has_tag('fem'):
+            reading.gender = Gender.male
+        elif regex.search(r'(日本の男優)', category) and reading.gender != Gender.female:
             # There are some false positives here (or rather women performing male roles?)
-            reading.add_tag('masc')
+            reading.gender = Gender.male
 
         if regex.search(r'架空の', category):
             reading.authenticity = NameAuthenticity.FICTIONAL
@@ -235,7 +237,6 @@ def parse_wikipedia_article(
     logging.debug(f'Box data: {box_data}')
     logging.debug(f'Article data: {article_data}')
 
-    # Complex merging logic YIKES
     namedata = merge_namedata(box_data, article_data)
 
     add_category_data(namedata, content)
@@ -252,9 +253,9 @@ def parse_wikipedia_article(
     if add_source:
         namedata.source = f"wikipedia_ja:{title}"
 
-    namedata.add_tag('person')
+    namedata.position = NamePosition.person
     for s in namedata.subreadings:
-        s.add_tag('person')
+        s.position = NamePosition.person
 
     namedata.clean_and_validate()
 
@@ -285,5 +286,4 @@ def test_ref_in_first_line():
         yomi='すずおき ひろたか',
         lifetime=Lifetime(1950),
         source='wikipedia_ja:bar',
-        tags={'person'},
     )

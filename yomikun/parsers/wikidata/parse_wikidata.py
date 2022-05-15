@@ -6,6 +6,7 @@ import jcconv3
 import regex
 
 from yomikun.models import Lifetime, NameAuthenticity, NameData
+from yomikun.models.gender import Gender
 from yomikun.parsers.wikidata.common import extract, year
 from yomikun.utils.split import split_kanji_name
 
@@ -74,12 +75,12 @@ def parse_wikidata(input: TextIO, birth_name_input: TextIO):
             year(extract(data, 'dob.value')), year(extract(data, 'dod.value'))
         )
 
-        namedata = NameData(
-            kanji, kana, lifetime=lifetime, source=f'wikidata:{item}', tags={'person'}
+        namedata = NameData.person(
+            kanji, kana, lifetime=lifetime, source=f'wikidata:{item}'
         )
 
-        if tag := gender_ja(extract(data, 'genderLabel.value')):
-            namedata.add_tag(tag)
+        if gender := gender_ja(extract(data, 'genderLabel.value')):
+            namedata.gender = gender
 
         if item is not None:
             birth_name_data = birth_name.get(item, None)
@@ -89,15 +90,13 @@ def parse_wikidata(input: TextIO, birth_name_input: TextIO):
                     kanji = birth_name_data['birthName']
                     kana = birth_name_data['birthNameKana']
                     kanji = split_kanji_name(kanji, kana)
-                    namedata.add_subreading(NameData(kanji, kana))
+                    namedata.add_subreading(NameData.person(kanji, kana))
 
         description = extract(data, 'itemDescription.value')
         if description:
             description = regex.sub(r'^Japanese ', '', description, regex.I)
             description = description[0].upper() + description[1:]
             namedata.notes = description
-
-        namedata.add_tag('person')
 
         try:
             namedata.clean_and_validate()
@@ -106,9 +105,11 @@ def parse_wikidata(input: TextIO, birth_name_input: TextIO):
             logging.error(f"Validation failure: {e}")
 
 
-def gender_ja(s: str | None):
+def gender_ja(s: str | None) -> Gender:
     if s:
         if s == "男性":
-            return "masc"
+            return Gender.male
         elif s == "女性":
-            return "fem"
+            return Gender.female
+
+    return Gender.unknown

@@ -24,6 +24,7 @@ def split_names():
     names = (NameData.from_dict(json.loads(line)) for line in sys.stdin)
     for name in names:
         try:
+            name.validate()
             sei, mei = name.split()
             print(sei.to_jsonl())
             print(mei.to_jsonl())

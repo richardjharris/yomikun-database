@@ -1,4 +1,4 @@
-command: 'build-aggregate-data --genderdb=%genderdb%'
+command: 'build-aggregated-data --genderdb=%genderdb%'
 # Basic test: split names, aggregate hits, consider jmnedict to be 0 hits
 ---
 {"kaki": "小田 剛嗣", "yomi": "おだ つよし", "authenticity": "real", "source": "custom", "tags": ["masc", "person"]}
@@ -6,10 +6,10 @@ command: 'build-aggregate-data --genderdb=%genderdb%'
 {"kaki": "塙 直政", "yomi": "はらだ なおまさ", "authenticity": "real", "lifetime": {"birth_year": 1550, "death_year": 1576}, "source": "wikidata:http://www.wikidata.org/entity/Q8193998", "tags": ["masc", "person", "xx-romaji"]}
 {"kaki": "壱多朗", "yomi": "いちたろう", "authenticity": "real", "source": "jmnedict", "tags": ["dict", "given"]}
 ---
-{"hits_male": 2, "hits_female": 0, "hits_unknown": 0, "years_seen": {"birth_year": null, "death_year": null}, "hits_xx_romaji": 0, "hits_pseudo": 0, "hits_total": 2, "kaki": "小田", "yomi": "おだ", "part": "sei", "ml_score": 83, "ct_score": 0, "ct_confidence": 0}
+{"hits_male": 0, "hits_female": 0, "hits_unknown": 2, "years_seen": {"birth_year": null, "death_year": null}, "hits_xx_romaji": 0, "hits_pseudo": 0, "hits_total": 2, "kaki": "小田", "yomi": "おだ", "part": "sei", "ml_score": 83, "ct_score": 0, "ct_confidence": 0}
 {"hits_male": 1, "hits_female": 0, "hits_unknown": 0, "years_seen": {"birth_year": null, "death_year": null}, "hits_xx_romaji": 0, "hits_pseudo": 0, "hits_total": 1, "kaki": "剛嗣", "yomi": "つよし", "part": "mei"}
 {"hits_male": 1, "hits_female": 0, "hits_unknown": 0, "years_seen": {"birth_year": null, "death_year": null}, "hits_xx_romaji": 0, "hits_pseudo": 0, "hits_total": 1, "kaki": "剛嗣", "yomi": "たけし", "part": "mei"}
-{"hits_male": 1, "hits_female": 0, "hits_unknown": 0, "years_seen": {"birth_year": 1550, "death_year": 1576}, "hits_xx_romaji": 1, "hits_pseudo": 0, "hits_total": 1, "kaki": "塙", "yomi": "はらだ", "part": "sei"}
+{"hits_male": 0, "hits_female": 0, "hits_unknown": 1, "years_seen": {"birth_year": 1550, "death_year": 1576}, "hits_xx_romaji": 1, "hits_pseudo": 0, "hits_total": 1, "kaki": "塙", "yomi": "はらだ", "part": "sei"}
 {"hits_male": 1, "hits_female": 0, "hits_unknown": 0, "years_seen": {"birth_year": 1550, "death_year": 1576}, "hits_xx_romaji": 1, "hits_pseudo": 0, "hits_total": 1, "kaki": "直政", "yomi": "なおまさ", "part": "mei", "ml_score": 0, "ct_score": -1.0, "ct_confidence": 0.8035037347571713}
 {"hits_male": 0, "hits_female": 0, "hits_unknown": 0, "years_seen": {"birth_year": null, "death_year": null}, "hits_xx_romaji": 0, "hits_pseudo": 0, "hits_total": 0, "kaki": "壱多朗", "yomi": "いちたろう", "part": "mei", "ml_score": 0, "ct_score": -1.0, "ct_confidence": 0.7096680449110859}
 ---

@@ -36,10 +36,10 @@ install: db/final.db
 	sqlite3 --csv --noheader $< 'pragma user_version' > ../app/assets/namesdb.version.txt 2>/dev/null
 
 db/final.db: db/aggregated.jsonl
-	rm -f $@ && $(YOMIKUN) build-sqlite $@ < $<
+	$(YOMIKUN) build-sqlite --replace $@ < $<
 
 db/aggregated.jsonl: db/deduped.jsonl
-	$(YOMIKUN) build-aggregate-data < $< > $@
+	$(YOMIKUN) build-aggregated-data < $< > $@
 
 db/gender.jsonl: db/deduped.jsonl data/name_lists.json
 	$(YOMIKUN) build-gender-db < $< > $@
@@ -90,7 +90,7 @@ isort:
 	isort $(SOURCE_FILES)
 
 db/deduped.jsonl: ${JSONLFILES}
-	$(YOMIKUN) person-dedupe < $^ > $@
+	cat $^ | $(YOMIKUN) person-dedupe > $@
 
 # Caution: LARGE! 36GB as of Oct 2021
 # Can be replaced with an empty file once data/enwiki-nihongo-articles.gz is built, as you are
@@ -128,10 +128,10 @@ jsonl/wikipedia_ja.jsonl: data/jawiki-articles.gz
 	${ZCAT} data/jawiki-articles.gz | $(PARALLEL) $(YOMIKUN) parse-wikipedia --lang=ja > $@
 
 jsonl/wikidata.jsonl: data/wikidata.jsonl.gz
-	${ZCAT} $< | ${PARALLEL} $(YOMIKUN) parse-wikidata > $@ 2>/dev/null
+	${ZCAT} $< | $(PARALLEL) $(YOMIKUN) parse-wikidata > $@ 2>/dev/null
 
 jsonl/wikidata-nokana.jsonl: data/wikidata-nokana.jsonl.gz
-	${ZCAT} $< | ${PARALELL} $(YOMIKUN) parse-wikidata-nokana > $@
+	${ZCAT} $< | $(PARALLEL) $(YOMIKUN) parse-wikidata-nokana > $@
 
 jsonl/custom.jsonl: data/custom.csv data/custom.d
 	$(YOMIKUN) parse-custom-data data/custom.csv data/custom.d/* > $@
@@ -140,8 +140,8 @@ jsonl/custom.jsonl: data/custom.csv data/custom.d
 jsonl/researchmap.jsonl jsonl/seijiyama.jsonl: jsonl/%.jsonl: data/%.jsonl
 	$(YOMIKUN) split-names < $< | sort > $@
 
-data/researchmap.jsonl:
-	${ZCAT} data/researchmap.gz | ${PARALLEL} $(YOMIKUN) import-researchmap > $@
+data/researchmap.jsonl: data/researchmap.gz
+	${ZCAT} $< | $(PARALLEL) $(YOMIKUN) import-researchmap > $@
 
 jsonl/jmnedict.jsonl:
 	$(YOMIKUN) parse-jmnedict > $@

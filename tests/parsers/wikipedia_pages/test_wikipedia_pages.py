@@ -14,6 +14,7 @@ import yaml
 import yomikun.parsers.wikipedia_en.parser
 import yomikun.parsers.wikipedia_ja.parser
 from yomikun.models import NameAuthenticity, NameData
+from yomikun.models.gender import Gender
 from yomikun.models.lifetime import Lifetime
 
 FIXTURE_DIR = Path(__file__).parent.joinpath('fixtures')
@@ -81,7 +82,7 @@ def test_parser(test_page: tuple[Path, str]):
     result = module.parse_wikipedia_article(path.name, content, add_source=False)
 
     if result is None:
-        result = NameData()
+        result = NameData.person()
 
     result.remove_xx_tags()
 
@@ -95,7 +96,7 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
     Returns the NameData that we expect to parse from a test case, using
     the test metadata.
     """
-    namedata = NameData()
+    namedata = NameData.person()
     for key, value in metadata.items():
         if key == 'name':
             namedata.kaki = value
@@ -112,16 +113,16 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
             # If gender is specified, it must match. Otherwise any gender
             # is accepted.
             if value == 'M':
-                namedata.add_tag('masc')
+                namedata.gender = Gender.male
             elif value == 'F':
-                namedata.add_tag('fem')
+                namedata.gender = Gender.female
             else:
                 raise Exception(f"Unknown gender value '{value}'")
         elif key == 'notes':
             namedata.notes = value
         elif key == 'tags':
             for tag in value:
-                namedata.add_tag(tag)
+                namedata.tags.add(tag)
         elif key == 'source':
             # Article source URL
             pass
@@ -133,6 +134,4 @@ def build_namedata_from_test_header(metadata: dict) -> NameData | None:
         else:
             raise Exception(f"invalid test key '{key}'")
 
-    if namedata.has_name():
-        namedata.add_tag('person')
     return namedata

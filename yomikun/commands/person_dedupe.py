@@ -30,13 +30,11 @@ def person_dedupe(input: TextIO):
             in_records += 1
         else:
             # Print out directly
-            print(line, end='')
+            print(data.to_jsonl())
             passthru_records += 1
 
     for person in dedupe.deduped_people():
         try:
-            person.add_tag('person')
-
             print(person.to_jsonl())
             out_records += 1
         except TypeError:

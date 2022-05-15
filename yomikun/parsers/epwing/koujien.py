@@ -15,7 +15,7 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
     """
     if m := regex.search(r'^(\p{Hiragana}+)‐(\p{Hiragana}+)【(\p{Han}+)】', heading):
         sei, mei, kanji = m.groups()
-        reading = NameData(kanji, f'{sei} {mei}')
+        reading = NameData.person(kanji, f'{sei} {mei}', source=f"koujien:{heading}")
 
         lines = text.splitlines()
         if m := regex.search(r'（(\d{4})〜(\d{4})?）$', lines[1]):
@@ -29,8 +29,6 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         # Attempt to split the kanji into surname + first name
         reading.kaki = split_kanji_name(reading.kaki, reading.yomi)
 
-        reading.source = f"koujien:{heading}"
-        reading.add_tag('person')
         reading.clean_and_validate()
         return reading
     else:

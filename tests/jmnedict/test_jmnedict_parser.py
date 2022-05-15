@@ -1,5 +1,6 @@
 from yomikun.jmnedict.parser import parse
 from yomikun.models import Lifetime, NameData
+from yomikun.models.name_position import NamePosition
 
 
 def test_basic():
@@ -125,10 +126,15 @@ def test_given_name():
         ],
     }
     result = parse(data)
-    # Should ignore gender tag and add 'dict'
-    assert result == [
-        NameData("愛", "ゆき", tags={"given", "dict"}, source="jmnedict"),
+    expected = [
+        NameData("愛", "ゆき", position=NamePosition.mei, is_dict=True, source="jmnedict"),
     ]
+    assert result == expected, 'gender tag ignored, is_dict=True'
+
+    # Test other tag combinations
+    for name_types in (['given'], ['given', 'masc'], ['masc', 'fem']):
+        data['senses'][0]['name_type'] = name_types
+        assert parse(data) == expected, name_types
 
 
 def test_surname():
@@ -145,8 +151,35 @@ def test_surname():
     }
     result = parse(data)
     assert result == [
-        NameData("斎藤", "さいとう", tags={"surname", "dict"}, source="jmnedict"),
+        NameData(
+            "斎藤", "さいとう", position=NamePosition.sei, is_dict=True, source="jmnedict"
+        ),
     ]
+
+
+def test_surname_with_given_name():
+    data = {
+        "idseq": 5301123,
+        "kanji": [{"text": "斎藤"}],
+        "kana": [{"text": "さいとう", "nokanji": 0}],
+        "senses": [
+            {
+                "SenseGloss": [{"lang": "eng", "text": "Saitou"}],
+                "name_type": ["surname", "given"],
+            }
+        ],
+    }
+    result = parse(data)
+    expected = [
+        NameData(
+            "斎藤", "さいとう", position=NamePosition.sei, is_dict=True, source="jmnedict"
+        ),
+        NameData(
+            "斎藤", "さいとう", position=NamePosition.mei, is_dict=True, source="jmnedict"
+        ),
+    ]
+    assert len(result) == 2
+    assert (result == expected) or (result == expected[::-1])
 
 
 def test_multiple_entries():

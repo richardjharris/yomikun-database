@@ -5,4 +5,4 @@ command: parse-custom-data
 
 # blank line
 ---
-{"kaki": "秋元 祐也", "yomi": "あきもと ゆうや", "authenticity": "real", "lifetime": {"birth_year": 1960, "death_year": null}, "source": "custom", "tags": ["masc", "person"], "notes": "Fashion designer"}
+{"kaki": "秋元 祐也", "yomi": "あきもと ゆうや", "authenticity": "real", "gender": "male", "position": "person", "lifetime": {"birth_year": 1960, "death_year": null}, "source": "custom", "notes": "Fashion designer"}

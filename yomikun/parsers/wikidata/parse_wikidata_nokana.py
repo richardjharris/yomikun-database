@@ -5,6 +5,7 @@ from typing import TextIO
 import regex
 
 from yomikun.models import Lifetime, NameData
+from yomikun.models.gender import Gender
 from yomikun.parsers.wikidata.common import year
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.split import try_to_swap_names
@@ -58,7 +59,7 @@ def parse_wikidata_nokana(input: TextIO):
         lifetime = Lifetime(year(data.get('dob', None)), year(data.get('dod', None)))
 
         # Include xx-romaji tag, as we only have romaji data
-        namedata = NameData(
+        namedata = NameData.person(
             kanji,
             kana,
             lifetime=lifetime,
@@ -66,10 +67,9 @@ def parse_wikidata_nokana(input: TextIO):
             tags={'xx-romaji'},
         )
 
-        if tag := gender_en(data.get('genderLabel', None)):
-            namedata.add_tag(tag)
+        if gender := gender_en(data.get('genderLabel', None)):
+            namedata.gender = gender
 
-        namedata.add_tag('person')
         try:
             namedata.clean_and_validate()
             print(namedata.to_jsonl())
@@ -77,9 +77,11 @@ def parse_wikidata_nokana(input: TextIO):
             logging.error(f"Validation failure: {e}")
 
 
-def gender_en(s: str | None):
+def gender_en(s: str | None) -> Gender:
     if s:
         if s == "male":
-            return "masc"
+            return Gender.male
         elif s == "female":
-            return "fem"
+            return Gender.female
+
+    return Gender.unknown

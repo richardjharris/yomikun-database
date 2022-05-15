@@ -3,17 +3,24 @@ from __future__ import annotations
 import copy
 import dataclasses
 import json
+import logging
 from dataclasses import dataclass, field
 
 import regex
 
 from yomikun.models.gender import Gender
 from yomikun.models.lifetime import Lifetime
-from yomikun.models.nameauthenticity import NameAuthenticity
-from yomikun.models.namepart import NamePart
-from yomikun.models.nameposition import NamePosition
+from yomikun.models.name_authenticity import NameAuthenticity
+from yomikun.models.name_position import NamePosition
 from yomikun.utils import normalise_whitespace, patterns
 from yomikun.utils.convert import convert_to_hiragana
+
+
+@dataclass(frozen=True)
+class NameDataKey:
+    kaki: str
+    yomi: str
+    position: NamePosition
 
 
 @dataclass
@@ -40,6 +47,16 @@ class NameData:
     names may not actually be used in the real world, only in fiction.
     """
     authenticity: NameAuthenticity = NameAuthenticity.REAL
+
+    """
+    Gender of name, if a given name or person
+    """
+    gender: Gender = Gender.unknown
+
+    """
+    Type of name this record represents.
+    """
+    position: NamePosition = NamePosition.unknown
 
     """
     Life span of this name.
@@ -69,27 +86,26 @@ class NameData:
     source: str = ''
 
     """
-    Tags associated with the name.
-
-    The gender and type of a name is indicated by a tag combination:
-
-      masc: male given
-      fem: female given
-      given: given (no gender)
-      surname: surname
-      masc, person: male person
-      fem, person: female person
-      person: person (no gender)
-
-    Additional tags include 'dict' (not a real-world sighting of the name).
+    True if this name represents a dictionary entry. Such names do not contribute
+    to a name hit count, and are included for completeness.
     """
-    # Arbitrary tags assigned to the name. Used by JMNedict to mark
-    # whether a name is a forename or a surname, etc.
+    is_dict: bool = False
+
+    # Arbitrary tags assigned to the name. (Legacy)
     tags: set[str] = field(default_factory=set)
 
     # Arbitrary notes. For person records, this indicates the type of person
     # e.g. (actor, musician, politician etc.)
     notes: str = ''
+
+    def key(self) -> NameDataKey:
+        """
+        Key used for name equality: kaki, yomi and position.
+
+        This is the most typical way to dedupe or aggregate names, and also the
+        primary key in the SQLite database.
+        """
+        return NameDataKey(self.kaki, self.yomi, self.position)
 
     def __post_init__(self):
         # Do basic type checking, as selfclasses does not
@@ -99,13 +115,33 @@ class NameData:
         if isinstance(self.tags, list):
             self.tags = set(self.tags)
 
+        # Handle legacy tags
+        # FIXME: remove
+        if self.tags:
+            if 'person' in self.tags or (' ' in self.kaki or ' ' in self.yomi):
+                self.position = NamePosition.person
+            elif 'surname' in self.tags:
+                self.position = NamePosition.sei
+            elif self.tags & {'given', 'masc', 'fem'}:
+                self.position = NamePosition.mei
+
+            if 'fem' in self.tags:
+                self.gender = Gender.female
+            elif 'masc' in self.tags:
+                self.gender = Gender.male
+
+            if 'dict' in self.tags:
+                self.is_dict = True
+
+            # Remove the tags we have handled
+            self.tags -= {'person', 'surname', 'given', 'masc', 'fem', 'dict'}
+            # FIXME: complain if any tags are not xx-*
+
         self.clean()
 
     @classmethod
     def person(cls, *args, **kvargs):
-        nd = NameData(*args, **kvargs)
-        nd.add_tag('person')
-        return nd
+        return NameData(*args, **kvargs, position=NamePosition.person)
 
     def set_name(self, kaki: str, yomi: str):
         self.kaki = kaki
@@ -124,39 +160,11 @@ class NameData:
         self.authenticity = NameAuthenticity.PSEUDO
         self.add_subreading(honmyo)
 
-    def add_tag(self, tag: str):
-        self.tags.add(tag)
-        return self
-
-    def remove_tag(self, tag: str):
-        if tag in self.tags:
-            self.tags.remove(tag)
-        return self
-
-    def remove_tags(self, *tags):
-        for tag in tags:
-            if tag in self.tags:
-                self.tags.remove(tag)
-        return self
-
-    def has_tag(self, tag: str):
-        return tag in self.tags
-
     def remove_xx_tags(self):
         to_remove = [tag for tag in self.tags if tag.startswith('xx-')]
         for tag in to_remove:
             self.tags.remove(tag)
         return self
-
-    def is_person(self):
-        return 'person' in self.tags or (' ' in self.kaki and ' ' in self.yomi)
-
-    def is_given_name(self):
-        # Assumes is_person/is_surname already checked.
-        return 'masc' in self.tags or 'fem' in self.tags or 'given' in self.tags
-
-    def is_surname(self):
-        return 'surname' in self.tags
 
     def has_name(self) -> bool:
         """
@@ -164,122 +172,62 @@ class NameData:
         """
         return len(self.kaki) > 0 and len(self.yomi) > 0
 
-    def gender(self) -> str | None:
-        if 'fem' in self.tags:
-            return 'fem'
-        elif 'masc' in self.tags:
-            return 'masc'
-        else:
-            return None
-
-    def _gender_typed(self) -> Gender:
-        tags = self.tags
-        if 'masc' in tags and 'fem' in tags:
-            return Gender.neutral
-        elif 'masc' in tags:
-            return Gender.male
-        elif 'fem' in tags:
-            return Gender.female
-        else:
-            return Gender.unknown
-
-    def set_gender(self, new_gender: str | None):
-        self.remove_tags('masc', 'fem')
-
-        if new_gender:
-            self.add_tag(new_gender)
-
-        return self
-
     def clone(self) -> NameData:
         # Use our existing JSONL serialization rather than coding the logic again.
         return NameData.from_jsonl(self.to_jsonl())
 
-    def split(self) -> tuple[NameData, NameData]:
+    def split(self, ignore_subreadings=False) -> tuple[NameData, NameData]:
         """
         Split this NameData object into two (surname + given name components).
         This object must be a person with two name parts, and no subreadings,
         otherwise ValueError will be raised.
         """
-        if not self.is_person():
+        if self.position != NamePosition.person:
             raise ValueError("split(): NameData must be a person")
-        if self.subreadings:
+        if self.subreadings and not ignore_subreadings:
             raise ValueError("split(): NameData must not have any subreadings")
         if len(self.kaki.split()) == 1:
             # Even though it's tagged as a person, the kanji is not split into two
             raise ValueError("split(): NameData kaki is not split")
 
-        self.clean_and_validate()
+        self.clean()
 
         sei_kaki, mei_kaki = self.kaki.split()
         sei_yomi, mei_yomi = self.yomi.split()
 
-        mei_tag = self.gender() or 'given'
+        sei = self.clone().set_name(sei_kaki, sei_yomi)
+        sei.position = NamePosition.sei
+        sei.gender = Gender.unknown
 
-        sei = (
-            self.clone()
-            .set_name(sei_kaki, sei_yomi)
-            .remove_tags('person', 'masc', 'fem', 'given')
-            .add_tag('surname')
-        )
-        mei = (
-            self.clone()
-            .set_name(mei_kaki, mei_yomi)
-            .remove_tags('person', 'given')
-            .add_tag(mei_tag)
-        )
+        mei = self.clone().set_name(mei_kaki, mei_yomi)
+        mei.position = NamePosition.mei
 
         return (sei, mei)
 
-    def extract_name_parts(self) -> list[tuple[NamePart, Gender | None]]:
+    def extract_name_parts(self) -> list[NameData]:
         """
         Used by RomajiDB, GenderDB, person dedupe etc.
 
         Return a list of name parts from this NameData record. If this record is
-        a person, outputs a sei and mei record; otherwise, outputs a single record
-        matching this name's position.
+        a person, outputs a sei and mei record; otherwise, outputs the record
+        as-is.
         """
         self.clean()
 
-        parts = []
-        if self.is_person():
-            # Sometimes is tagged [person, fem] to indicate the person's gender.
-            gender = self._gender_typed()
-            kakis = self.kaki.split()
-            yomis = self.yomi.split()
-            if len(kakis) == 2 and len(yomis) == 2:
-                sei = NamePart(kaki=kakis[0], yomi=yomis[0], position=NamePosition.sei)
-                mei = NamePart(kaki=kakis[1], yomi=yomis[1], position=NamePosition.mei)
-                parts += [(sei, gender), (mei, gender)]
-            else:
-                # Can't reliably assign positions to names
-                part = NamePart(
-                    kaki=self.kaki, yomi=self.yomi, position=NamePosition.unknown
-                )
-                parts.append((part, gender))
-        elif 'unclass' in self.tags:
-            for tag in ('person', 'surname', 'given', 'fem', 'masc'):
-                assert not self.has_tag(tag)
-
-            part = NamePart(
-                kaki=self.kaki, yomi=self.yomi, position=NamePosition.unknown
-            )
-            parts.append((part, None))
+        names = []
+        if (
+            self.position == NamePosition.person
+            and len(self.kaki.split()) == 2
+            and len(self.yomi.split()) == 2
+        ):
+            names += self.split(ignore_subreadings=True)
         else:
-            # Names may be a combination of masc,fem,given,surname
-            if 'surname' in self.tags:
-                sei = NamePart(
-                    kaki=self.kaki, yomi=self.yomi, position=NamePosition.sei
-                )
-                parts.append((sei, None))
-            elif set(self.tags).intersection({'masc', 'fem', 'given'}):
-                gender = self._gender_typed()
-                mei = NamePart(
-                    kaki=self.kaki, yomi=self.yomi, position=NamePosition.mei
-                )
-                parts.append((mei, gender))
+            names += [self]
 
-        return parts
+        for subreading in self.subreadings:
+            names += subreading.extract_name_parts()
+
+        return names
 
     def clean(self):
         """
@@ -321,6 +269,7 @@ class NameData:
 
         Does nothing if the main reading is not PSEUDO.
         """
+        # FIXME: copies 'xx-romaji' too which is wrong
         for subreading in self.subreadings:
             # Copy over the lifetime / gender / source to the real actor
             if (
@@ -334,36 +283,35 @@ class NameData:
                 if self.tags and not subreading.tags:
                     subreading.tags = self.tags
 
+                subreading.gender = self.gender
+
     def validate(self):
         """
-        Validates the kaki and yomi values are correct based on the tags set.
+        Validates the kaki and yomi values are correct based on the name type.
+
         Raises ValueError if not correct.
         """
-        part = None
-        if self.is_person():
-            kaki_pat = patterns.name_pat
-            if len(self.kaki.split()) == 1:
-                yomi_pat = patterns.reading_pat_optional_space
-            else:
-                yomi_pat = patterns.reading_pat
-            part = 'person'
-        elif self.is_given_name():
-            kaki_pat = patterns.mei_pat
-            yomi_pat = patterns.hiragana_pat
-            part = 'given'
-        elif self.is_surname():
-            kaki_pat = patterns.sei_pat
-            yomi_pat = patterns.hiragana_pat
-            part = 'surname'
-        else:
-            raise ValueError(
-                f'Data should be tagged to indicate part of name: {self.to_jsonl()}'
-            )
+        match self.position:
+            case NamePosition.person:
+                kaki_pat = patterns.name_pat
+                if len(self.kaki.split()) == 1:
+                    yomi_pat = patterns.reading_pat_optional_space
+                else:
+                    yomi_pat = patterns.reading_pat
+            case NamePosition.mei:
+                kaki_pat = patterns.mei_pat
+                yomi_pat = patterns.hiragana_pat
+            case NamePosition.sei:
+                kaki_pat = patterns.sei_pat
+                yomi_pat = patterns.hiragana_pat
+            case NamePosition.unknown:
+                logging.error(self)
+                raise ValueError("name with position=unknown")
 
         if not regex.match(fr'^{kaki_pat}$', self.kaki):
             if self.authenticity == NameAuthenticity.REAL:
                 raise ValueError(
-                    f"Invalid kaki '{self.kaki}' for part {part} ({self.to_jsonl()})"
+                    f"Invalid kaki '{self.kaki}' for part {self.position} ({self.to_jsonl()})"
                 )
             else:
                 # Anything is allowed for pen-names and fictional characters
@@ -371,7 +319,7 @@ class NameData:
 
         if not regex.match(fr'^{yomi_pat}$', self.yomi):
             raise ValueError(
-                f"Invalid yomi '{self.yomi}' for part {part} ({self.to_jsonl()})"
+                f"Invalid yomi '{self.yomi}' for part {self.position} ({self.to_jsonl()})"
             )
 
         for sub in self.subreadings:
@@ -391,6 +339,8 @@ class NameData:
         data = dataclasses.asdict(self)
 
         data['authenticity'] = data['authenticity'].name.lower()
+        data['gender'] = data['gender'].name.lower()
+        data['position'] = data['position'].name.lower()
 
         if data['notes'] == '':
             del data['notes']
@@ -398,8 +348,19 @@ class NameData:
         if not self.lifetime:
             del data['lifetime']
 
+        if self.gender == Gender.unknown:
+            del data['gender']
+
+        if self.position == NamePosition.unknown:
+            del data['position']
+
         # Use list for tags as JSON has no set operator
         data['tags'] = list(sorted(data['tags']))
+        if not data['tags']:
+            del data['tags']
+
+        if not data['is_dict']:
+            del data['is_dict']
 
         # Does not seem to recurse via asdict()
         if not data['subreadings']:
@@ -423,6 +384,10 @@ class NameData:
     def from_dict(cls, data: dict) -> NameData:
         if 'authenticity' in data:
             data['authenticity'] = NameAuthenticity[data['authenticity'].upper()]
+        if 'gender' in data:
+            data['gender'] = Gender[data['gender'].lower()]
+        if 'position' in data:
+            data['position'] = NamePosition[data['position'].lower()]
         if 'lifetime' in data:
             data['lifetime'] = Lifetime(**data['lifetime'])
         if 'subreadings' in data:
@@ -438,6 +403,7 @@ class NameData:
     def from_jsonl(cls, jsonl: str) -> NameData:
         return cls.from_dict(json.loads(jsonl))
 
+    # FIXME: handle new fields
     def to_csv(self) -> str:
         """
         Returns name data in custom.csv format
@@ -446,26 +412,26 @@ class NameData:
             raise ValueError('subreadings are not supported with to_csv')
 
         tags = set(self.tags)
-        if 'masc' in tags:
-            tags.remove('masc')
+        if self.gender == Gender.male:
             tags.add('m')
-        if 'fem' in tags:
-            tags.remove('fem')
+        elif self.gender == Gender.female:
             tags.add('f')
-        if 'surname' in tags:
-            tags.remove('surname')
+
+        if self.position == NamePosition.sei:
             tags.add('s')
+
         if self.authenticity == NameAuthenticity.PSEUDO:
             tags.add('pseudo')
         if self.authenticity == NameAuthenticity.FICTIONAL:
             tags.add('fictional')
 
-        fields = [self.kaki, self.yomi, '+'.join(sorted(tags))]
-        lifetime = self.lifetime.to_csv()
-        if lifetime or self.notes:
-            fields.append(lifetime)
-        if self.notes:
-            fields.append(self.notes)
+        tags_joined = '+'.join(sorted(tags))
+
+        fields = [self.kaki, self.yomi, tags_joined, self.lifetime.to_csv(), self.notes]
+
+        # Remove trailing empty fields
+        while fields and fields[-1] == '':
+            fields.pop()
 
         return ','.join(fields)
 
@@ -479,26 +445,27 @@ class NameData:
         """
         kaki = row['kaki']
         yomi = convert_to_hiragana(row['yomi'])
-        namedata = NameData(kaki, yomi)
+        namedata = NameData(kaki, yomi, position=NamePosition.mei)
 
         if row['tags']:
             tags = row['tags'].split('+')
             for tag in tags:
                 if tag == 'm':
-                    namedata.set_gender('masc')
+                    namedata.gender = Gender.male
                 elif tag == 'f':
-                    namedata.set_gender('fem')
+                    namedata.gender = Gender.female
                 elif tag == 's':
-                    namedata.set_gender('surname')
+                    namedata.position = NamePosition.sei
                 elif tag == 'pseudo':
                     namedata.authenticity = NameAuthenticity.PSEUDO
                 elif tag in ('fictional', 'fict'):
                     namedata.authenticity = NameAuthenticity.FICTIONAL
                 else:
-                    namedata.add_tag(tag)
+                    namedata.tags.add(tag)
 
-        if namedata.is_person():
-            namedata.add_tag('person')
+        # Assume person if the name contained spaces
+        if len(kaki.split()) == 2:
+            namedata.position = NamePosition.person
 
         if row['lifetime']:
             try:

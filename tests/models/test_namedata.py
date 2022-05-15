@@ -1,21 +1,8 @@
 import pytest
 
 from yomikun.models import Lifetime, NameAuthenticity, NameData
-
-
-def test_add_tag():
-    nd = NameData('高次', 'こうじ')
-    nd.add_tag('foo')
-    assert nd == NameData('高次', 'こうじ', tags={'foo'})
-
-    nd.add_tag('bar')
-    assert nd == NameData('高次', 'こうじ', tags={'foo', 'bar'})
-
-
-def test_remove_tag():
-    nd = NameData('高次', 'こうじ', tags={'foo', 'bar'})
-    nd.remove_tag('foo')
-    assert nd == NameData('高次', 'こうじ', tags={'bar'})
+from yomikun.models.gender import Gender
+from yomikun.models.name_position import NamePosition
 
 
 def test_remove_xx():
@@ -24,15 +11,15 @@ def test_remove_xx():
     assert nd.tags == {'foo'}
 
 
-def test_pos_validation():
-    with pytest.raises(ValueError, match=r'^Data should be tagged'):
-        NameData('愛', 'あい').validate()
+def test_unknown_validation():
+    with pytest.raises(ValueError, match=r'^name with position=unknown'):
+        NameData('愛', 'あい', position=NamePosition.unknown).validate()
 
     NameData('愛', 'あい', tags={'fem'}).validate()
 
 
 def test_kaki_validation():
-    nd = NameData.person('梅の里 昭二', 'うめのさと しょうじ')
+    nd = NameData.person('foobar', 'うめのさと しょうじ')
     with pytest.raises(ValueError, match=r'^Invalid kaki'):
         nd.validate()
 
@@ -51,37 +38,64 @@ def test_kana_validation():
 
 def test_split():
     nd = NameData.person(
-        '黒澤 明', 'くろさわ あきら', tags={'xx-romaji', 'masc'}, source='wikipedia_en'
+        '黒澤 明',
+        'くろさわ あきら',
+        tags={'xx-romaji'},
+        gender=Gender.male,
+        source='wikipedia_en',
     )
     sei, mei = nd.split()
     assert sei == NameData(
-        '黒澤', 'くろさわ', tags={'xx-romaji', 'surname'}, source='wikipedia_en'
+        '黒澤',
+        'くろさわ',
+        tags={'xx-romaji'},
+        position=NamePosition.sei,
+        source='wikipedia_en',
     )
     assert mei == NameData(
-        '明', 'あきら', tags={'xx-romaji', 'masc'}, source='wikipedia_en'
+        '明',
+        'あきら',
+        tags={'xx-romaji'},
+        position=NamePosition.mei,
+        gender=Gender.male,
+        source='wikipedia_en',
     )
 
     # Errors
     with pytest.raises(ValueError, match=r'NameData must be a person'):
-        NameData('明', 'あきら', tags={'masc'}).split()
+        NameData('明', 'あきら', gender=Gender.male).split()
 
     with pytest.raises(ValueError, match=r'NameData must not have any subreadings'):
-        NameData(
+        NameData.person(
             '黒澤 明',
             'くろさわ あきら',
-            tags={'masc', 'person'},
+            gender=Gender.male,
             subreadings=[NameData('気　来', 'き き')],
         ).split()
 
     with pytest.raises(ValueError, match=r'NameData kaki is not split'):
-        NameData('朱匠', 'しゅ たくみ', tags={'person'}).split()
+        NameData.person('朱匠', 'しゅ たくみ').split()
 
 
-def test_gender():
-    assert NameData('まこと', 'まこと', tags={'fem'}).gender() == 'fem'
-    assert NameData('まこと', 'まこと', tags={'masc'}).gender() == 'masc'
-    assert NameData('まこと', 'まこと', tags={'fem', 'masc'}).gender() == 'fem'
-    assert NameData('まこと', 'まこと').gender() is None
+def test_legacy_gender_tags():
+    assert NameData('まこと', 'まこと', tags={'fem'}).gender == Gender.female
+    assert NameData('まこと', 'まこと', tags={'masc'}).gender == Gender.male
+    assert (
+        NameData('まこと', 'まこと', tags={'fem', 'masc'}).gender == Gender.female
+    ), 'female preferred'
+    assert NameData('まこと', 'まこと').gender == Gender.unknown
+
+
+def test_legacy_isdict():
+    assert not NameData('夏目', 'なつめ').is_dict
+    assert NameData('夏目', 'なつめ', tags={'dict'}).is_dict
+
+
+def test_legacy_isdict_surname():
+    nd = NameData('夏目', 'なつめ', tags={'surname', 'dict'})
+    assert nd.is_dict
+    assert nd.position == NamePosition.sei
+    assert not nd.tags
 
 
 def test_copy_data_to_subreadings():
@@ -100,4 +114,17 @@ def test_copy_data_to_subreadings():
 
     assert nd.subreadings[0].lifetime == Lifetime(1867, 1916)
     assert nd.subreadings[0].source == 'wikipedia_en'
-    assert 'person' in nd.subreadings[0].tags
+
+
+def test_from_csv_regression():
+    row = {
+        'kaki': '小田　剛嗣',
+        'yomi': 'おだ つよし',
+        'tags': 'm',
+        'lifetime': '1920-1980',
+        'notes': '',
+    }
+    result = NameData.from_csv(row)
+    assert result == NameData.person(
+        '小田　剛嗣', 'おだ つよし', gender=Gender.male, lifetime=Lifetime(1920, 1980)
+    )

@@ -8,7 +8,7 @@ from yomikun.sqlite.constants import PART_ID
 from yomikun.sqlite.table_builders.base import TableBuilderBase
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(frozen=True)
 class NameAndPart:
     kanji: str
     part: str  # as string
@@ -18,21 +18,24 @@ class NameAndPart:
 class GenderCounts:
     male: int = 0
     female: int = 0
+    unknown: int = 0
 
-    def add(self, new_male: int, new_female: int):
+    def add(self, new_male: int, new_female: int, new_unknown: int):
         self.male += new_male
         self.female += new_female
+        self.unknown += new_unknown
 
     @property
     def total(self):
-        return self.male + self.female
+        return self.male + self.female + self.unknown
 
     @property
     def female_ratio(self) -> int:
-        if self.total == 0:
+        male_and_female = self.male + self.female
+        if male_and_female == 0:
             return 127
         else:
-            return int(self.female / self.total * 255)
+            return int(self.female / male_and_female * 255)
 
 
 class KanjiStatsTable(TableBuilderBase):
@@ -45,7 +48,7 @@ class KanjiStatsTable(TableBuilderBase):
 
     counts: defaultdict[NameAndPart, GenderCounts]
 
-    is_han = regex.compile(r"\p{Han}")
+    IS_HAN = regex.compile(r"\p{Han}")
 
     _create_statement = """
         CREATE TABLE kanji_stats(
@@ -69,11 +72,12 @@ class KanjiStatsTable(TableBuilderBase):
             # already covered by mei/sei
             return
 
-        for ji in self.is_han.findall(row["kaki"]):
+        for ji in self.IS_HAN.findall(row["kaki"]):
             key = NameAndPart(ji, part)
             self.counts[key].add(
                 new_male=int(row["hits_male"]),
                 new_female=int(row["hits_female"]),
+                new_unknown=int(row["hits_unknown"]),
             )
 
     def finish(self, cur: sqlite3.Cursor):

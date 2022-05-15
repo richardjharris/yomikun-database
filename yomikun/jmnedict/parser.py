@@ -3,9 +3,13 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from operator import itemgetter
-from typing import cast
+
+import jcconv3
+import regex
 
 from yomikun.models import Lifetime, NameData
+from yomikun.models.gender import Gender
+from yomikun.models.name_position import NamePosition
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.split import split_kanji_name
 
@@ -87,23 +91,43 @@ def parse(data: dict) -> list[NameData]:
                     if kanji != split_kanji:
                         kanji, kana = split_kanji, split_kana
 
-                tags = cast(set[str], name_types.copy())
+                # Handle katakana yomi such as ウメこ for ウメ子
+                if regex.search(r"\p{Katakana}", kana):
+                    kana = jcconv3.kata2hira(kana)
 
-                # Indicates that this is a dictionary entry, not a real-world name
-                # sighting
-                if "person" not in tags:
-                    tags.add("dict")
-
-                    # Map fem/masc to given, as gender information is untrustworthy
-                    if tags.intersection({"masc", "fem"}):
-                        tags -= {"masc", "fem"}
-                        tags.add("given")
-
-                namedata = NameData(kanji, kana, tags=tags, source="jmnedict")
-
+                base_data = NameData(kanji, kana, source="jmnedict", is_dict=True)
                 if gloss.lifetime:
-                    namedata.lifetime = gloss.lifetime
+                    base_data.lifetime = gloss.lifetime
 
-                records_out.append(namedata)
+                # Generate NameData for each name type - some JMnedict entries can have
+                # multiple name types (e.g. ['surname', 'given'])
+                if "person" in name_types:
+                    namedata = base_data.clone()
+                    namedata.is_dict = False
+                    namedata.position = NamePosition.person
+                    if "fem" in name_types:
+                        namedata.gender = Gender.female
+                    elif "masc" in name_types:
+                        namedata.gender = Gender.male
+
+                    # Normalise whitespace
+                    namedata.clean()
+                    records_out.append(namedata)
+                else:
+                    if "unclass" in name_types:
+                        namedata = base_data.clone()
+                        namedata.position = NamePosition.unknown
+                        records_out.append(namedata)
+
+                    if "surname" in name_types:
+                        namedata = base_data.clone()
+                        namedata.position = NamePosition.sei
+                        records_out.append(namedata)
+
+                    if name_types & {"masc", "fem", "given"}:
+                        namedata = base_data.clone()
+                        namedata.position = NamePosition.mei
+                        # ignore gender tag, as it is untrustworthy
+                        records_out.append(namedata)
 
     return records_out

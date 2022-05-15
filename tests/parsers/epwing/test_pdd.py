@@ -46,7 +46,7 @@ def test_alternate_name():
         lifetime=Lifetime(1878, 1942),
         source='pdd:よさの　あきこ【与謝野　晶子(與謝野　晶子)】',
         subreadings=[
-            NameData("與謝野　晶子", "よさの あきこ"),
+            NameData.person("與謝野　晶子", "よさの あきこ"),
         ],
     ), 'alternate name form ignored'
 

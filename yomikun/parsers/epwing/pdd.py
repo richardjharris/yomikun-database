@@ -58,10 +58,10 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         yomi = regex.sub(r'\s*\?+$', '', yomi)
         yomi = regex.sub(r'子$', 'こ', yomi)
 
-        namedata = NameData(kaki, yomi)
+        namedata = NameData.person(kaki, yomi)
 
         if alt_kaki:
-            namedata.add_subreading(NameData(alt_kaki, yomi))
+            namedata.add_subreading(NameData.person(alt_kaki, yomi))
 
     if not namedata:
         logging.warning(f"Cannot parse heading {heading}")
@@ -80,7 +80,6 @@ def name_from_entry(heading: str, text: str) -> NameData | None:
         if m := regex.search(r'^\s*(\d{3,4})[\.\(]', right):
             namedata.lifetime.death_year = int(m[1])
 
-    namedata.add_tag('person')
     namedata.source = f'pdd:{heading}'
 
     namedata.validate()

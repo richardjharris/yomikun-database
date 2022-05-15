@@ -9,10 +9,11 @@ import json
 import logging
 from collections import Counter, defaultdict
 from math import sqrt
-from typing import Iterable, TextIO
+from typing import DefaultDict, Iterable, TextIO
 
 from yomikun.gender.ml import GenderML
-from yomikun.models import Gender, NameData, NamePart, NamePosition
+from yomikun.models import Gender, NameData, NamePosition
+from yomikun.models.namedata import NameDataKey
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 
 NameLists = dict[str, dict[str, str]]
@@ -123,7 +124,7 @@ def make_gender_dict(
     Output dictionary to `dict_out` (JSON format)
     Save ML model weights to file `weights` is specified.
     """
-    counts_kanji = defaultdict(Counter)
+    counts_kanji: DefaultDict[NameDataKey, Counter] = defaultdict(Counter)
     model = GenderML(quiet=True)
 
     tags_for_name = load_name_lists(name_list_data)
@@ -131,19 +132,24 @@ def make_gender_dict(
     # Count the occurences, per-gender, for each input name.
     # Train the ML model
     for name in names:
-        if name.is_given_name() and name.gender() and name.has_tag('dict'):
+        if (
+            name.is_dict
+            and name.position == NamePosition.mei
+            and name.gender != Gender.unknown
+        ):
             # A gendered 'dict' entry is intended to gender-tag a non-
             # gender-tagged entry elsewhere.
-            part = NamePart(name.kaki, name.yomi, NamePosition.mei)
-            counts_kanji[part][Gender.unknown] -= 1
+            counts_kanji[name.key()][Gender.unknown] -= 1
 
-        for part, gender in name.extract_name_parts():
+        for part in name.extract_name_parts():
             if part.position != NamePosition.mei:
                 continue
 
-            counts_kanji[part][gender] += 1
+            gender = part.gender
 
-            if gender and gender != Gender.unknown:
+            counts_kanji[part.key()][gender] += 1
+
+            if gender != Gender.unknown:
                 model.train(part.kaki, part.yomi, gender == Gender.female)
 
     # Now do testing

@@ -7,6 +7,7 @@ import regex
 import romkan
 
 from yomikun.models import NameData
+from yomikun.models.name_position import NamePosition
 from yomikun.researchmap.record import ResearchMapRecord
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.romaji.names import (
@@ -43,7 +44,7 @@ def parse_researchmap(kana: str, kanji: str, english: str) -> NameData | None:
     data.yomi = data.yomi.replace('ヱ', 'ゑ')
 
     data.source = 'researchmap'
-    data.add_tag('person')
+    data.position = NamePosition.person
     data.clean_and_validate()
 
     return data
@@ -140,7 +141,7 @@ def _parse_researchmap_using_kana(record: ResearchMapRecord) -> NameData | None:
             kana = split_kana_name(kanji, kana)
             if len(kana.split()) == 2:
                 # Successful
-                return NameData(kanji, kana).add_tag('xx-split')
+                return NameData(kanji, kana, tags={'xx-split'})
 
     return None
 

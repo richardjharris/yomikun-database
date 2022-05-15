@@ -9,6 +9,7 @@ import regex
 from mediawiki_dump.tokenizer import clean
 
 from yomikun.models import Gender, NameAuthenticity, NameData
+from yomikun.models.name_position import NamePosition
 from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
 from yomikun.researchmap import ResearchMapRecord
 from yomikun.researchmap.parser import _parse_researchmap_inner
@@ -91,7 +92,7 @@ def parse_wikipedia_article(
             # Fall back to messy code
             kana = romaji_to_hiragana_messy(clean(romaji), kanji)
             kanji = split_kanji_name(kanji, kana)
-            namedata = NameData(kanji, kana).add_tag('xx-romaji')
+            namedata = NameData(kanji, kana, tags={'xx-romaji'})
 
         gender = Gender.unknown
 
@@ -134,10 +135,7 @@ def parse_wikipedia_article(
                 if matched in ('she', 'her'):
                     gender = Gender.female
 
-        if gender == Gender.male:
-            namedata.add_tag('masc')
-        elif gender == Gender.female:
-            namedata.add_tag('fem')
+        namedata.gender = gender
 
         # Find out what kind of person this is
         # Prefer a simple description from the categories
@@ -206,7 +204,7 @@ def parse_wikipedia_article(
             )
             pass
 
-    namedata.add_tag('person')
+    namedata.position = NamePosition.person
     namedata.clean_and_validate()
 
     if add_source:

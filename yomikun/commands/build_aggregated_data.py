@@ -3,7 +3,7 @@ import sys
 
 import click
 
-from yomikun.aggregator.make_aggregated_data import make_aggregated_data
+import yomikun.aggregator.build_aggregated_data as builder
 from yomikun.models import NameData
 from yomikun.utils.timer import Timer
 
@@ -15,7 +15,7 @@ from yomikun.utils.timer import Timer
     default='db/gender.jsonl',
     help='Path to gender score database',
 )
-def build_aggregate_data(input, genderdb):
+def build_aggregated_data(input, genderdb):
     """
     Build aggregated.jsonl for SQLite load
 
@@ -29,5 +29,7 @@ def build_aggregate_data(input, genderdb):
     """
     timer = Timer()
     names = (NameData.from_dict(json.loads(line)) for line in input)
-    make_aggregated_data(names_in=names, genderdb_file_in=genderdb, db_out=sys.stdout)
+    builder.build_aggregated_data(
+        names_in=names, genderdb_file_in=genderdb, db_out=sys.stdout
+    )
     timer.report('Generated aggregated data')

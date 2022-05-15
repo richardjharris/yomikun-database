@@ -1,4 +1,4 @@
-from .build_aggregate_data import build_aggregate_data
+from .build_aggregated_data import build_aggregated_data
 from .build_gender_db import build_gender_db
 from .build_romaji_db import build_romaji_db
 from .build_sqlite import build_sqlite
@@ -25,7 +25,7 @@ def add_yomikun_commands(cli) -> None:
     """
     Add all known Yomikun commands to the Click cli object.
     """
-    cli.add_command(build_aggregate_data)
+    cli.add_command(build_aggregated_data)
     cli.add_command(build_gender_db)
     cli.add_command(build_romaji_db)
     cli.add_command(build_sqlite)

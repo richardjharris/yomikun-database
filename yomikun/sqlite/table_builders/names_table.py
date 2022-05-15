@@ -5,6 +5,8 @@ import romkan
 from yomikun.sqlite.constants import PART_ID
 from yomikun.sqlite.table_builders.base import TableBuilderBase
 
+seen = dict()
+
 
 class NamesTable(TableBuilderBase):
     """
@@ -42,6 +44,13 @@ class NamesTable(TableBuilderBase):
 
         # Convert part to part ID
         part_id = PART_ID[row["part"]]
+
+        global seen
+        key = (row["kaki"], yomi, part_id)
+        if key in seen:
+            raise Exception(f"Already have key {key} ({row} vs. {seen[key]})")
+        else:
+            seen[key] = row
 
         values = (
             row["kaki"],

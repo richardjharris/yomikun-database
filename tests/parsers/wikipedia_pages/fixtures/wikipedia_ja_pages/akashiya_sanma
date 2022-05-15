@@ -2,12 +2,13 @@ lifetime: 1955 ~
 name: 明石家 さんま
 reading: あかしや さんま
 type: pseudo
-tags: [masc]
+gender: M
 subreadings:
  - name: 杉本 高文
    reading: すぎもと たかふみ
    type: real
    lifetime: 1955 ~
+   gender: M
 ---
 {{半保護}}
 {{複数の問題|存命人物の出典明記=2008年1月|独自研究=2012年4月}}

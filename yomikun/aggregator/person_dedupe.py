@@ -2,6 +2,8 @@ import logging
 from collections import defaultdict
 
 from yomikun.models import NameAuthenticity, NameData
+from yomikun.models.gender import Gender
+from yomikun.models.name_position import NamePosition
 
 
 class PersonDedupe:
@@ -13,7 +15,7 @@ class PersonDedupe:
         For people records, returns True and ingests the data.
         For other records, returns False and ignores it.
         """
-        if not data.is_person():
+        if data.position != NamePosition.person:
             return False
 
         key = (data.kaki, data.yomi, data.lifetime.birth_year)
@@ -51,15 +53,13 @@ class PersonDedupe:
         merged = people[0].clone()
 
         # Dedupe logic
-        genders = set(p.gender() for p in people if p.gender() is not None)
+        genders = set(p.gender for p in people if p.gender != Gender.unknown)
 
         if len(genders) > 1:
             logging.info('Giving up (inconsistent genders)')
             return people
         elif len(genders) == 1:
-            gender = genders.pop()
-            assert isinstance(gender, str)  # shut pyright up
-            merged.set_gender(gender)
+            merged.gender = genders.pop()
 
         # All people have the same birth_year, but fill in death_year if
         # missing.
@@ -101,8 +101,8 @@ class PersonDedupe:
             merged.notes = all_notes[0][1]
 
         # Remove xx-romaji if at least one record does not have it
-        if any(not p.has_tag('xx-romaji') for p in people):
-            merged.remove_tag('xx-romaji')
+        if any('xx-romaji' not in p.tags for p in people):
+            merged.tags.discard('xx-romaji')
 
         # Return the deduplicated record
         logging.info("Merged into 1 record")

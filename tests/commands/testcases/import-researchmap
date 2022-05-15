@@ -11,8 +11,8 @@ Adachi Naoko	足立 直子	Naoko Adachi
 # Normal record with kana
 アオキ ケンジ	青木 堅持	Kenji Aoki
 ---
-{"kaki": "齊藤 隆典", "yomi": "さいとう たかすけ", "authenticity": "real", "source": "researchmap", "tags": ["person", "xx-romaji"]}
-{"kaki": "足立 直子", "yomi": "あだち なおこ", "authenticity": "real", "source": "researchmap", "tags": ["person"]}
-{"kaki": "青木 堅持", "yomi": "あおき けんじ", "authenticity": "real", "source": "researchmap", "tags": ["person"]}
+{"kaki": "齊藤 隆典", "yomi": "さいとう たかすけ", "authenticity": "real", "position": "person", "source": "researchmap", "tags": ["xx-romaji"]}
+{"kaki": "足立 直子", "yomi": "あだち なおこ", "authenticity": "real", "position": "person", "source": "researchmap"}
+{"kaki": "青木 堅持", "yomi": "あおき けんじ", "authenticity": "real", "position": "person", "source": "researchmap"}
 ---
 Parsed 3 of 5 results (60.0%) in <time> (2 errors)

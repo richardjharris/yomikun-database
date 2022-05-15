@@ -2,7 +2,8 @@ import pytest
 
 from yomikun.aggregator.person_dedupe import PersonDedupe
 from yomikun.models import Lifetime, NameData
-from yomikun.models.nameauthenticity import NameAuthenticity as NA
+from yomikun.models.gender import Gender
+from yomikun.models.name_authenticity import NameAuthenticity as NA
 
 
 def test_akira():
@@ -26,7 +27,7 @@ def test_akira():
         'くろさわ あきら',
         lifetime=Lifetime(1910, 1998),
         source='wikipedia_en:Akira Kurosawa',
-        tags=['person', 'masc'],
+        gender=Gender.male,
         notes='Filmmaker and painter who directed 30 films in a career spanning 57 years',
     )
 
@@ -52,7 +53,6 @@ def test_natsume():
         lifetime=Lifetime(1867, 1916),
         authenticity=NA.PSEUDO,  # from third result
         source='wikipedia_ja:夏目漱石',
-        tags=['person'],
         subreadings=[
             NameData.person(
                 '夏目 金之助',
@@ -64,12 +64,12 @@ def test_natsume():
 
 def test_non_person_dedupe():
     pd = PersonDedupe()
-    assert pd.ingest(NameData("心愛", "ここあ", tags={'fem'})) is False, 'ignored'
+    assert pd.ingest(NameData("心愛", "ここあ", gender=Gender.female)) is False, 'ignored'
     assert not list(pd.deduped_people()), 'no results returned'
 
 
 def test_single_dedupe():
-    person = NameData("大野 心愛", "おおの ここあ", tags={'person'})
+    person = NameData.person("大野 心愛", "おおの ここあ")
     pd = PersonDedupe()
     assert pd.ingest(person)
     assert list(pd.deduped_people()) == [person], 'single result returned'
@@ -77,8 +77,9 @@ def test_single_dedupe():
 
 def test_multiple_genders():
     """Should not dedupe if genders are different."""
-    person1 = NameData('田中 ひびき', 'たなか ひびき', tags={'masc'})
-    person2 = person1.clone().set_gender('fem')
+    person1 = NameData.person('田中 ひびき', 'たなか ひびき', gender=Gender.male)
+    person2 = NameData.person('田中 ひびき', 'たなか ひびき', gender=Gender.female)
+
     pd = PersonDedupe()
     assert pd.ingest(person1)
     assert pd.ingest(person2)
@@ -87,8 +88,8 @@ def test_multiple_genders():
 
 def test_multiple_death_years():
     """Should not dedupe if death years are different"""
-    person1 = NameData(
-        '田中 ひびき', 'たなか ひびき', tags={'masc'}, lifetime=Lifetime(1910, 1998)
+    person1 = NameData.person(
+        '田中 ひびき', 'たなか ひびき', gender=Gender.male, lifetime=Lifetime(1910, 1998)
     )
     person2 = person1.clone()
     person2.lifetime.death_year = 1999
@@ -111,9 +112,9 @@ def test_pseudo_fictional_different():
     """
 
     def merged_ok(type1: NA, type2: NA) -> NA | None:
-        person1 = NameData('田中 ひびき', 'たなか ひびき', authenticity=type1)
-        person2 = person1.clone()
-        person2.authenticity = type2
+        person1 = NameData.person('田中 ひびき', 'たなか ひびき', authenticity=type1)
+        person2 = NameData.person('田中 ひびき', 'たなか ひびき', authenticity=type2)
+
         pd = PersonDedupe()
         pd.ingest(person1)
         pd.ingest(person2)

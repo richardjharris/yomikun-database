@@ -7,9 +7,14 @@ Wikipedia JA's 202k. The epwings even fewer.
 ## Code quality
 
 NameData is too big
- - refactor to have 'part' and 'gender' fields
  - require caller to 'cast' namedata to a PersonData sub?class, which has
    different split() methods etc.
+
+ - PART_ID -> enum
+
+ - Run sql comparison thing automatically.
+
+ - stop using re/regex.match (start of string only)
 
     - split vs extract_name_parts
 
@@ -224,7 +229,7 @@ the majority.
 ## Refactor
 
  - Should probably ensure only one set of subreadings exists.
- - Map names back to sources?
+ - Map names back to sources (at DB level)
 
 ## Bugs
 
@@ -298,11 +303,6 @@ of one NameData record.
 If we do this, change finaldb's record_hit to only apply to the particular
 part.
 
-## Other dictionaries
-
-These are less important as wikipedia_ja accounts for 90% of all
-name records among the wiki/dictionary sources.
-
 ### Use the Researchmap code in all importers
 
 Wikidata etc. should use the same researchmap code that already
@@ -317,10 +317,6 @@ handles clever stuff.
 ### Related: make romaji_to_hiragana_fullname swap names for you
 
 This would simplify logic in both researchmap and wikidata_nokana.
-
-### koujien
-
-Fails to split in some places, could be fixed by using RomajiDB
 
 ## wikidata: de-dupe variant records
 
@@ -398,3 +394,5 @@ Not sure if RomajiDB has multiple readings used in find_split_point.
    function!
 
  * Custom data: support commas in the notes field.
+
+ * Support 一の瀬 and variants (seen in pen-names) [done but wikipedia needs re-running]

@@ -4,6 +4,7 @@ import regex
 from mediawiki_dump.tokenizer import clean
 
 from yomikun.models import NameData
+from yomikun.models.gender import Gender
 from yomikun.utils.patterns import name_paren_start, name_pat, reading_pat
 from yomikun.utils.split import split_kanji_name
 
@@ -93,6 +94,7 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
     result = NameData()
     lifetime = result.lifetime
     name_set = False
+    male, female = False, False
 
     for box in boxes:
         if not name_set:
@@ -123,16 +125,16 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
         if key := box.first_set('性別'):
             value = clean(box[key])
             if value in ('女性', '女'):
-                result.add_tag("fem")
+                female = True
             elif value in ('男性', '男'):
-                result.add_tag("masc")
+                male = True
 
         if key := box.first_set('職業'):
             if regex.search('女優', clean(box[key])):
-                result.add_tag("fem")
+                female = True
 
         if key := box.first_set('フリーサイズ', 'カップサイズ'):
-            result.add_tag('fem')
+            female = True
 
         if key := box.first_set('本名'):
             value = clean(box[key])
@@ -148,7 +150,14 @@ def parse_infoboxes(boxes: list[Infobox]) -> NameData:
         if box.name == '基礎情報 公家' and '妻' in box:
             value = clean(box['妻'])
             if value:
-                result.add_tag('masc')
+                male = True
+
+    # If both male/female match, prefer female, as this was always the right determination
+    # when manually investigated.
+    if female:
+        result.gender = Gender.female
+    elif male:
+        result.gender = Gender.male
 
     result.clean()
     return result

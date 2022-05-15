@@ -28,6 +28,18 @@ ignore_words = [
     '学校',
     '地球',
     '組合',
+    '時代', # suffix
+    '大学',
+    '大學',
+    '女王',
+    '幕府',
+    '山脈',
+    '庭園', # FPs?
+    '主義',
+    '事件',
+    '兵団',
+    # TODO apply to wikipedia_en
+    # names ending with 駅?
 ]
 ignore_words_pat = regex.compile(r"\L<words>", words=ignore_words)
 

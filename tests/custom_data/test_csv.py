@@ -23,11 +23,11 @@ def test_success():
     assert (
         output_data.getvalue()
         == """
-{"kaki": "二木 英徳", "yomi": "ふたぎ ひでのり", "authenticity": "real", "lifetime": {"birth_year": 1936, "death_year": null}, "source": "custom", "tags": ["masc", "person"], "notes": "Chairman (AEON)"}
-{"kaki": "爽彩", "yomi": "さや", "authenticity": "real", "lifetime": {"birth_year": 2000, "death_year": null}, "source": "custom", "tags": ["fem"]}
-{"kaki": "小田 剛嗣", "yomi": "おだ つよし", "authenticity": "real", "lifetime": {"birth_year": 1920, "death_year": 1980}, "source": "custom", "tags": ["masc", "person"]}
-{"kaki": "宇治", "yomi": "うじ", "authenticity": "fictional", "source": "custom", "tags": ["surname"]}
-{"kaki": "白馬 弥那", "yomi": "はくば みな", "authenticity": "fictional", "source": "custom", "tags": ["fem", "person"]}
+{"kaki": "二木 英徳", "yomi": "ふたぎ ひでのり", "authenticity": "real", "gender": "male", "position": "person", "lifetime": {"birth_year": 1936, "death_year": null}, "source": "custom", "notes": "Chairman (AEON)"}
+{"kaki": "爽彩", "yomi": "さや", "authenticity": "real", "gender": "female", "position": "mei", "lifetime": {"birth_year": 2000, "death_year": null}, "source": "custom"}
+{"kaki": "小田 剛嗣", "yomi": "おだ つよし", "authenticity": "real", "gender": "male", "position": "person", "lifetime": {"birth_year": 1920, "death_year": 1980}, "source": "custom"}
+{"kaki": "宇治", "yomi": "うじ", "authenticity": "fictional", "position": "sei", "source": "custom"}
+{"kaki": "白馬 弥那", "yomi": "はくば みな", "authenticity": "fictional", "gender": "female", "position": "person", "source": "custom"}
     """.strip()  # noqa
         + "\n"
     )

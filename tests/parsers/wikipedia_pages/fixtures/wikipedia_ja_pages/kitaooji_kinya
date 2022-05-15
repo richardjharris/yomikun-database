@@ -2,12 +2,13 @@ name: 北大路 欣也
 reading: きたおおじ きんや
 type: pseudo
 lifetime: 1943 ~
-tags: [masc] # 男優 category
+gender: M # 男優 category
 subreadings:
  - name: 淺井 将勝
    reading: あさい まさかつ
    lifetime: 1943 ~
    type: real
+   gender: M
 source: https://ja.wikipedia.org/w/index.php?title=%E5%8C%97%E5%A4%A7%E8%B7%AF%E6%AC%A3%E4%B9%9F&oldid=85596195
 # 本名 = 淺井 将勝<small>（あさい まさかつ）</small> in infobox
 ---

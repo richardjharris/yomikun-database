@@ -18,8 +18,8 @@ def make_romajidb(names: Iterable[NameData], db_out: TextIO):
 
         logging.debug(f"Name: {name}")
 
-        for part, gender in name.extract_name_parts():
-            logging.info(f"Part {part} gender={gender}")
+        for part in name.extract_name_parts():
+            logging.info(f"Part {part}")
             if part.position == NamePosition.unknown:
                 continue
 

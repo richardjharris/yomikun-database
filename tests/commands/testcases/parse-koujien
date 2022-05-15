@@ -21,4 +21,4 @@ command: parse-koujien
   ]
 }
 ---
-{"kaki": "小渕 恵三", "yomi": "おぶち けいぞう", "authenticity": "real", "lifetime": {"birth_year": 1937, "death_year": 2000}, "source": "koujien:おぶち‐けいぞう【小渕恵三】ヲ‥ザウ", "tags": ["person"]}
+{"kaki": "小渕 恵三", "yomi": "おぶち けいぞう", "authenticity": "real", "position": "person", "lifetime": {"birth_year": 1937, "death_year": 2000}, "source": "koujien:おぶち‐けいぞう【小渕恵三】ヲ‥ザウ"}

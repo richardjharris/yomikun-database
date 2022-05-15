@@ -1,4 +1,5 @@
 from yomikun.models import Lifetime, NameAuthenticity, NameData
+from yomikun.models.gender import Gender
 from yomikun.parsers.wikipedia_en.parser import parse_wikipedia_article
 
 
@@ -8,11 +9,12 @@ def test_basic():
 [[Category:Japanese male voice actors]]
 [[Category:1964 births]]
 """.strip()  # noqa
-    assert parse_wikipedia_article('Akifumi Endo', content) == NameData(
+    assert parse_wikipedia_article('Akifumi Endo', content) == NameData.person(
         kaki='遠藤 章史',
         yomi='えんどう あきふみ',
         lifetime=Lifetime(1964),
-        tags={'xx-romaji', 'masc', 'person'},
+        gender=Gender.male,
+        tags={'xx-romaji'},
         source='wikipedia_en:Akifumi Endo',
         notes='Voice actor',
     ), 'extracts gender from category'
@@ -32,11 +34,11 @@ Murata was born on July 14, 1986, in [[Uozu, Toyama]].<ref>{{cite web|url=https:
 
 [[Category:1986 births]]
 """.strip()  # noqa
-    assert parse_wikipedia_article('Akihiro Murata', content) == NameData(
+    assert parse_wikipedia_article('Akihiro Murata', content) == NameData.person(
         kaki='村田 顕弘',
         yomi='むらた あきひろ',
         lifetime=Lifetime(1986),
-        tags={'masc', 'person'},
+        gender=Gender.male,
         source='wikipedia_en:Akihiro Murata',
         notes='Professional shogi player ranked 6-dan',
     ), 'extracts gender from text'
@@ -48,11 +50,12 @@ def test_nya_romaji():
 [[Category:1994 births]]
 [[Category:Association football forwards]]
 """.strip()  # noqa
-    assert parse_wikipedia_article('Junya Kato', content) == NameData(
+    assert parse_wikipedia_article('Junya Kato', content) == NameData.person(
         kaki='加藤 潤也',
         yomi='かとう じゅんや',
         lifetime=Lifetime(1994),
-        tags={'xx-romaji', 'masc', 'person'},
+        tags={'xx-romaji'},
+        gender=Gender.male,
         source='wikipedia_en:Junya Kato',
         notes='Football player',
     ), 'should not convert to じゅにゃ'
@@ -72,12 +75,12 @@ In 2000, a 21-year-old campaign volunteer accused Yokoyama of [[sexual harassmen
 """.strip()  # noqa
     result = parse_wikipedia_article('Knock Yokoyama', content)
     # We don't expect Yamada Isamu to be extracted, but we do want to mark it as pseudo at least
-    assert result == NameData(
+    assert result == NameData.person(
         kaki='横山 ノック',
         yomi='よこやま のっく',
         lifetime=Lifetime(1932, 2007),
         authenticity=NameAuthenticity.PSEUDO,
-        tags={'masc', 'person'},
+        gender=Gender.male,
         source='wikipedia_en:Knock Yokoyama',
         notes='Politician and comedian',
     )
@@ -92,6 +95,6 @@ def test_allow_fictional_character_with_no_lifetime():
         yomi='しらぬい まい',
         authenticity=NameAuthenticity.FICTIONAL,
         source='wikipedia_en:foo',
-        tags={'person', 'fem'},
+        gender=Gender.female,
         notes='Fictional character in the Fatal Fury and The King of Fighters series of fighting games by SNK',  # noqa
     )

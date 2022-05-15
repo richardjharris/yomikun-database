@@ -13,6 +13,7 @@ These would show up dead last in a dictionary lookup, but are good for completen
 """
 import click
 
+# FIXME: move jmnedict to parsers/jmnedict
 import yomikun.jmnedict
 import yomikun.utils.jmnedict
 

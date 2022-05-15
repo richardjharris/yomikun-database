@@ -3,6 +3,7 @@ from typing import TextIO
 import click
 
 from yomikun.models import NameData
+from yomikun.models.name_position import NamePosition
 
 
 @click.command()
@@ -24,10 +25,7 @@ def parse_myoji_yurai(input: TextIO):
         readings = readings_joined.split('|')
 
         for reading in filter(len, readings):
-            data = NameData(kanji, reading)
-            data.add_tag('surname')
-            data.add_tag('dict')
-            data.add_tag('top5k')
+            data = NameData(kanji, reading, is_dict=True, position=NamePosition.sei)
             data.source = "myoji-yurai-5000"
             data.notes = f"population:{population}"
             data.clean_and_validate()

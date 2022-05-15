@@ -44,8 +44,5 @@ def _output_clean_row(row: dict[str, str]):
         raise ValueError("kaki and yomi have different name counts")
 
     # Split person into two parts for anonymity
-    if namedata.is_person():
-        for part in namedata.split():
-            print(part.to_csv())
-    else:
-        print(namedata.to_csv())
+    for part in namedata.extract_name_parts():
+        print(part.to_csv())

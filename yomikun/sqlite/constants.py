@@ -5,6 +5,7 @@ PART_ID = {
     "unknown": 0,
     "sei": 1,
     "mei": 2,
+    "person": 3,
 }
 
-PARTS_IN_DATABASE_ORDER = ["unknown", "sei", "mei"]
+PARTS_IN_DATABASE_ORDER = list(PART_ID.keys())

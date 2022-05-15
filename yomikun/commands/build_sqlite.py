@@ -15,7 +15,7 @@ def build_sqlite(dbfile: Path, trace: bool, replace: bool):
     """
     Build final SQLite database
 
-    Build the final SQLite database as a new file DBFILE, using final.jsonl
+    Build the final SQLite database as a new file DBFILE, using aggregated.jsonl
     output from STDIN.
     """
     oldcopy = None

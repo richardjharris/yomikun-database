@@ -12,6 +12,6 @@ logging: ["Validation failure: Invalid yomi 'くし あう゛ぇりね'"]
 {"item":"http://www.wikidata.org/entity/Q705860","itemLabel":"Anjirō","itemDescription":"Japanese translator","nativeName":"ヤジロウ","genderLabel":"male","dob":"1600-01-01T00:00:00Z","dod":"1550-01-01T00:00:00Z","countryLabel":"Japan"}
 {"item":"http://www.wikidata.org/entity/Q790363","itemLabel":"Aveline Kushi","itemDescription":"Japanese author","nativeName":"久司アヴェリン","genderLabel":"female","dob":"1925-01-01T00:00:00Z","dod":"2001-01-01T00:00:00Z","countryLabel":"Japan"}
 ---
-{"kaki": "山本 常朝", "yomi": "やまもと つねとも", "authenticity": "real", "lifetime": {"birth_year": 1659, "death_year": 1719}, "source": "wikidata:http://www.wikidata.org/entity/Q548162", "tags": ["masc", "person", "xx-romaji"]}
-{"kaki": "日野 康子", "yomi": "ひの やすこ", "authenticity": "real", "lifetime": {"birth_year": 1369, "death_year": 1419}, "source": "wikidata:http://www.wikidata.org/entity/Q604058", "tags": ["fem", "person", "xx-romaji"]}
-{"kaki": "梅木 美代志", "yomi": "うめき みよし", "authenticity": "real", "lifetime": {"birth_year": 1929, "death_year": 2007}, "source": "wikidata:http://www.wikidata.org/entity/Q232588", "tags": ["fem", "person", "xx-romaji"]}
+{"kaki": "山本 常朝", "yomi": "やまもと つねとも", "authenticity": "real", "gender": "male", "position": "person", "lifetime": {"birth_year": 1659, "death_year": 1719}, "source": "wikidata:http://www.wikidata.org/entity/Q548162", "tags": ["xx-romaji"]}
+{"kaki": "日野 康子", "yomi": "ひの やすこ", "authenticity": "real", "gender": "female", "position": "person", "lifetime": {"birth_year": 1369, "death_year": 1419}, "source": "wikidata:http://www.wikidata.org/entity/Q604058", "tags": ["xx-romaji"]}
+{"kaki": "梅木 美代志", "yomi": "うめき みよし", "authenticity": "real", "gender": "female", "position": "person", "lifetime": {"birth_year": 1929, "death_year": 2007}, "source": "wikidata:http://www.wikidata.org/entity/Q232588", "tags": ["xx-romaji"]}

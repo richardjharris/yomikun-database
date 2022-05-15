@@ -13,7 +13,7 @@ import jcconv3
 import regex
 
 from yomikun.gender.dict import GenderDict
-from yomikun.models import Gender, Lifetime, NameAuthenticity, NameData, NamePosition
+from yomikun.models import Gender, Lifetime, NameAuthenticity, NameData, NameDataKey
 
 
 @dataclass
@@ -36,13 +36,13 @@ class AggregatedData:
         return self.hits_male + self.hits_female + self.hits_unknown
 
     def record_hit(self, gender: Gender, name: NameData):
-        if name.has_tag('dict'):
+        if name.is_dict:
             # Does not count as a hit
             return
 
         self._record_gender_hit(gender)
         self.years_seen.expand(name.lifetime)
-        if name.has_tag('xx-romaji'):
+        if 'xx-romaji' in name.tags:
             self.hits_xx_romaji += 1
         if name.authenticity != NameAuthenticity.REAL:
             self.hits_pseudo += 1
@@ -56,6 +56,7 @@ class AggregatedData:
             self.hits_unknown += 1
         elif gender == Gender.neutral:
             # Both masc/fem tags
+            # TODO could remove this.
             self.hits_unknown += 1
         else:
             raise Exception(f'Unknown Gender value: {gender}')
@@ -73,10 +74,7 @@ class AggregatedData:
         self.population = population
 
 
-DictKey = tuple[str, str, NamePosition]
-
-
-def make_aggregated_data(
+def build_aggregated_data(
     names_in: Iterable[NameData], genderdb_file_in: str, db_out: TextIO
 ):
     """
@@ -84,50 +82,43 @@ def make_aggregated_data(
     aggregate the data and produce output in JSONL format suitable for
     importing into SQLite. This text is sent to [db_out].
     """
-    aggregated_data: dict[DictKey, AggregatedData] = defaultdict(AggregatedData)
+    aggregated_data: dict[NameDataKey, AggregatedData] = defaultdict(AggregatedData)
 
     for name in names_in:
-        for part, gender in name.extract_name_parts():
+        for part in name.extract_name_parts():
             kana = part.yomi
 
             # Some jmnedict results currently contain katakana
+            # FIXME: kana is currently ignored
             kana = cast(str, jcconv3.kata2hira(kana))
 
-            kaki = part.kaki
-            pos = part.position
-            gender = gender or Gender.unknown
+            aggregated_data[part.key()].record_hit(part.gender, name)
 
-            key = (kaki, kana, pos)
-
-            aggregated_data[key].record_hit(gender, name)
-
-            if name.has_tag('top5k'):
+            if name.source == 'myoji-yurai-5000':
                 population = 0
                 if m := regex.match(r'^population:(\d+)$', name.notes):
                     population = int(m[1])
 
-                aggregated_data[key].mark_top5k(population)
+                aggregated_data[part.key()].mark_top5k(population)
 
     _output_aggregated_data(aggregated_data, genderdb_file_in, db_out)
 
 
 def _output_aggregated_data(
-    aggregated_data: dict[DictKey, AggregatedData],
+    aggregated_data: dict[NameDataKey, AggregatedData],
     genderdb_file_in: str,
     db_out: TextIO,
 ):
     genderdb = GenderDict(genderdb_file_in)
 
     # Output aggregated data
-    for key, aggregated in aggregated_data.items():
-        kaki, kana, part = key
-
+    for name, aggregated in aggregated_data.items():
         row = aggregated.to_dict()
-        row['kaki'] = kaki
-        row['yomi'] = kana
-        row['part'] = part.name
+        row['kaki'] = name.kaki
+        row['yomi'] = name.yomi
+        row['part'] = name.position.name
 
-        if info := genderdb.lookup(kaki, kana):
+        if info := genderdb.lookup(name.kaki, name.yomi):
             row.update(info.to_dict())
             # Convert ml_score to sqlite int 0-255
             row['ml_score'] = ml_score_float_to_int(row.get('ml_score', 0))
