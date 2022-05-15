@@ -4,14 +4,14 @@ from dataclasses import dataclass
 
 import regex
 
-from yomikun.sqlite.constants import PART_ID
+from yomikun.sqlite.models import NamePart
 from yomikun.sqlite.table_builders.base import TableBuilderBase
 
 
 @dataclass(frozen=True)
 class NameAndPart:
     kanji: str
-    part: str  # as string
+    part: NamePart
 
 
 @dataclass
@@ -73,7 +73,7 @@ class KanjiStatsTable(TableBuilderBase):
             return
 
         for ji in self.IS_HAN.findall(row["kaki"]):
-            key = NameAndPart(ji, part)
+            key = NameAndPart(ji, NamePart[part.lower()])
             self.counts[key].add(
                 new_male=int(row["hits_male"]),
                 new_female=int(row["hits_female"]),
@@ -83,14 +83,14 @@ class KanjiStatsTable(TableBuilderBase):
     def finish(self, cur: sqlite3.Cursor):
         for name_and_part, counts in self.counts.items():
             kanji = name_and_part.kanji
-            part_id = PART_ID[name_and_part.part]
+            part_id = name_and_part.part.value
 
             # Insert stats for all genders combined
             cur.execute(
                 "INSERT INTO kanji_stats VALUES(?, ?, 'A', ?, ?)",
                 (kanji, part_id, counts.total, counts.female_ratio),
             )
-            if name_and_part.part == 'mei':
+            if name_and_part.part == NamePart.mei:
                 # Insert stats for male and female only
                 cur.execute(
                     "INSERT INTO kanji_stats VALUES(?, ?, 'M', ?, 0)",

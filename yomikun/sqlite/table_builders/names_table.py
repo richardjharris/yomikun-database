@@ -2,7 +2,7 @@ import sqlite3
 
 import romkan
 
-from yomikun.sqlite.constants import PART_ID
+from yomikun.sqlite.models import NamePart
 from yomikun.sqlite.table_builders.base import TableBuilderBase
 
 
@@ -41,7 +41,7 @@ class NamesTable(TableBuilderBase):
         yomi = yomi.replace("n'n", "nn")
 
         # Convert part to part ID
-        part_id = PART_ID[row["part"]]
+        part_id = NamePart[row["part"]].value
 
         values = (
             row["kaki"],

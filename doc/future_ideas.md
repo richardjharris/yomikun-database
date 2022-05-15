@@ -10,8 +10,6 @@ NameData is too big
  - require caller to 'cast' namedata to a PersonData sub?class, which has
    different split() methods etc.
 
- - PART_ID -> enum
-
  - Run sql comparison thing automatically.
 
  - stop using re/regex.match (start of string only)
