@@ -30,7 +30,7 @@ def get_data(
     sql = f"""
         SELECT * FROM names
         WHERE {query_col} = ? {part_query}
-        ORDER BY part, hits_total DESC
+        ORDER BY hits_total DESC
         {limit_sql}
     """
     cur.execute(sql, (search_term,))

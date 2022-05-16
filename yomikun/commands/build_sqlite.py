@@ -20,7 +20,7 @@ def build_sqlite(dbfile: Path, trace: bool, replace: bool):
     """
     oldcopy = None
 
-    if dbfile.exists():
+    if dbfile.exists() and dbfile.lstat().st_size > 0:
         if replace:
             oldcopy = dbfile.with_suffix('.old')
             dbfile.rename(oldcopy)

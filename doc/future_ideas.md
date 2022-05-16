@@ -4,6 +4,15 @@ the future.
 Wikipedia EN/WikiData contribute only ~20k names each compared to
 Wikipedia JA's 202k. The epwings even fewer.
 
+## old db handling
+
+Report + compare() use different old DBs
+
+## Handle hiragana + kanakana variants
+
+Most names (あけみ, ナオト) have kana variants recorded. Question is how we should handle
+other forms of the names. Should we insert phantom records for the other names?
+
 ## Incorrect kana
 
 Results for 菅野
