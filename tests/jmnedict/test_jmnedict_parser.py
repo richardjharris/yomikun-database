@@ -1,6 +1,6 @@
-from yomikun.jmnedict.parser import parse
 from yomikun.models import Lifetime, NameData
 from yomikun.models.name_position import NamePosition
+from yomikun.parsers.jmnedict import parser
 
 
 def test_basic():
@@ -15,7 +15,7 @@ def test_basic():
             }
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     assert result == [
         NameData.person(
             "あき 竹城", "あき たけじょう", lifetime=Lifetime(1947), source="jmnedict"
@@ -41,7 +41,7 @@ def test_sumo():
             }
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     assert result == [
         NameData.person(
             "蒼国来 栄吉", "そうこくらい えいきち", lifetime=Lifetime(1984), source="jmnedict"
@@ -63,7 +63,7 @@ def test_taira():
             }
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     assert result == [
         NameData.person(
             "平 知盛", "たいら とももり", lifetime=Lifetime(1151, 1185), source="jmnedict"
@@ -85,7 +85,7 @@ def test_oumi():
             }
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     assert result == [
         NameData.person("近江 君", "おうみ きみ", source="jmnedict"),
     ]
@@ -108,7 +108,7 @@ def test_long_u():
             },
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     assert result == [
         NameData.person(
             "千 利休", "せん りきゅう", lifetime=Lifetime(1522, 1591), source="jmnedict"
@@ -125,7 +125,7 @@ def test_given_name():
             {"SenseGloss": [{"lang": "eng", "text": "Yuki"}], "name_type": ["fem"]}
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     expected = [
         NameData("愛", "ゆき", position=NamePosition.mei, is_dict=True, source="jmnedict"),
     ]
@@ -134,7 +134,7 @@ def test_given_name():
     # Test other tag combinations
     for name_types in (['given'], ['given', 'masc'], ['masc', 'fem']):
         data['senses'][0]['name_type'] = name_types
-        assert parse(data) == expected, name_types
+        assert parser.parse_jmnedict_entry(data) == expected, name_types
 
 
 def test_surname():
@@ -149,7 +149,7 @@ def test_surname():
             }
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     assert result == [
         NameData(
             "斎藤", "さいとう", position=NamePosition.sei, is_dict=True, source="jmnedict"
@@ -169,7 +169,7 @@ def test_surname_with_given_name():
             }
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     expected = [
         NameData(
             "斎藤", "さいとう", position=NamePosition.sei, is_dict=True, source="jmnedict"
@@ -200,7 +200,7 @@ def test_multiple_entries():
             },
         ],
     }
-    result = parse(data)
+    result = parser.parse_jmnedict_entry(data)
     assert result == [
         NameData.person("輝夜姫", "かぐやひめ", source="jmnedict"),
         NameData.person("かぐや姫", "かぐやひめ", source="jmnedict"),

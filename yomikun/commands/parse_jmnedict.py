@@ -13,9 +13,8 @@ These would show up dead last in a dictionary lookup, but are good for completen
 """
 import click
 
-# FIXME: move jmnedict to parsers/jmnedict
-import yomikun.jmnedict
 import yomikun.utils.jmnedict
+from yomikun.parsers.jmnedict import parser
 
 
 @click.command()
@@ -32,5 +31,5 @@ def parse_jmnedict():
     sightings. Such entries do not count as a 'hit' in aggregated statistics.
     """
     for data in yomikun.utils.jmnedict.all_jmnedict_data():
-        for name in yomikun.jmnedict.parse(data):
+        for name in parser.parse_jmnedict_entry(data):
             print(name.to_jsonl())
