@@ -6,17 +6,10 @@ Wikipedia JA's 202k. The epwings even fewer.
 
 ## Code quality
 
-NameData is too big
- - remove legacy tag handling
- - remove tag as list handler
-
  - fix use of internal methods
   - wikipedia_en.parser using _parse_researchmap_inner
   - remove Aggregator
   - gender model
-
- - inconsistent use of sei/mei vs. given name / surname. Same for reading/written
-   and yomi/kaki.
 
 ## Names allowed in kanji
 

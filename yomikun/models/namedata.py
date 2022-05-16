@@ -123,12 +123,6 @@ class NameData:
     def person(cls, *args, **kvargs):
         return NameData(*args, **kvargs, position=NamePosition.person)
 
-    def set_name(self, kaki: str, yomi: str):
-        self.kaki = kaki
-        self.yomi = yomi
-        self.clean()
-        return self
-
     def add_subreading(self, subreading: NameData):
         """
         Add a subreading.
@@ -169,11 +163,11 @@ class NameData:
         sei_kaki, mei_kaki = self.kaki.split()
         sei_yomi, mei_yomi = self.yomi.split()
 
-        sei = self.clone().set_name(sei_kaki, sei_yomi)
+        sei = self.clone()._set_name(sei_kaki, sei_yomi)
         sei.position = NamePosition.sei
         sei.gender = Gender.unknown
 
-        mei = self.clone().set_name(mei_kaki, mei_yomi)
+        mei = self.clone()._set_name(mei_kaki, mei_yomi)
         mei.position = NamePosition.mei
 
         return (sei, mei)
@@ -236,29 +230,6 @@ class NameData:
 
         return self
 
-    def _copy_pseudo_data_to_subreadings(self):
-        """
-        Copy information in the main (pseudo) NameData reading to any real
-        subreadings, including lifetime, source, tags.
-
-        Does nothing if the main reading is not PSEUDO.
-        """
-        # FIXME: copies 'xx-romaji' too which is wrong
-        for subreading in self.subreadings:
-            # Copy over the lifetime / gender / source to the real actor
-            if (
-                self.authenticity == NameAuthenticity.PSEUDO
-                and subreading.authenticity == NameAuthenticity.REAL
-            ):
-                if self.lifetime and not subreading.lifetime:
-                    subreading.lifetime = copy.copy(self.lifetime)
-                if self.source and not subreading.source:
-                    subreading.source = self.source
-                if self.tags and not subreading.tags:
-                    subreading.tags = self.tags
-
-                subreading.gender = self.gender
-
     def validate(self):
         """
         Validates the kaki and yomi values are correct based on the name type.
@@ -304,6 +275,10 @@ class NameData:
         self.validate()
         return self
 
+    # --------------------------------------------------------------------------------
+    # Conversion methods (JSON/CSV)
+    # --------------------------------------------------------------------------------
+
     def to_dict(self) -> dict:
         self.clean()
 
@@ -343,10 +318,6 @@ class NameData:
             data['subreadings'] = [x.to_dict() for x in self.subreadings]
 
         return data
-
-    # --------------------------------------------------------------------------------
-    # Conversion methods (JSON/CSV)
-    # --------------------------------------------------------------------------------
 
     def to_jsonl(self) -> str:
         """
@@ -466,3 +437,36 @@ class NameData:
         # Normalise spaces
         namedata.clean()
         return namedata
+
+    # --------------------------------------------------------------------------------
+    # Private methods
+    # --------------------------------------------------------------------------------
+
+    def _set_name(self, kaki: str, yomi: str):
+        self.kaki = kaki
+        self.yomi = yomi
+        self.clean()
+        return self
+
+    def _copy_pseudo_data_to_subreadings(self):
+        """
+        Copy information in the main (pseudo) NameData reading to any real
+        subreadings, including lifetime, source, tags.
+
+        Does nothing if the main reading is not PSEUDO.
+        """
+        # FIXME: copies 'xx-romaji' too which is wrong
+        for subreading in self.subreadings:
+            # Copy over the lifetime / gender / source to the real actor
+            if (
+                self.authenticity == NameAuthenticity.PSEUDO
+                and subreading.authenticity == NameAuthenticity.REAL
+            ):
+                if self.lifetime and not subreading.lifetime:
+                    subreading.lifetime = copy.copy(self.lifetime)
+                if self.source and not subreading.source:
+                    subreading.source = self.source
+                if self.tags and not subreading.tags:
+                    subreading.tags = self.tags
+
+                subreading.gender = self.gender
