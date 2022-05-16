@@ -7,6 +7,8 @@ class TableBuilderBase(metaclass=ABCMeta):
 
     name: str
 
+    test_queries: list[str] = []
+
     def create(self, cur: sqlite3.Cursor):
         """
         Invoked before loading any data. Should execute the CREATE TABLE statement
@@ -28,19 +30,21 @@ class TableBuilderBase(metaclass=ABCMeta):
         """
         pass
 
-    def compare(self, old: sqlite3.Cursor, new: sqlite3.Cursor) -> str:
+    @classmethod
+    def compare(cls, old: sqlite3.Cursor, new: sqlite3.Cursor) -> str:
         """
         Compare two copies of this table across two cursors, and return
         a short textual summary of the changes.
 
         By default, prints the old and new row counts.
         """
+
         def row_count(cur: sqlite3.Cursor) -> int:
-            cur.execute(f"SELECT COUNT(*) FROM {self.name}")
+            cur.execute(f"SELECT COUNT(*) FROM {cls.name}")
             return cur.fetchone()[0]
 
         old_count = row_count(old)
         new_count = row_count(new)
         diff = new_count - old_count
         plus = '+' if diff > 0 else ''
-        return f"{self.name:20}: {old_count} -> {new_count} ({plus}{diff})"
+        return f"{cls.name:20}: {old_count} -> {new_count} ({plus}{diff})"

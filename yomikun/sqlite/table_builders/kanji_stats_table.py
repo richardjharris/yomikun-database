@@ -46,6 +46,10 @@ class KanjiStatsTable(TableBuilderBase):
 
     name = 'kanji_stats'
 
+    test_queries = [
+        'SELECT * FROM kanji_stats ORDER BY hits_total DESC LIMIT 10',
+    ]
+
     counts: defaultdict[NameAndPart, GenderCounts]
 
     IS_HAN = regex.compile(r"\p{Han}")

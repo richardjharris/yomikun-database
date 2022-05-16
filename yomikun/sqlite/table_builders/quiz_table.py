@@ -8,6 +8,11 @@ from yomikun.sqlite.table_builders.base import TableBuilderBase
 class QuizTable(TableBuilderBase):
     name = 'quiz'
 
+    test_queries = [
+        "SELECT COUNT(*) FROM quiz",
+        "SELECT * FROM quiz ORDER BY total DESC LIMIT 15",
+    ]
+
     _create_statement = """
         CREATE TABLE quiz AS
             WITH most_common AS (

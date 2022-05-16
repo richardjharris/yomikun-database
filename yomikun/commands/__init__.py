@@ -19,6 +19,7 @@ from .parse_wikipedia import parse_wikipedia
 from .person_dedupe import person_dedupe
 from .query import query
 from .split_names import split_names
+from .sqlite_test_queries import sqlite_test_queries
 
 
 def add_yomikun_commands(cli) -> None:
@@ -46,3 +47,4 @@ def add_yomikun_commands(cli) -> None:
     cli.add_command(person_dedupe)
     cli.add_command(query)
     cli.add_command(split_names)
+    cli.add_command(sqlite_test_queries)

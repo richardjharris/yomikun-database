@@ -14,6 +14,17 @@ class NamesTable(TableBuilderBase):
 
     name = 'names'
 
+    test_queries = [
+        "SELECT COUNT(*) FROM names",
+        "SELECT part, COUNT(*) FROM names GROUP BY part",
+        "SELECT part, SUM(hits_total), SUM(hits_male), SUM(hits_female), SUM(hits_pseudo) FROM names GROUP BY part",  # noqa
+        "SELECT * FROM names ORDER BY hits_total DESC LIMIT 20",
+        "SELECT * FROM names WHERE yomi = 'shijou' ORDER BY hits_total DESC",
+        "SELECT * FROM names WHERE kaki = '吉原' ORDER BY hits_total DESC",
+        "SELECT * FROM names WHERE yomi = 'oono' ORDER BY hits_total DESC LIMIT 10",
+        "SELECT * FROM names WHERE kaki = '大野' ORDER BY hits_total DESC LIMIT 10",
+    ]
+
     _create_statement = """
         CREATE TABLE names(
             kaki TEXT,

@@ -7,10 +7,8 @@ Wikipedia JA's 202k. The epwings even fewer.
 ## Code quality
 
 NameData is too big
- - require caller to 'cast' namedata to a PersonData sub?class, which has
-   different split() methods etc.
-
- - Run sql comparison thing automatically.
+ - remove legacy tag handling
+ - remove tag as list handler
 
  - fix use of internal methods
   - wikipedia_en.parser using _parse_researchmap_inner

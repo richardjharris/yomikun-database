@@ -25,15 +25,24 @@ export ROMAJIDB_TSV_PATH = data/romajidb.tsv.gz
 
 .PHONY: all clean test prep prep-ci prep-perl prep-dev deadcode cover lint pylint install isort
 
+.PRECIOUS: db/final.test
+
 JSONL = koujien daijisen pdd jmnedict myoji-yurai wikipedia_en wikipedia_ja wikidata wikidata-nokana custom researchmap seijiyama
 JSONLFILES = $(JSONL:%=jsonl/%.jsonl)
 
 SOURCE_FILES = tests yomikun scripts/*.py
 
+all: db/final.test
+
 # Installs to the app assets folder for distribution
-install: db/final.db
-	cp $< ../app/assets/namesdb.sqlite3
+install: db/final.test
+	cp db/final.db ../app/assets/namesdb.sqlite3
 	sqlite3 --csv --noheader $< 'pragma user_version' > ../app/assets/namesdb.version.txt 2>/dev/null
+
+db/final.test: db/final.db
+	mv db/final.test db/old.test || :
+	$(YOMIKUN) sqlite-test-queries | sqlite3 -echo $^ > $@
+	git diff --no-index --word-diff db/old.test $@
 
 db/final.db: db/aggregated.jsonl
 	$(YOMIKUN) build-sqlite --replace $@ < $<
