@@ -171,26 +171,21 @@ We use 架空の for fictional characters, but 架空 by itself may be enough.
 
 Could develop a crawler + extractor for these.
 
-* https://www.chuobyoin.or.jp/doctor/
 * https://www.bungelingbay.com/gym/staff-reigo-sirai/
 * https://www.niraidai.net/professor/professor.html
 * https://www.k-1.co.jp/fighter/828/
-* https://en.wikipedia.org/wiki/Toma_Kuroda
 * https://toyokeizai.net/list/ranking
 * https://48pedia.org/%E5%85%A8%E3%83%A1%E3%83%B3%E3%83%90%E3%83%BC%E3%81%AE%E4%B8%80%E8%A6%A7#AKB48
 * http://keirin.jp/pc/racerprofile?snum=015518
 
 * https://oneosaka.jp/member/
 * https://www.wasedarugby.com/member_list/
-* http://kazina.com/dummy/
 
 * https://www.tus.ac.jp/today/archive/20210705_2485.html - 大翔 readings split (and 結愛)
 * https://www.j-clip.co.jp/narrator/
 * https://gendai.ismedia.jp/articles/-/63867?page=3
 
 * (main dict) http://www.practical-japanese.com/
-
-## Other name data (?)
 
 * https://pon-navi.net/nazuke/name/ranking
 * https://b-name.jp/
