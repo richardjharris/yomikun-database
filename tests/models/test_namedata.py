@@ -5,13 +5,6 @@ from yomikun.models.gender import Gender
 from yomikun.models.name_position import NamePosition
 
 
-def test_remove_xx():
-    nd = NameData(tags={'xx-romaji', 'xx-split'})
-    nd.tags.add('foo')
-    nd.remove_xx_tags()
-    assert nd.tags == {'foo'}
-
-
 def test_unknown_validation():
     with pytest.raises(ValueError, match=r'^name with position=unknown'):
         NameData('愛', 'あい', position=NamePosition.unknown).validate()

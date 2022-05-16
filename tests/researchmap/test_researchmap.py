@@ -96,7 +96,7 @@ def test_parse_researchmap(test):
         assert result is None
     else:
         assert result is not None
-        result.remove_xx_tags()
+        result.tags -= {'xx-romaji', 'xx-split'}
         assert result == NameData.person(
             expected_kaki, expected_yomi, source='researchmap'
         )

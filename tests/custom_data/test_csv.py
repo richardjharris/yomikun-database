@@ -1,5 +1,7 @@
 import io
 
+import pytest
+
 from yomikun.custom_data import csv
 
 
@@ -36,11 +38,5 @@ def test_success():
 def test_error(caplog):
     input_data = io.StringIO("二木 英徳,ふたぎ　ひでのり,1936,m  # wrong-way around\n")
     output_data = io.StringIO()
-
-    assert not csv.parse_file(input_data, output_data)
-    assert output_data.getvalue() == ""
-    assert caplog.records[0].levelname == "ERROR"
-    assert (
-        "Error: invalid literal for int() with base 10: 'm'"
-        in caplog.records[0].message
-    )
+    with pytest.raises(Exception, match="invalid tag '1936'"):
+        csv.parse_file(input_data, output_data)

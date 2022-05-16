@@ -35,8 +35,8 @@ SOURCE_FILES = tests yomikun scripts/*.py
 all: db/final.test
 
 # Installs to the app assets folder for distribution
-install: db/final.test
-	cp db/final.db ../app/assets/namesdb.sqlite3
+install: db/final.db db/final.test
+	cp $< ../app/assets/namesdb.sqlite3
 	sqlite3 --csv --noheader $< 'pragma user_version' > ../app/assets/namesdb.version.txt 2>/dev/null
 
 db/final.test: db/final.db

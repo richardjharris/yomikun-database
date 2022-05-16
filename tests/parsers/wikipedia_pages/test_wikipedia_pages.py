@@ -84,7 +84,7 @@ def test_parser(test_page: tuple[Path, str]):
     if result is None:
         result = NameData.person()
 
-    result.remove_xx_tags()
+    result.tags.discard('xx-romaji')
 
     expected = build_namedata_from_test_header(metadata)
 

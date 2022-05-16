@@ -140,12 +140,6 @@ class NameData:
         self.authenticity = NameAuthenticity.PSEUDO
         self.add_subreading(honmyo)
 
-    def remove_xx_tags(self):
-        to_remove = [tag for tag in self.tags if tag.startswith('xx-')]
-        for tag in to_remove:
-            self.tags.remove(tag)
-        return self
-
     def has_name(self) -> bool:
         """
         Returns True if this object has name self fully populated.
