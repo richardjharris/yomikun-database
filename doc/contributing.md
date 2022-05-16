@@ -16,7 +16,18 @@ Send a pull request, ideally with tests!
 * Add requirements to `requirements.txt` and dev-only requirements to
   `requirements-dev.txt`.
 
-## Prerequisites
+### Imports
+
+Python has several ways to import things. The following scheme is suggested:
+
+1. Use `import module` if the module name is short, or used only a few times
+2. Use `import long.module as x` if the module name is long 
+3. Use `from module import x` where it is idiomatic to do so: `dataclasses`, `typing`, `datetime` etc.
+
+Rationale: it should be obvious where functions come from, but not at a large
+cost to readability.
+
+### Prerequisites
 
 Code: Python 3.10+, the modules in `requirements.txt` (and `requirements-dev.txt`
 for development). See the `prep*` makefile targets.

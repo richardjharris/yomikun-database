@@ -20,26 +20,6 @@ NameData is too big
  - inconsistent use of sei/mei vs. given name / surname. Same for reading/written
    and yomi/kaki.
 
-### import of many loose functions feels off to me
-
-'import foo.bar.baz' makes functions too long
-
-'from module import *' is bad
-
-'from module import a, b, c' is okay but not obviously tied to
-  the module
-
-'import foo.bar.baz as baz' can be too cryptic
-
-Gpod practice:
- - plain 'import module' for short modules and if functions are
-   only used a few times (clarity > brevity)
-
- - 'import long.module as x' seems like an upgrade over bare
-   function names for most things.
-
- - 'from module import x' rarely (e.g. datetime)
-
 ## Names allowed in kanji
 
  data/chars_allowed_in_names
