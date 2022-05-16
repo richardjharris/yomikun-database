@@ -15,6 +15,7 @@ NameData is too big
  - fix use of internal methods
   - wikipedia_en.parser using _parse_researchmap_inner
   - remove Aggregator
+  - gender model
 
  - inconsistent use of sei/mei vs. given name / surname. Same for reading/written
    and yomi/kaki.

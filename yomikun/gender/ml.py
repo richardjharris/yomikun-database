@@ -1,10 +1,13 @@
 """
 ML-based model for guessing first name genders
 """
-import json
 from typing import cast
 
 import vowpalwabbit
+
+from yomikun.models.gender import Gender
+from yomikun.models.name_position import NamePosition
+from yomikun.models.namedata import NameData
 
 # --nn didn't help
 # -q kk or other values didn't help (as expected)
@@ -47,44 +50,31 @@ class GenderML:
         return prediction
 
 
+# FIXME this has duplicate code with make.py
 def generate_examples(jsonl_iterator):
-    people = set()
-
     # Read jsonl from stdin
     for line in jsonl_iterator:
-        data = json.loads(line)
-
-        # Ignore non-people.
-        if len(data['kaki'].split()) != 2 or len(data['yomi'].split()) != 2:
+        data = NameData.from_jsonl(line)
+        if data.is_dict:
             continue
 
-        # Ignore entries without a masc/fem tag, e.g. jmnedict
-        if 'masc' not in data['tags'] and 'fem' not in data['tags']:
-            continue
+        for part in data.extract_name_parts():
+            if part.position != NamePosition.mei:
+                continue
+            if part.gender not in {Gender.male, Gender.female}:
+                continue
 
-        if 'masc' in data['tags'] and 'fem' in data['tags']:
-            # A few fem FPs left in, should be fixed later
-            data['tags'].remove('fem')
-
-        # Hash people to deduplicate them
-        key = (data['kaki'], data.get('lifetime', {}).get('birth_year', None))
-        if key in people:
-            continue
-
-        people.add(key)
-
-        mei = data['kaki'].split()[1]
-        mei_yomi = data['yomi'].split()[1]
-        is_female = 'fem' in data['tags']
-        example = vw_example(vw_features(mei, mei_yomi), is_female)
-        yield example
+            example = vw_example(
+                vw_features(part.kaki, part.yomi), part.gender == Gender.female
+            )
+            yield example
 
 
 def vw_example(features: str, is_female: bool):
     return f"{1 if is_female else -1} {features}"
 
 
-def vw_features(kaki, yomi):
+def vw_features(kaki: str, yomi: str):
     """
     Vowpal Wabbit features for a name:
     |y yomi
