@@ -1,5 +1,4 @@
-from yomikun.models import Lifetime, NameData
-from yomikun.models.name_position import NamePosition
+from yomikun.models import Lifetime, NameData, NamePosition
 from yomikun.parsers.jmnedict import parser
 
 
