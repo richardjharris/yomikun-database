@@ -11,8 +11,7 @@ from mediawiki_dump.tokenizer import clean
 from yomikun.models import Gender, NameAuthenticity, NameData
 from yomikun.models.name_position import NamePosition
 from yomikun.parsers.wikipedia_ja.ignore import should_ignore_name
-from yomikun.researchmap import ResearchMapRecord
-from yomikun.researchmap.parser import _parse_researchmap_inner
+from yomikun.utils.parse import parse_romaji_name
 from yomikun.utils.patterns import name_pat
 from yomikun.utils.romaji.messy import romaji_to_hiragana_messy
 from yomikun.utils.split import split_kanji_name
@@ -83,8 +82,7 @@ def parse_wikipedia_article(
         # HACK: Uses researchmap code.
         namedata = None
         try:
-            record = ResearchMapRecord(romaji, kanji, '')
-            namedata = _parse_researchmap_inner(record, swap_names=True)
+            namedata = parse_romaji_name(romaji, kanji)
         except NotImplementedError:
             pass
 

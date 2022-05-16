@@ -4,13 +4,6 @@ the future.
 Wikipedia EN/WikiData contribute only ~20k names each compared to
 Wikipedia JA's 202k. The epwings even fewer.
 
-## Code quality
-
- - fix use of internal methods
-  - wikipedia_en.parser using _parse_researchmap_inner
-  - remove Aggregator
-  - gender model
-
 ## Names allowed in kanji
 
  data/chars_allowed_in_names
