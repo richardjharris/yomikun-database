@@ -3,21 +3,21 @@ import sys
 
 import click
 import prettytable
-import regex
 import romkan
 
+import yomikun.sqlite.query
 from yomikun.sqlite.models import NamePart
 
-HEADER_NAMES = ["kaki", "yomi", "part", "hits", "female", "male", "fict"]
-SQL_COLUMN_NAMES = [
-    "kaki",
-    "yomi",
-    "part",
-    "hits_total",
-    "hits_female",
-    "hits_male",
-    "hits_pseudo",
-]
+# Mapping of sqlite column to header, in order
+COLUMN_MAP = {
+    'kaki': 'kaki',
+    'yomi': 'yomi',
+    'part': 'part',
+    'hits': 'hits_total',
+    'female': 'hits_female',
+    'male': 'hits_male',
+    'fict': 'hits_pseudo',
+}
 
 
 @click.command()
@@ -51,7 +51,7 @@ def query(search_term, dbfile, part, trace, limit):
 
     printer = PrettyPrinter() if sys.stdout.isatty() else TsvPrinter()
 
-    cur = get_data(conn, search_term, part.lower(), limit)
+    cur = yomikun.sqlite.query.get_data(conn, search_term, part.lower(), limit)
     for row in cur.fetchall():
         row = dict(row)
         row['yomi'] = romkan.to_hiragana(row['yomi'])
@@ -66,7 +66,7 @@ class PrettyPrinter:
     _table: prettytable.PrettyTable
 
     def __init__(self):
-        table = prettytable.PrettyTable(HEADER_NAMES)
+        table = prettytable.PrettyTable(COLUMN_MAP.keys())
         table.align = "r"
         table.align['yomi'] = 'l'  # type: ignore
         table.align['kaki'] = 'l'  # type: ignore
@@ -74,7 +74,7 @@ class PrettyPrinter:
         self._table = table
 
     def add_row(self, row: dict):
-        self._table.add_row(row.values())
+        self._table.add_row([row[v] for v in COLUMN_MAP.values()])
 
     def __str__(self):
         return str(self._table)
@@ -84,41 +84,10 @@ class TsvPrinter:
     _lines = []
 
     def __init__(self):
-        self._lines.append('\t'.join(HEADER_NAMES))
+        self._lines.append('\t'.join(COLUMN_MAP.keys()))
 
     def add_row(self, row: dict):
-        self._lines.append('\t'.join(map(str, row.values())))
+        self._lines.append('\t'.join(str(row[v]) for v in COLUMN_MAP.values()))
 
     def __str__(self):
         return '\n'.join(self._lines)
-
-
-def get_data(
-    conn: sqlite3.Connection, search_term: str, part: str, limit: int
-) -> sqlite3.Cursor:
-    cur = conn.cursor()
-    cur.row_factory = sqlite3.Row  # type: ignore
-
-    is_kaki = regex.search(r'\p{Han}', search_term)
-    if is_kaki:
-        query_col = 'kaki'
-    else:
-        query_col = 'yomi'
-        search_term = romkan.to_roma(search_term)
-
-    if part == 'all':
-        part_query = ""
-    else:
-        part_id = NamePart[part].value
-        part_query = f"AND part = {int(part_id)}"
-
-    limit_sql = '' if limit == -1 else f'LIMIT {int(limit)}'
-
-    sql = f"""
-        SELECT {', '.join(SQL_COLUMN_NAMES)} FROM names
-        WHERE {query_col} = ? {part_query}
-        ORDER BY part, hits_total DESC
-        {limit_sql}
-    """
-    cur.execute(sql, (search_term,))
-    return cur

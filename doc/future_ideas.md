@@ -4,6 +4,52 @@ the future.
 Wikipedia EN/WikiData contribute only ~20k names each compared to
 Wikipedia JA's 202k. The epwings even fewer.
 
+## Incorrect kana
+
+Results for 菅野
+
+myoji-yurai says 【読み】かんの,すがの,すげの,かやの,すかの,すがや
+
+kaki                                      yomi                                      part  hits_total  hits_male  hits_female  hits_pseudo  female_ratio
+----------------------------------------  ----------------------------------------  ----  ----------  ---------  -----------  -----------  ------------
+菅野                                        kanno                                     1     218         0          0            5            0           
+菅野                                        sugano                                    1     137         0          0            1            0           
+菅野                                        kan'o                                     1     52          0          0            0            0           
+菅野                                        sugeno                                    1     11          0          0            1            0           
+菅野                                        ogino                                     1     1           0          0            0            0           
+菅野                                        sugaya                                    1     0           0          0            0            0           
+菅野                                        sukano                                    1     0           0          0            0            0  
+
++------+--------+------+------+--------+------+------+
+| kaki | yomi   | part | hits | female | male | fict |
++------+--------+------+------+--------+------+------+
+| 菅野 | かんお | 姓   |  218 |      0 |    0 |    5 |
+| 菅野 | すがの | 姓   |  137 |      0 |    0 |    1 |
+| 菅野 | かんお | 姓   |   52 |      0 |    0 |    0 |
+| 菅野 | すげの | 姓   |   11 |      0 |    0 |    1 |
+| 菅野 | おぎの | 姓   |    1 |      0 |    0 |    0 |
+| 菅野 | すがや | 姓   |    0 |      0 |    0 |    0 |
+| 菅野 | すかの | 姓   |    0 |      0 |    0 |    0 |
++------+--------+------+------+--------+------+------+
+
+Similar issue with 丹野 (たんお only?), 慎之介 (しんおすけ)
+
+When loading the DB we do `yomi = yomi.replace("n'n", "nn")`
+# e.g. "anna" does not need to be "an'na".
+
+>>> romkan.to_hiragana("anna")
+'あんあ'
+>>> romkan.to_hiragana("an'na")
+'あんな'
+
+I guess this is required: ana = あな, anna = あんあ, an'na = あんな
+
+## Missing kana names
+
+  e.g. しぼり - no entries for kana -> kana (not even dict)
+    Split and search logic should probably just inject a dict entry
+    Or we could manufacture dict entries for every known reading.
+
 ## Names allowed in kanji
 
  data/chars_allowed_in_names

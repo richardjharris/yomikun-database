@@ -47,10 +47,6 @@ class NamesTable(TableBuilderBase):
         # Convert yomi to romaji so it takes up less space
         yomi = romkan.to_roma(row["yomi"])
 
-        # romkan eagerly adds apostrophes in places where we don't really need them,
-        # e.g. "anna" does not need to be "an'na".
-        yomi = yomi.replace("n'n", "nn")
-
         # Convert part to part ID
         part_id = NamePart[row["part"]].value
 
