@@ -6,7 +6,8 @@ from yomikun.models.name_position import NamePosition
 
 
 def test_remove_xx():
-    nd = NameData(tags={'xx-romaji', 'xx-split', 'foo'})
+    nd = NameData(tags={'xx-romaji', 'xx-split'})
+    nd.tags.add('foo')
     nd.remove_xx_tags()
     assert nd.tags == {'foo'}
 
@@ -15,7 +16,7 @@ def test_unknown_validation():
     with pytest.raises(ValueError, match=r'^name with position=unknown'):
         NameData('愛', 'あい', position=NamePosition.unknown).validate()
 
-    NameData('愛', 'あい', tags={'fem'}).validate()
+    NameData('愛', 'あい', position=NamePosition.mei, gender=Gender.female).validate()
 
 
 def test_kaki_validation():
@@ -31,7 +32,7 @@ def test_kaki_validation():
 
 
 def test_kana_validation():
-    nd = NameData('心', 'ココロ', tags={'given'})
+    nd = NameData('心', 'ココロ', position=NamePosition.mei)
     with pytest.raises(ValueError, match=r'^Invalid yomi'):
         nd.validate()
 
@@ -75,27 +76,6 @@ def test_split():
 
     with pytest.raises(ValueError, match=r'NameData kaki is not split'):
         NameData.person('朱匠', 'しゅ たくみ').split()
-
-
-def test_legacy_gender_tags():
-    assert NameData('まこと', 'まこと', tags={'fem'}).gender == Gender.female
-    assert NameData('まこと', 'まこと', tags={'masc'}).gender == Gender.male
-    assert (
-        NameData('まこと', 'まこと', tags={'fem', 'masc'}).gender == Gender.female
-    ), 'female preferred'
-    assert NameData('まこと', 'まこと').gender == Gender.unknown
-
-
-def test_legacy_isdict():
-    assert not NameData('夏目', 'なつめ').is_dict
-    assert NameData('夏目', 'なつめ', tags={'dict'}).is_dict
-
-
-def test_legacy_isdict_surname():
-    nd = NameData('夏目', 'なつめ', tags={'surname', 'dict'})
-    assert nd.is_dict
-    assert nd.position == NamePosition.sei
-    assert not nd.tags
 
 
 def test_copy_data_to_subreadings():

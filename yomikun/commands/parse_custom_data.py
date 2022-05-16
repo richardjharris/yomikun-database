@@ -3,7 +3,7 @@ import sys
 
 import click
 
-from yomikun.custom_data.csv import parse_file
+import yomikun.custom_data
 
 
 @click.command()
@@ -23,5 +23,7 @@ def parse_custom_data(input):
 
     for file in input:
         logging.info(f"Parsing {file.name}")
-        if not parse_file(file, sys.stdout, input_filename=file.name):
+        if not yomikun.custom_data.parse_file(
+            file, sys.stdout, input_filename=file.name
+        ):
             sys.exit(1)

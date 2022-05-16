@@ -108,34 +108,14 @@ class NameData:
         return NameDataKey(self.kaki, self.yomi, self.position)
 
     def __post_init__(self):
-        # Do basic type checking, as selfclasses does not
+        # Do basic type checking, as dataclasses does not
         assert isinstance(self.subreadings, list)
+        assert isinstance(self.tags, set)
 
-        # Some tests create NameData with tags as a list
-        if isinstance(self.tags, list):
-            self.tags = set(self.tags)
-
-        # Handle legacy tags
-        # FIXME: remove
-        if self.tags:
-            if 'person' in self.tags or (' ' in self.kaki or ' ' in self.yomi):
-                self.position = NamePosition.person
-            elif 'surname' in self.tags:
-                self.position = NamePosition.sei
-            elif self.tags & {'given', 'masc', 'fem'}:
-                self.position = NamePosition.mei
-
-            if 'fem' in self.tags:
-                self.gender = Gender.female
-            elif 'masc' in self.tags:
-                self.gender = Gender.male
-
-            if 'dict' in self.tags:
-                self.is_dict = True
-
-            # Remove the tags we have handled
-            self.tags -= {'person', 'surname', 'given', 'masc', 'fem', 'dict'}
-            # FIXME: complain if any tags are not xx-*
+        # Only xx-* tags are accepted.
+        assert all(
+            tag.startswith('xx-') for tag in self.tags
+        ), f"legacy tag in: {self.tags}"
 
         self.clean()
 
@@ -454,14 +434,21 @@ class NameData:
                     namedata.gender = Gender.male
                 elif tag == 'f':
                     namedata.gender = Gender.female
-                elif tag == 's':
+                elif tag in ('s', 'surname'):
                     namedata.position = NamePosition.sei
+                elif tag == 'given':
+                    # default value
+                    pass
                 elif tag == 'pseudo':
                     namedata.authenticity = NameAuthenticity.PSEUDO
                 elif tag in ('fictional', 'fict'):
                     namedata.authenticity = NameAuthenticity.FICTIONAL
+                elif tag == 'dict':
+                    namedata.is_dict = True
+                elif tag == 'xx-romaji':
+                    namedata.tags.add('xx-romaji')
                 else:
-                    namedata.tags.add(tag)
+                    raise Exception(f"invalid tag '{tag}' in {row}")
 
         # Assume person if the name contained spaces
         if len(kaki.split()) == 2:

@@ -9,10 +9,10 @@ from yomikun.models.name_authenticity import NameAuthenticity as NA
 def test_akira():
     """Basic test of deduping four real-world Akira Kurosawa entries."""
     jsonl = """
-{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "jmnedict", "tags": ["person"]}
-{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikidata:http://www.wikidata.org/entity/Q8006", "tags": ["person", "masc"], "notes": "日本の映画監督"}
-{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikipedia_en:Akira Kurosawa", "tags": ["xx-romaji", "masc", "person"], "notes": "Filmmaker and painter who directed 30 films in a career spanning 57 years"}
-{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikipedia_ja:黒澤明", "tags": ["person"]}
+{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "position": "person", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "jmnedict"}
+{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "position": "person", "gender": "male", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikidata:http://www.wikidata.org/entity/Q8006", "notes": "日本の映画監督"}
+{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "position": "person", "gender": "male", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikipedia_en:Akira Kurosawa", "tags": ["xx-romaji"], "notes": "Filmmaker and painter who directed 30 films in a career spanning 57 years"}
+{"kaki": "黒澤 明", "yomi": "くろさわ あきら", "authenticity": "real", "position": "person", "lifetime": {"birth_year": 1910, "death_year": 1998}, "source": "wikipedia_ja:黒澤明"}
     """.strip()  # noqa: E501
 
     pd = PersonDedupe()
@@ -35,9 +35,9 @@ def test_akira():
 def test_natsume():
     """Test that involves copying subreadings and dealing with real/pseudo"""
     jsonl = """
-{"kaki": "夏目 漱石", "yomi": "なつめ そうせき", "authenticity": "real", "lifetime": {"birth_year": 1867, "death_year": 1916}, "subreadings": [], "source": "daijisen:なつめ‐そうせき【夏目漱石】", "tags": ["person"]}
-{"kaki": "夏目 漱石", "yomi": "なつめ そうせき", "authenticity": "real", "lifetime": {"birth_year": 1867, "death_year": 1916}, "subreadings": [], "source": "koujien:なつめ‐そうせき【夏目漱石】", "tags": ["person"]}
-{"kaki": "夏目 漱石", "yomi": "なつめ そうせき", "authenticity": "pseudo", "lifetime": {"birth_year": 1867, "death_year": 1916}, "subreadings": [{"kaki": "夏目 金之助", "yomi": "なつめ きんのすけ", "authenticity": "real", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "", "tags": ["person"], "notes": ""}], "source": "wikipedia_ja:夏目漱石", "tags": ["person"]}
+{"kaki": "夏目 漱石", "yomi": "なつめ そうせき", "authenticity": "real", "position": "person", "lifetime": {"birth_year": 1867, "death_year": 1916}, "subreadings": [], "source": "daijisen:なつめ‐そうせき【夏目漱石】"}
+{"kaki": "夏目 漱石", "yomi": "なつめ そうせき", "authenticity": "real", "position": "person", "lifetime": {"birth_year": 1867, "death_year": 1916}, "subreadings": [], "source": "koujien:なつめ‐そうせき【夏目漱石】"}
+{"kaki": "夏目 漱石", "yomi": "なつめ そうせき", "authenticity": "pseudo", "position": "person", "lifetime": {"birth_year": 1867, "death_year": 1916}, "subreadings": [{"kaki": "夏目 金之助", "yomi": "なつめ きんのすけ", "authenticity": "real", "position": "person", "lifetime": {"birth_year": null, "death_year": null}, "subreadings": [], "source": "", "notes": ""}], "source": "wikipedia_ja:夏目漱石"}
     """.strip()  # noqa: E501
 
     pd = PersonDedupe()
