@@ -6,6 +6,7 @@ import csv
 import sqlite3
 
 import click
+import regex
 import requests
 
 import yomikun.sqlite.query
@@ -38,12 +39,18 @@ def query_kazina_dummay(dbfile, count):
     )
     reader = csv.reader(r.text.splitlines())
     _ = next(reader)  # skip header
+    seen = set()
     for row in reader:
         kaki, yomi, gender_code = row
         gender = Gender.male if gender_code == 'M' else Gender.female
         namedata = NameData.person(kaki, yomi, gender=gender)
 
         for part in namedata.extract_name_parts():
+            # Skip over kaki that is just the reading in hiragana or katakana
+            # FIXME: handle these too
+            if regex.search(r'^[\p{Hiragana}\p{Katakana}ー]+$', part.kaki):
+                continue
+
             has_name = yomikun.sqlite.query.get_exact_match(
                 conn,
                 part.kaki,
@@ -51,7 +58,9 @@ def query_kazina_dummay(dbfile, count):
                 NamePart.from_position(part.position),
             )
             if not has_name:
-                print("Missing: " + repr(part))
+                if part.key() not in seen:
+                    print("Missing: " + repr(part))
+                    seen.add(part.key())
 
 
 if __name__ == '__main__':
