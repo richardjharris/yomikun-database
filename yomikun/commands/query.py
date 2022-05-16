@@ -120,5 +120,5 @@ def get_data(
         ORDER BY part, hits_total DESC
         {limit_sql}
     """
-    cur.execute(sql, (search_term))
+    cur.execute(sql, (search_term,))
     return cur
