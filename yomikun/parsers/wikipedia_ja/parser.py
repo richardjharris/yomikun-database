@@ -18,6 +18,8 @@ from yomikun.parsers.wikipedia_ja.infobox import extract_infoboxes, parse_infobo
 from yomikun.utils.patterns import name_paren_start, name_pat, reading_pat
 from yomikun.utils.split import split_kanji_name
 
+logger = logging.getLogger(__name__)
+
 
 def parse_article_text(title: str, content: str) -> NameData:
     """
@@ -56,22 +58,22 @@ def parse_article_text(title: str, content: str) -> NameData:
 
         # Handle names like 'みなもと の よりいえ'
         if yomi.endswith(' の'):
-            logging.debug(
+            logger.debug(
                 f'{kaki=} {yomi=} Looks like middle name? Removing and retrying...'
             )
             if m := regex.search(fr'^({reading_pat})', yomi[:-2] + extra_raw):
                 yomi = m[1]
-                logging.debug(f'New yomi is {yomi}')
+                logger.debug(f'New yomi is {yomi}')
             else:
-                logging.debug('Did not match after removing の, leaving as is')
+                logger.debug('Did not match after removing の, leaving as is')
 
         kaki = split_kanji_name(kaki, yomi)
         reading = NameData(kaki, yomi)
-        logging.info(f"Got headline reading {reading}")
+        logger.info(f"Got headline reading {reading}")
     elif honmyo:
         # Make the honmyo the main reading
         reading = honmyo
-        logging.info(f"No headline reading, using honymo {reading}")
+        logger.info(f"No headline reading, using honymo {reading}")
         # Extract extra_raw from the article content, if possible
         # Quite often the name is Latin/Katakana and has no furigana reading,
         # so include the reading in the extra_raw.
@@ -80,7 +82,7 @@ def parse_article_text(title: str, content: str) -> NameData:
         )
         extra_raw = m.group(1) if m else ''
     else:
-        logging.info(f"[{title}] Could not find a reading, giving up")
+        logger.info(f"[{title}] Could not find a reading, giving up")
         # Return empty data record to indicate failure
         return NameData()
 
@@ -138,11 +140,11 @@ def parse_article_text(title: str, content: str) -> NameData:
         # FP: '本名同じ', '「巧」が姓、「舟」が名前である。ペンネームのようだが本名[3]。通称は「タクシュー」[4]。'
         if m := regex.search(r'本名(.{0,4})', extra_raw):
             trailing = clean(m[1])
-            logging.debug(f'Unparsed 本名 found (following text: [{trailing}])')
+            logger.debug(f'Unparsed 本名 found (following text: [{trailing}])')
             if regex.search(r'(同じ|。)', trailing):
-                logging.debug('Ignoring (looks like FP)')
+                logger.debug('Ignoring (looks like FP)')
             else:
-                logging.debug('Marking PSEUDO')
+                logger.debug('Marking PSEUDO')
                 reading.authenticity = NameAuthenticity.PSEUDO
 
     reading.clean()
@@ -228,16 +230,30 @@ def parse_wikipedia_article(
     """
     if ':' in title:
         # 1,500+ Template/Talk/Project/User pages have extractable names
-        logging.debug(f"Skipping '{title}' (not an article page)")
+        logger.debug(f"Skipping '{title}' (not an article page)")
         return
 
-    box_data = parse_infoboxes(extract_infoboxes(content)).clean()
+    infoboxes = extract_infoboxes(content)
+    box_data = parse_infoboxes(infoboxes).clean()
     article_data = parse_article_text(title, content).clean()
 
-    logging.debug(f'Box data: {box_data}')
-    logging.debug(f'Article data: {article_data}')
+    logger.debug(f'Box data: {box_data}')
+    logger.debug(f'Article data: {article_data}')
 
     namedata = merge_namedata(box_data, article_data)
+
+    # Experimental: consider name to be pseudo if we encounter a 'honmyou' field
+    # in the infobox.
+    for box in infoboxes:
+        if honmyo_key := box.first_set('本名'):
+            honmyo = box[honmyo_key]
+            honmyo = clean(honmyo).strip()
+            honmyo = regex.sub(r'\s+', '', honmyo)
+            if honmyo and regex.search(rf'^{name_pat}$', honmyo):
+                kaki = regex.sub(r'\s+', '', namedata.kaki)
+                yomi = regex.sub(r'\s+', '', namedata.yomi)
+                if honmyo not in {'同じ', kaki, kaki + yomi}:
+                    namedata.authenticity = NameAuthenticity.PSEUDO
 
     add_category_data(namedata, content)
 
@@ -247,7 +263,7 @@ def parse_wikipedia_article(
     # Exclude certain names which are likely to not be people
     # Also exclude cases where we were unable to split the kanji
     if len(namedata.kaki.split()) == 1 or should_ignore_name(namedata.kaki):
-        logging.info(f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
+        logger.info(f"[{title}] Name '{namedata.kaki}' matched ignore rules, skipping")
         return
 
     if add_source:
@@ -260,30 +276,3 @@ def parse_wikipedia_article(
     namedata.clean_and_validate()
 
     return namedata
-
-
-def test_basic():
-    content = """
-{{ActorActress<!-- テンプレートは変更しないでください。「Template:ActorActress」参照 -->
-| 生年 = 1964
-}}
-'''阿部 寛'''（あべ ひろし、[[1964年]]〈昭和39年〉[[6月22日]]<ref name="rirekisho" /> - ）は、[[日本]]の[[俳優]]。[[茂田オフィス]]所属。
-""".strip()  # noqa
-    assert parse_wikipedia_article('foo', content) == NameData.person(
-        kaki='阿部 寛',
-        yomi='あべ ひろし',
-        lifetime=Lifetime(1964),
-        source='wikipedia_ja:foo',
-    )
-
-
-def test_ref_in_first_line():
-    content = """
-'''鈴置 洋孝'''（すずおき ひろたか、[[1950年]][[3月6日]]<ref name="kenproduction">{{Cite web|date=|url=blah}}</ref>
-"""  # noqa
-    assert parse_wikipedia_article('bar', content) == NameData.person(
-        kaki='鈴置 洋孝',
-        yomi='すずおき ひろたか',
-        lifetime=Lifetime(1950),
-        source='wikipedia_ja:bar',
-    )

@@ -3,10 +3,10 @@ from dataclasses import dataclass
 
 import pytest
 
-kanji_numbers = '〇一二三四五六七八九'
-knum_char_class = '[' + kanji_numbers + ']'
-year_matcher = re.compile(
-    '^［(' + knum_char_class + '{3,4}|)〜(' + knum_char_class + '{3,4}|)］'
+KANJI_NUMBERS = '〇一二三四五六七八九'
+KANJI_NUMBER_CHAR_CLASS = '[' + KANJI_NUMBERS + ']'
+YEAR_MATCHER = re.compile(
+    '^［(' + KANJI_NUMBER_CHAR_CLASS + '{3,4}|)〜(' + KANJI_NUMBER_CHAR_CLASS + '{3,4}|)］'
 )
 
 
@@ -27,7 +27,7 @@ def convert_kanji_year(kanji: str) -> int:
     if len(kanji) == 0:
         raise ValueError('empty string')
 
-    numbers = (str(kanji_numbers.index(n)) for n in kanji)
+    numbers = (str(KANJI_NUMBERS.index(n)) for n in kanji)
     return int(''.join(numbers))
 
 
@@ -60,7 +60,7 @@ def parse_birth_and_death_year(text: str) -> BirthDeathYear:
     line = line.replace('　', '')
     line = line.replace('ころ', '')
     line = line.replace('？', '')
-    if m := year_matcher.match(line):
+    if m := YEAR_MATCHER.match(line):
         try:
             result.birth_year = convert_kanji_year(m[1])
         except ValueError:

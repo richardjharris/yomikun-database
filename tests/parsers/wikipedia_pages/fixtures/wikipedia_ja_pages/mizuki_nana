@@ -4,6 +4,8 @@ name: 水樹 奈々
 reading: みずき なな
 lifetime: 1980 ~
 gender: F
+type: pseudo
+# Unable to parse 本名 (no reading) but we know it exists.
 # 性別 is included in infobox
 ---
 {{拡張半保護}}

@@ -41,6 +41,7 @@ def convert_to_hiragana(yomi: str, swap_names: bool = True) -> str:
 
 def test_convert_to_hiragana():
     assert convert_to_hiragana('Suzuki Hirabe') == 'ひらべ すずき'
+    assert convert_to_hiragana('Suzuki Hirabe', swap_names=False) == 'すずき ひらべ'
     assert convert_to_hiragana('Yuuzou　Kouda') == 'こうだ ゆうぞう'
     assert convert_to_hiragana('フジモト　ミキ') == 'ふじもと みき'
     assert convert_to_hiragana('みき') == 'みき'
