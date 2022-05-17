@@ -171,10 +171,8 @@ We use 架空の for fictional characters, but 架空 by itself may be enough.
 
 Could develop a crawler + extractor for these.
 
-* https://www.bungelingbay.com/gym/staff-reigo-sirai/
 * https://www.niraidai.net/professor/professor.html
 * https://www.k-1.co.jp/fighter/828/
-* https://toyokeizai.net/list/ranking
 * https://48pedia.org/%E5%85%A8%E3%83%A1%E3%83%B3%E3%83%90%E3%83%BC%E3%81%AE%E4%B8%80%E8%A6%A7#AKB48
 * http://keirin.jp/pc/racerprofile?snum=015518
 
