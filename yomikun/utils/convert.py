@@ -5,7 +5,7 @@ import regex
 from yomikun.utils.romaji.strict import romaji_to_hiragana_strict
 
 
-def convert_to_hiragana(yomi: str) -> str:
+def convert_to_hiragana(yomi: str, swap_names: bool = True) -> str:
     """
     Convert katakana or romaji names to hiragana.
 
@@ -31,7 +31,7 @@ def convert_to_hiragana(yomi: str) -> str:
     if len(formats) > 1:
         raise ValueError(f"Inconsistent formats: {', '.join(formats)}")
 
-    if 'romaji' in formats and len(out) > 1:
+    if swap_names and 'romaji' in formats and len(out) > 1:
         # Swap order of romaji names
         assert len(out) == 2
         out.reverse()

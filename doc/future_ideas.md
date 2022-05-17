@@ -8,6 +8,9 @@ Wikipedia JA's 202k. The epwings even fewer.
 
 Report + compare() use different old DBs
 
+Does 'dict' work for surnames? in terms of hit counts.
+  Example: 上門,かみじょう,s+dict
+
 ## Handle hiragana + kanakana variants
 
 Most names (あけみ, ナオト) have kana variants recorded. Question is how we should handle
@@ -67,6 +70,11 @@ I guess this is required: ana = あな, anna = あんあ, an'na = あんな
  - other old kana (wo, we, wi) are allowed
  - small wa is allowed
  - ゝゞ are allowed
+
+## Did not detect honmyo
+
+jsonl/wikipedia_ja.jsonl:{"kaki": "佐々木 孫悟空", "yomi": "ささき そんごくう", "authenticity": "real", "position": "person", "lifetime": {"birth_year": 1974, "death_year": null}, "source": "wikipedia_ja:佐々木孫悟空"}
+
 
 ## Fixing suo
 

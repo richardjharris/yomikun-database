@@ -8,12 +8,24 @@ from yomikun.models.namedata import NameData
 
 @click.command()
 @click.argument('input', type=click.File('r'), default='-')
-def clean_custom_data(input):
+@click.option(
+    '--split/--no-split',
+    type=bool,
+    default=True,
+    help='Split person into two name records for anonymity',
+)
+@click.option(
+    '--swap-romaji/--no-swap-romaji',
+    type=bool,
+    default=True,
+    help='Swap order of romaji names',
+)
+def clean_custom_data(input, split, swap_romaji):
     """
     Clean up/anonymize sloppy custom.csv data
 
     This script converts sloppy custom.csv data, typically transcribed from
-    a website or book, into standard form. It does two things:
+    a website or book, into standard form. It does up to two things:
 
     \b
     1) Convert romaji/katakana names into hiragana
@@ -34,15 +46,18 @@ def clean_custom_data(input):
     """
     reader = csv.DictReader(input, CSV_FIELDS)
     for row in reader:
-        _output_clean_row(row)
+        _output_clean_row(row, split, swap_romaji)
 
 
-def _output_clean_row(row: dict[str, str]):
-    namedata = NameData.from_csv(row)
+def _output_clean_row(row: dict[str, str], do_split: bool, swap_romaji: bool):
+    namedata = NameData.from_csv(row, swap_romaji)
 
     if len(namedata.kaki.split()) != len(namedata.yomi.split()):
-        raise ValueError("kaki and yomi have different name counts")
+        raise ValueError(f"kaki and yomi have different name counts: {row}")
 
-    # Split person into two parts for anonymity
-    for part in namedata.extract_name_parts():
-        print(part.to_csv())
+    if do_split:
+        # Split person into two parts for anonymity
+        for part in namedata.extract_name_parts():
+            print(part.to_csv())
+    else:
+        print(namedata.to_csv())

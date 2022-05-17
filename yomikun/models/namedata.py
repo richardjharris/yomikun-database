@@ -381,15 +381,18 @@ class NameData:
         return ','.join(fields)
 
     @classmethod
-    def from_csv(cls, row: dict) -> NameData:
+    def from_csv(cls, row: dict, swap_names=True) -> NameData:
         """
         Parse an incoming CSV data row and return a NameData object.
 
         Row must a parsed dict containing the fields: kaki, yomi,
         tags, lifetime, notes.
+
+        `swap_names` causes romaji names to be interpreted as
+        'Lastname Firstname' and swapped around. It defaults to True.
         """
         kaki = row['kaki']
-        yomi = convert_to_hiragana(row['yomi'])
+        yomi = convert_to_hiragana(row['yomi'], swap_names)
         namedata = NameData(kaki, yomi, position=NamePosition.mei)
 
         if row['tags']:
