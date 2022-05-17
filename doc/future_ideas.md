@@ -97,13 +97,7 @@ has any. It could at least check if any are being missed.
 
 Currently we use a manual dictionary to correct these.
 
-## 反り目、反リ目 (etc.) ought to be treated identically
-
-## Pitch accents
-
- - see pitch text.
-
-## Kanji picker
+## Kanji picker (app)
 
 A better kanji picker. Top/bottom slots, pick radical, etc.
 
@@ -123,23 +117,6 @@ in the original romaji, e.g. if macrons are used they'll be respected.
    kana is large instead. But equally we could romaji_key ryo -> riyo
    to handle this.
 
-## seijiyama improvements
-
-  - go back and scrape missing cards (currently we ignore things we have
-    \> 5 hits for)
-
-## yuuki / yuki and other stuff
-
-For some names (ゆうき・ゆき) perhaps we shouldn't even generate records, as they
-would bias the stats? Picking randomly doesn't work either if it's gender-based.
-
-For example ochi/大内 has two readings おおち、おうち, clearly either of them is better
-than returning おち!
- - I think we currently do this (only messy romajise one part, not both) but
-   need to check
-
- - How much effort do we want to expend? How much of the database is xx-romaji?
-
 ## Importer module
 
 A module to handle logging, execution time, validation, errors/okays
@@ -155,16 +132,13 @@ https://jahis.law.nagoya-u.ac.jp/who/search  (multiple editions)
 
 ## Wikipedia JA gender
 
-If we compute all subcategories belonging to the root 'Japanese women'
-category we can match against that instead of handcrafted patterns.
+If we compute all subcategories belonging to the root 'Japanese women' category we can match against that instead of handcrafted patterns.
 
 ## Wikipedia EN
 
-Check for 'nihongo' template requires 3 arguments, there are some with
-fewer.
+Check for 'nihongo' template requires 3 arguments, there are some with fewer.
 
-Uses researchmapcode, but this needs refactoring as it uses an internal
-method
+Uses researchmapcode, but this needs refactoring as it uses an internal method
 
 ## Wikidata EN
 
@@ -179,7 +153,6 @@ We use 架空の for fictional characters, but 架空 by itself may be enough.
 
 Could develop a crawler + extractor for these.
 
-* https://www.niraidai.net/professor/professor.html
 * https://www.k-1.co.jp/fighter/828/
 * https://48pedia.org/%E5%85%A8%E3%83%A1%E3%83%B3%E3%83%90%E3%83%BC%E3%81%AE%E4%B8%80%E8%A6%A7#AKB48
 * http://keirin.jp/pc/racerprofile?snum=015518
