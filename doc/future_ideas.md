@@ -18,43 +18,8 @@ other forms of the names. Should we insert phantom records for the other names?
 
 ## Incorrect kana
 
-Results for 菅野
-
-myoji-yurai says 【読み】かんの,すがの,すげの,かやの,すかの,すがや
-
-kaki                                      yomi                                      part  hits_total  hits_male  hits_female  hits_pseudo  female_ratio
-----------------------------------------  ----------------------------------------  ----  ----------  ---------  -----------  -----------  ------------
-菅野                                        kanno                                     1     218         0          0            5            0           
-菅野                                        sugano                                    1     137         0          0            1            0           
-菅野                                        kan'o                                     1     52          0          0            0            0           
-菅野                                        sugeno                                    1     11          0          0            1            0           
-菅野                                        ogino                                     1     1           0          0            0            0           
-菅野                                        sugaya                                    1     0           0          0            0            0           
-菅野                                        sukano                                    1     0           0          0            0            0  
-
-+------+--------+------+------+--------+------+------+
-| kaki | yomi   | part | hits | female | male | fict |
-+------+--------+------+------+--------+------+------+
-| 菅野 | かんお | 姓   |  218 |      0 |    0 |    5 |
-| 菅野 | すがの | 姓   |  137 |      0 |    0 |    1 |
-| 菅野 | かんお | 姓   |   52 |      0 |    0 |    0 |
-| 菅野 | すげの | 姓   |   11 |      0 |    0 |    1 |
-| 菅野 | おぎの | 姓   |    1 |      0 |    0 |    0 |
-| 菅野 | すがや | 姓   |    0 |      0 |    0 |    0 |
-| 菅野 | すかの | 姓   |    0 |      0 |    0 |    0 |
-+------+--------+------+------+--------+------+------+
-
-Similar issue with 丹野 (たんお only?), 慎之介 (しんおすけ)
-
-When loading the DB we do `yomi = yomi.replace("n'n", "nn")`
-# e.g. "anna" does not need to be "an'na".
-
->>> romkan.to_hiragana("anna")
-'あんあ'
->>> romkan.to_hiragana("an'na")
-'あんな'
-
-I guess this is required: ana = あな, anna = あんあ, an'na = あんな
+We are now encoding 菅野 as "kan'no" etc., but client database needs to handle this
+also.
 
 ## Missing kana names
 
@@ -382,5 +347,3 @@ Not sure if RomajiDB has multiple readings used in find_split_point.
    function!
 
  * Custom data: support commas in the notes field.
-
- * Support 一の瀬 and variants (seen in pen-names) [done but wikipedia needs re-running]
