@@ -345,5 +345,3 @@ Not sure if RomajiDB has multiple readings used in find_split_point.
  * In romaji_to_hiragana_messy, we don't try to handle ē -> ei in the same way
    as o. The whole thing is hacky though, there's rarely a good reason to use this
    function!
-
- * Custom data: support commas in the notes field.

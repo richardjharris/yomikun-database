@@ -11,7 +11,7 @@ def test_success():
 # Comment, ignored
 
 # Blank lines also ignored
-二木 英徳,ふたぎ　ひでのり,m,1936,Chairman (AEON)
+二木 英徳,ふたぎ　ひでのり,m,1936,"Chairman, AEON"
 爽彩,さや,f,2000-
 小田　剛嗣,おだ つよし,m,1920-1980 # Based on Coke can in FB profile
 宇治,うじ,s+fictional
@@ -25,7 +25,7 @@ def test_success():
     assert (
         output_data.getvalue()
         == """
-{"kaki": "二木 英徳", "yomi": "ふたぎ ひでのり", "authenticity": "real", "gender": "male", "position": "person", "lifetime": {"birth_year": 1936, "death_year": null}, "source": "custom", "notes": "Chairman (AEON)"}
+{"kaki": "二木 英徳", "yomi": "ふたぎ ひでのり", "authenticity": "real", "gender": "male", "position": "person", "lifetime": {"birth_year": 1936, "death_year": null}, "source": "custom", "notes": "Chairman, AEON"}
 {"kaki": "爽彩", "yomi": "さや", "authenticity": "real", "gender": "female", "position": "mei", "lifetime": {"birth_year": 2000, "death_year": null}, "source": "custom"}
 {"kaki": "小田 剛嗣", "yomi": "おだ つよし", "authenticity": "real", "gender": "male", "position": "person", "lifetime": {"birth_year": 1920, "death_year": 1980}, "source": "custom"}
 {"kaki": "宇治", "yomi": "うじ", "authenticity": "fictional", "position": "sei", "source": "custom"}

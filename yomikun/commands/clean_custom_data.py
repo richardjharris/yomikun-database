@@ -43,6 +43,10 @@ def clean_custom_data(input, split, swap_romaji):
     八久保　竜司,ハチクボ　リュウジ
     佐藤 直哉,さとう　なおや,m
     頴川 文彦,Fumihiko Egawa,m+fictional
+
+    Limitations:
+     - notes field cannot contain commas
+     - some tags are not supported (stick to m,f,s)
     """
     reader = csv.DictReader(input, CSV_FIELDS)
     for row in reader:
