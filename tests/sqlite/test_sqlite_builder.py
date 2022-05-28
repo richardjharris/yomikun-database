@@ -6,7 +6,7 @@ from io import StringIO
 from tempfile import NamedTemporaryFile
 
 from yomikun.sqlite import builder
-from yomikun.sqlite.models import NamePart
+from yomikun.sqlite.models.name_part import NamePart
 
 MEI = NamePart.mei.value
 SEI = NamePart.sei.value

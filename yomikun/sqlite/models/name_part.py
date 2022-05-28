@@ -7,7 +7,6 @@ from enum import Enum
 from yomikun.models.name_position import NamePosition
 
 
-# TODO: remove duplication between NamePart and NamePosition
 class NamePart(Enum):
     """Represents the position of a name."""
 

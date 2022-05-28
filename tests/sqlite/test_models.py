@@ -1,4 +1,4 @@
-from yomikun.sqlite.models import NamePart
+from yomikun.sqlite.models.name_part import NamePart
 
 
 def test_name_part():
