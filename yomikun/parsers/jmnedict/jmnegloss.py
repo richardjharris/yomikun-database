@@ -14,6 +14,7 @@ class JmneGloss:
 
     # Match a YYYY.MM.DD date and capture the year
     DATE_PAT = r"(\d{3,4})(?:\.\d\d?(?:\.\d\d?)?|[?]|)"
+
     # Match (date-date) or (date-)
     # some are like 'Sōkokurai Eikichi (sumo wrestler from Inner Mongolia, 1984-)' so
     # we also match on a preceding comma.
