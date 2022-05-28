@@ -7,4 +7,3 @@ class Gender(enum.Enum):
     unknown = 1
     male = 2
     female = 3
-    neutral = 4

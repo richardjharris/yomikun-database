@@ -54,10 +54,6 @@ class AggregatedData:
             self.hits_female += 1
         elif gender == Gender.unknown:
             self.hits_unknown += 1
-        elif gender == Gender.neutral:
-            # Both masc/fem tags
-            # TODO could remove this.
-            self.hits_unknown += 1
         else:
             raise Exception(f'Unknown Gender value: {gender}')
 
