@@ -34,12 +34,10 @@ ignore_words = [
     '女王',
     '幕府',
     '山脈',
-    '庭園',  # FPs?
+    '庭園',
     '主義',
     '事件',
     '兵団',
-    # TODO apply to wikipedia_en
-    # names ending with 駅?
 ]
 ignore_words_pat = regex.compile(r"\L<words>", words=ignore_words)
 
