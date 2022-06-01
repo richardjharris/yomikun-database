@@ -4,6 +4,10 @@ the future.
 Wikipedia EN/WikiData contribute only ~20k names each compared to
 Wikipedia JA's 202k. The epwings even fewer.
 
+*Important:* romaji searching in the app will be broken as we now include
+apostrophes in words like 菅野 ("kan'no"). The client database may not
+be expecting that.
+
 ## old db handling
 
 Report + compare() use different old DBs
@@ -15,11 +19,6 @@ Does 'dict' work for surnames? in terms of hit counts.
 
 Most names (あけみ, ナオト) have kana variants recorded. Question is how we should handle
 other forms of the names. Should we insert phantom records for the other names?
-
-## Incorrect kana
-
-We are now encoding 菅野 as "kan'no" etc., but client database needs to handle this
-also.
 
 ## Missing kana names
 
