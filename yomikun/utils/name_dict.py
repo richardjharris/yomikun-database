@@ -7,7 +7,7 @@ from yomikun.utils import jmnedict
 from yomikun.utils.romaji.romaji_key import romaji_key
 
 
-def match_name(kanji, kana, sei: bool, romaji=False) -> bool:
+def match_name(kanji: str, kana: str, sei: bool, romaji: bool = False) -> bool:
     """
     Returns bool indicating if the given name exists in our name
     dictionary.

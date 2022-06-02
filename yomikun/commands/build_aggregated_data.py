@@ -15,7 +15,7 @@ from yomikun.utils.timer import Timer
     default='db/gender.jsonl',
     help='Path to gender score database',
 )
-def build_aggregated_data(input, genderdb):
+def build_aggregated_data(input, genderdb: str):
     """
     Build aggregated.jsonl for SQLite load
 

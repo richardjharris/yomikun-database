@@ -19,7 +19,12 @@ vw_args = (
 
 
 class GenderML:
-    def __init__(self, cache_file='gender.vw.cache', weights_file=None, quiet=False):
+    def __init__(
+        self,
+        cache_file: str = 'gender.vw.cache',
+        weights_file: str | None = None,
+        quiet: bool = False,
+    ):
         self.cache_file = cache_file
         self.weights_file = weights_file
         if weights_file:

@@ -30,7 +30,7 @@ def load_name_lists(name_list_data: NameLists) -> dict[str, set[ListTitle]]:
     Converts the name list data loaded from JSON file to a mapping
     of kana name -> ListTitle tags (above).
     """
-    tags_for_name = defaultdict(set)
+    tags_for_name: defaultdict[str, set[ListTitle]] = defaultdict(set)
     for list_name, list_data in name_list_data.items():
         list_tag = ListTitle(list_name)
         for _page_id, name in list_data.items():
@@ -60,7 +60,7 @@ def sanity_check_score(score: float, name_lists: set[ListTitle]) -> str | None:
         return
 
 
-def adjusted_wald_moe(female, male, z=1.96):
+def adjusted_wald_moe(female: int, male: int, z: float = 1.96):
     """
     Given male/female counts return the margin of error (0..0.5) from
     the adjusted Wald confidence interval. Default z=1.96 = 95% confidence.

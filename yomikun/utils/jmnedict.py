@@ -5,6 +5,7 @@ also sometimes consulted when splitting names.
 """
 import logging
 from dataclasses import dataclass
+from typing import Any, Generator
 
 import jamdict
 
@@ -15,7 +16,7 @@ NOISY_LOGGERS = (
     'puchikarui.puchikarui',
 )
 
-_INSTANCE = None
+_instance = None
 
 
 def jam() -> jamdict.Jamdict:
@@ -24,15 +25,15 @@ def jam() -> jamdict.Jamdict:
 
     Loads a local copy of the database via the jamdict-data module.
     """
-    global _INSTANCE
-    if not _INSTANCE:
-        _INSTANCE = jamdict.Jamdict(memory_mode=False)
-        assert _INSTANCE.has_jmne()
+    global _instance
+    if not _instance:
+        _instance = jamdict.Jamdict(memory_mode=False)
+        assert _instance.has_jmne()
 
         for logger in NOISY_LOGGERS:
             logging.getLogger(logger).setLevel(logging.ERROR)
 
-    return _INSTANCE
+    return _instance
 
 
 @dataclass
@@ -41,7 +42,7 @@ class NameResult:
     kanji: list[str]
 
 
-def find(query, senses) -> list[NameResult]:
+def find(query: str, senses) -> list[NameResult]:
     """
     Given kana or kanji name (`query`), return all results matching the
     senses in `senses`.
@@ -60,21 +61,21 @@ def find(query, senses) -> list[NameResult]:
     return out
 
 
-def find_surname(query):
+def find_surname(query: str):
     """
     Returns surnames precisely matching `query`.
     """
     return find(query, senses=['surname'])
 
 
-def find_given_name(query):
+def find_given_name(query: str):
     """
     Returns given names precisely matching `query`.
     """
     return find(query, senses=['masc', 'fem', 'given'])
 
 
-def all_jmnedict_data():
+def all_jmnedict_data() -> Generator[dict[str, Any], None, None]:
     """
     Return all name entries as raw python dictionary data.
     """

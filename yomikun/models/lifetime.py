@@ -35,7 +35,7 @@ class Lifetime:
         ):
             self.death_year = other.death_year
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, int]:
         return dataclasses.asdict(self)
 
     @classmethod

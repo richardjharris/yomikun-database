@@ -182,7 +182,7 @@ class NameData:
         """
         self.clean()
 
-        names = []
+        names: list[NameData] = []
         if (
             self.position == NamePosition.person
             and len(self.kaki.split()) == 2
@@ -207,7 +207,7 @@ class NameData:
             sub.clean()
 
         # HACK: for Beat Takeshi
-        to_delete = []
+        to_delete: list[NameData] = []
         for sub in self.subreadings:
             if (self.kaki, self.yomi) == (sub.kaki, sub.yomi):
                 # Delete the subreading. One example case is beat takeshi which has two
@@ -381,7 +381,7 @@ class NameData:
         return ','.join(fields)
 
     @classmethod
-    def from_csv(cls, row: dict, swap_names=True) -> NameData:
+    def from_csv(cls, row: dict[str, str], swap_names: bool=True) -> NameData:
         """
         Parse an incoming CSV data row and return a NameData object.
 

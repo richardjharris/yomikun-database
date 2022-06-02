@@ -7,7 +7,7 @@ import dataclasses
 import json
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Iterable, TextIO, cast
+from typing import Iterable, TextIO
 
 import jcconv3
 import regex
@@ -86,7 +86,7 @@ def build_aggregated_data(
 
             # Some jmnedict results currently contain katakana
             # FIXME: kana is currently ignored
-            kana = cast(str, jcconv3.kata2hira(kana))
+            kana = jcconv3.kata2hira(kana)
 
             aggregated_data[part.key()].record_hit(part.gender, name)
 

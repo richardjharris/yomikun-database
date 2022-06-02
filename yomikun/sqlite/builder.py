@@ -3,7 +3,7 @@ import logging
 import sqlite3
 import sys
 from datetime import datetime
-from typing import IO
+from typing import TextIO
 
 from yomikun.sqlite.table_builders.kanji_stats_table import KanjiStatsTable
 from yomikun.sqlite.table_builders.names_table import NamesTable
@@ -13,7 +13,9 @@ from yomikun.sqlite.table_builders.quiz_table import QuizTable
 TABLES = [NamesTable, KanjiStatsTable, QuizTable]
 
 
-def build_sqlite(connection: sqlite3.Connection, data_input: IO = sys.stdin) -> None:
+def build_sqlite(
+    connection: sqlite3.Connection, data_input: TextIO = sys.stdin
+) -> None:
     """
     Builds the Yomikun database using the supplied `connection`.
 

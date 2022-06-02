@@ -10,8 +10,8 @@ from yomikun.models import NameData
 CSV_FIELDS = ('kaki', 'yomi', 'tags', 'lifetime', 'notes')
 
 # Remember last CSV input line, for error handling
-LAST_RAW_LINE = ''
-LAST_RAW_LINE_NUMBER = 0
+last_raw_line = ''
+last_raw_line_number = 0
 
 
 def parse_file(
@@ -32,14 +32,14 @@ def parse_file(
             namedata.validate()
             print(namedata.to_jsonl(), file=output_file)
         except ValueError as e:
-            location = f"line {LAST_RAW_LINE_NUMBER}"
+            location = f"line {last_raw_line_number}"
             if input_filename:
                 location = f"file '{input_filename}' {location}"
 
             logging.exception(
                 f"Error parsing {location}\n"
                 f"Error: {e}\n\n"
-                f"Raw line: {LAST_RAW_LINE}\n"
+                f"Raw line: {last_raw_line}\n"
                 f"Generated dict: {row}\n"
                 f"Generated namedata: {namedata}"
             )
@@ -49,14 +49,14 @@ def parse_file(
 
 
 def skip_lines_and_comments(lines):
-    global LAST_RAW_LINE
-    global LAST_RAW_LINE_NUMBER
+    global last_raw_line
+    global last_raw_line_number
 
-    LAST_RAW_LINE_NUMBER = 0
+    last_raw_line_number = 0
 
     for line in lines:
-        LAST_RAW_LINE = line.rstrip()
-        LAST_RAW_LINE_NUMBER += 1
+        last_raw_line = line.rstrip()
+        last_raw_line_number += 1
         line = regex.sub(r'#.*$', '', line)
         if regex.search(r'\S', line):
             yield line.rstrip()

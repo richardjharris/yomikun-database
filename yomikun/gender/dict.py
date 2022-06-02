@@ -11,13 +11,13 @@ class GenderInfo:
     ct_score: float
     ct_confidence: float
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, float]:
         return dataclasses.asdict(self)
 
 
 class GenderDict:
     def __init__(self, file: str = DEFAULT_JSONL_PATH):
-        self.dict = {}
+        self.dict: dict[tuple[str, str], GenderInfo] = {}
         with open(file, encoding='utf-8') as fh:
             for line in fh:
                 row = json.loads(line)
