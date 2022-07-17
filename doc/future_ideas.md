@@ -8,6 +8,18 @@ Wikipedia JA's 202k. The epwings even fewer.
 apostrophes in words like 菅野 ("kan'no"). The client database may not
 be expecting that.
 
+## random names
+
+東彦「はるひこ」
+灯熾　真乃「ひお　まの」シャニマス
+藤堂「とうどう」さん
+畠山「はたけやま」さん
+山科「やましな」さん
+生稲　晃子「いくいな　あきこ」さん
+三四「みよ」female first name
+紗子（さえこ）、沁子（しみこ？）
+犬飼寿樹（としき）
+
 ## old db handling
 
 Report + compare() use different old DBs
